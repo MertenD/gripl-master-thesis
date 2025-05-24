@@ -1,0 +1,50 @@
+name: Build Thesis and Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'thesis/**'
+      - '.github/workflows/latex-pages.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup TeX Live and build PDF
+        uses: dante-ev/latex-action@latest
+        with:
+          working_directory: 'thesis'
+          root_file: 'main.tex'
+
+      - name: Generate preview image
+        run: |
+          cd thesis
+          sudo apt-get update \
+            && sudo apt-get install -y poppler-utils
+          pdftoppm -singlefile -jpeg main.pdf preview
+
+      - name: Prepare gh-pages
+        run: |
+          mkdir -p gh-pages
+          cp thesis/main.pdf gh-pages/
+          cp thesis/preview.jpg gh-pages/
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: gh-pages
+          commit_message: "Update LaTeX PDF via Action"
+
+      - name: Cleanup
+        if: always()
+        run: rm -rf gh-pages
