@@ -1,1 +1,0 @@
-# GRIPL Frontend
