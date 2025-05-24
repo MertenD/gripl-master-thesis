@@ -5,6 +5,9 @@ on:
     branches: [main]
     paths:
       - 'thesis/**'
+      - '!thesis/README.md'
+      - '!thesis/.gitignore'
+      - '!thesis/thesis.iml'
       - '.github/workflows/latex-pages.yml'
 
 permissions:
