@@ -1,5 +1,7 @@
+import React from "react";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { ThemeProvider } from 'next-themes'
 import "./globals.css";
 
 const geistSans = Geist({
@@ -22,13 +24,23 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+
+  return <html lang="en">
+    <head>
+        {/* Lade die bpmn-js Stylesheets */}
+        <title>GRIPL</title>
+        <link rel="stylesheet" href="https://unpkg.com/bpmn-js@9.3.1/dist/assets/diagram-js.css"/>
+        <link rel="stylesheet" href="https://unpkg.com/bpmn-js@9.3.1/dist/assets/bpmn-font/css/bpmn.css"/>
+        <link rel="stylesheet" href="https://unpkg.com/bpmn-js@9.3.1/dist/assets/bpmn-js.css"/>
+    </head>
+    <body className={`${geistSans.variable} ${geistMono.variable} antialiased h-screen w-screen`}>
+      <ThemeProvider
+        attribute="class"
+        defaultTheme="dark"
+        enableSystem="false"
       >
         {children}
-      </body>
-    </html>
-  );
+      </ThemeProvider>
+    </body>
+  </html>
 }
