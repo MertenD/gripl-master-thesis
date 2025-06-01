@@ -1,0 +1,166 @@
+/* https://unpkg.com/bpmn-js@9.3.1/dist/assets/bpmn-font/css/bpmn.css */
+
+@font-face {
+    font-family: 'bpmn';
+    src: url('../font/bpmn.eot');
+    src: url('../font/bpmn.eot') format('embedded-opentype'),
+    url('../font/bpmn.woff2') format('woff2'),
+    url('../font/bpmn.woff') format('woff'),
+    url('../font/bpmn.ttf') format('truetype'),
+    url('../font/bpmn.svg') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+/* Chrome hack: SVG is rendered more smooth in Windozze. 100% magic, uncomment if you need it. */
+/* Note, that will break hinting! In other OS-es font will be not as sharp as it could be */
+/*
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: 'bpmn';
+    src: url('../font/bpmn.svg?26374340#bpmn') format('svg');
+  }
+}
+*/
+
+[class^="bpmn-icon-"]:before, [class*=" bpmn-icon-"]:before {
+    font-family: "bpmn";
+    font-style: normal;
+    font-weight: normal;
+    speak: never;
+
+    display: inline-block;
+    text-decoration: inherit;
+    width: 1em;
+    /* margin-right: .2em; */
+    text-align: center;
+    /* opacity: .8; */
+
+    /* For safety - reset parent styles, that can break glyph codes*/
+    font-variant: normal;
+    text-transform: none;
+
+    /* fix buttons height, for twitter bootstrap */
+    line-height: 1em;
+
+    /* Animation center compensation - margins should be symmetric */
+    /* remove if not needed */
+    /* margin-left: .2em; */
+
+    /* you can be more comfortable with increased icons size */
+    /* font-size: 120%; */
+
+    /* Font smoothing. That was taken from TWBS */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+    /* Uncomment for 3D effect */
+    /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */
+}
+
+.bpmn-icon-screw-wrench:before { content: '\e800'; } /* 'î €' */
+.bpmn-icon-trash:before { content: '\e801'; } /* 'î ' */
+.bpmn-icon-conditional-flow:before { content: '\e802'; } /* 'î ‚' */
+.bpmn-icon-default-flow:before { content: '\e803'; } /* 'î ƒ' */
+.bpmn-icon-gateway-parallel:before { content: '\e804'; } /* 'î „' */
+.bpmn-icon-intermediate-event-catch-cancel:before { content: '\e805'; } /* 'î …' */
+.bpmn-icon-intermediate-event-catch-non-interrupting-message:before { content: '\e806'; } /* 'î †' */
+.bpmn-icon-start-event-compensation:before { content: '\e807'; } /* 'î ‡' */
+.bpmn-icon-start-event-non-interrupting-parallel-multiple:before { content: '\e808'; } /* 'î ˆ' */
+.bpmn-icon-loop-marker:before { content: '\e809'; } /* 'î ‰' */
+.bpmn-icon-parallel-mi-marker:before { content: '\e80a'; } /* 'î Š' */
+.bpmn-icon-start-event-non-interrupting-signal:before { content: '\e80b'; } /* 'î ‹' */
+.bpmn-icon-intermediate-event-catch-non-interrupting-timer:before { content: '\e80c'; } /* 'î Œ' */
+.bpmn-icon-intermediate-event-catch-parallel-multiple:before { content: '\e80d'; } /* 'î ' */
+.bpmn-icon-intermediate-event-catch-compensation:before { content: '\e80e'; } /* 'î Ž' */
+.bpmn-icon-gateway-xor:before { content: '\e80f'; } /* 'î ' */
+.bpmn-icon-connection:before { content: '\e810'; } /* 'î ' */
+.bpmn-icon-end-event-cancel:before { content: '\e811'; } /* 'î ‘' */
+.bpmn-icon-intermediate-event-catch-condition:before { content: '\e812'; } /* 'î ’' */
+.bpmn-icon-intermediate-event-catch-non-interrupting-parallel-multiple:before { content: '\e813'; } /* 'î “' */
+.bpmn-icon-start-event-condition:before { content: '\e814'; } /* 'î ”' */
+.bpmn-icon-start-event-non-interrupting-timer:before { content: '\e815'; } /* 'î •' */
+.bpmn-icon-sequential-mi-marker:before { content: '\e816'; } /* 'î –' */
+.bpmn-icon-user-task:before { content: '\e817'; } /* 'î —' */
+.bpmn-icon-business-rule:before { content: '\e818'; } /* 'î ˜' */
+.bpmn-icon-sub-process-marker:before { content: '\e819'; } /* 'î ™' */
+.bpmn-icon-start-event-parallel-multiple:before { content: '\e81a'; } /* 'î š' */
+.bpmn-icon-start-event-error:before { content: '\e81b'; } /* 'î ›' */
+.bpmn-icon-intermediate-event-catch-signal:before { content: '\e81c'; } /* 'î œ' */
+.bpmn-icon-intermediate-event-catch-error:before { content: '\e81d'; } /* 'î ' */
+.bpmn-icon-end-event-compensation:before { content: '\e81e'; } /* 'î ž' */
+.bpmn-icon-subprocess-collapsed:before { content: '\e81f'; } /* 'î Ÿ' */
+.bpmn-icon-subprocess-expanded:before { content: '\e820'; } /* 'î  ' */
+.bpmn-icon-task:before { content: '\e821'; } /* 'î ¡' */
+.bpmn-icon-end-event-error:before { content: '\e822'; } /* 'î ¢' */
+.bpmn-icon-intermediate-event-catch-escalation:before { content: '\e823'; } /* 'î £' */
+.bpmn-icon-intermediate-event-catch-timer:before { content: '\e824'; } /* 'î ¤' */
+.bpmn-icon-start-event-escalation:before { content: '\e825'; } /* 'î ¥' */
+.bpmn-icon-start-event-signal:before { content: '\e826'; } /* 'î ¦' */
+.bpmn-icon-business-rule-task:before { content: '\e827'; } /* 'î §' */
+.bpmn-icon-manual:before { content: '\e828'; } /* 'î ¨' */
+.bpmn-icon-receive:before { content: '\e829'; } /* 'î ©' */
+.bpmn-icon-call-activity:before { content: '\e82a'; } /* 'î ª' */
+.bpmn-icon-start-event-timer:before { content: '\e82b'; } /* 'î «' */
+.bpmn-icon-start-event-message:before { content: '\e82c'; } /* 'î ¬' */
+.bpmn-icon-intermediate-event-none:before { content: '\e82d'; } /* 'î ­' */
+.bpmn-icon-intermediate-event-catch-link:before { content: '\e82e'; } /* 'î ®' */
+.bpmn-icon-end-event-escalation:before { content: '\e82f'; } /* 'î ¯' */
+.bpmn-icon-text-annotation:before { content: '\e830'; } /* 'î °' */
+.bpmn-icon-bpmn-io:before { content: '\e831'; } /* 'î ±' */
+.bpmn-icon-gateway-complex:before { content: '\e832'; } /* 'î ²' */
+.bpmn-icon-gateway-eventbased:before { content: '\e833'; } /* 'î ³' */
+.bpmn-icon-gateway-none:before { content: '\e834'; } /* 'î ´' */
+.bpmn-icon-gateway-or:before { content: '\e835'; } /* 'î µ' */
+.bpmn-icon-end-event-terminate:before { content: '\e836'; } /* 'î ¶' */
+.bpmn-icon-end-event-signal:before { content: '\e837'; } /* 'î ·' */
+.bpmn-icon-end-event-none:before { content: '\e838'; } /* 'î ¸' */
+.bpmn-icon-end-event-multiple:before { content: '\e839'; } /* 'î ¹' */
+.bpmn-icon-end-event-message:before { content: '\e83a'; } /* 'î º' */
+.bpmn-icon-end-event-link:before { content: '\e83b'; } /* 'î »' */
+.bpmn-icon-intermediate-event-catch-message:before { content: '\e83c'; } /* 'î ¼' */
+.bpmn-icon-intermediate-event-throw-compensation:before { content: '\e83d'; } /* 'î ½' */
+.bpmn-icon-start-event-multiple:before { content: '\e83e'; } /* 'î ¾' */
+.bpmn-icon-script:before { content: '\e83f'; } /* 'î ¿' */
+.bpmn-icon-manual-task:before { content: '\e840'; } /* 'î¡€' */
+.bpmn-icon-send:before { content: '\e841'; } /* 'î¡' */
+.bpmn-icon-service:before { content: '\e842'; } /* 'î¡‚' */
+.bpmn-icon-receive-task:before { content: '\e843'; } /* 'î¡ƒ' */
+.bpmn-icon-user:before { content: '\e844'; } /* 'î¡„' */
+.bpmn-icon-start-event-none:before { content: '\e845'; } /* 'î¡…' */
+.bpmn-icon-intermediate-event-throw-escalation:before { content: '\e846'; } /* 'î¡†' */
+.bpmn-icon-intermediate-event-catch-multiple:before { content: '\e847'; } /* 'î¡‡' */
+.bpmn-icon-intermediate-event-catch-non-interrupting-escalation:before { content: '\e848'; } /* 'î¡ˆ' */
+.bpmn-icon-intermediate-event-throw-link:before { content: '\e849'; } /* 'î¡‰' */
+.bpmn-icon-start-event-non-interrupting-condition:before { content: '\e84a'; } /* 'î¡Š' */
+.bpmn-icon-data-object:before { content: '\e84b'; } /* 'î¡‹' */
+.bpmn-icon-script-task:before { content: '\e84c'; } /* 'î¡Œ' */
+.bpmn-icon-send-task:before { content: '\e84d'; } /* 'î¡' */
+.bpmn-icon-data-store:before { content: '\e84e'; } /* 'î¡Ž' */
+.bpmn-icon-start-event-non-interrupting-escalation:before { content: '\e84f'; } /* 'î¡' */
+.bpmn-icon-intermediate-event-throw-message:before { content: '\e850'; } /* 'î¡' */
+.bpmn-icon-intermediate-event-catch-non-interrupting-multiple:before { content: '\e851'; } /* 'î¡‘' */
+.bpmn-icon-intermediate-event-catch-non-interrupting-signal:before { content: '\e852'; } /* 'î¡’' */
+.bpmn-icon-intermediate-event-throw-multiple:before { content: '\e853'; } /* 'î¡“' */
+.bpmn-icon-start-event-non-interrupting-message:before { content: '\e854'; } /* 'î¡”' */
+.bpmn-icon-ad-hoc-marker:before { content: '\e855'; } /* 'î¡•' */
+.bpmn-icon-service-task:before { content: '\e856'; } /* 'î¡–' */
+.bpmn-icon-task-none:before { content: '\e857'; } /* 'î¡—' */
+.bpmn-icon-compensation-marker:before { content: '\e858'; } /* 'î¡˜' */
+.bpmn-icon-start-event-non-interrupting-multiple:before { content: '\e859'; } /* 'î¡™' */
+.bpmn-icon-intermediate-event-throw-signal:before { content: '\e85a'; } /* 'î¡š' */
+.bpmn-icon-intermediate-event-catch-non-interrupting-condition:before { content: '\e85b'; } /* 'î¡›' */
+.bpmn-icon-participant:before { content: '\e85c'; } /* 'î¡œ' */
+.bpmn-icon-event-subprocess-expanded:before { content: '\e85d'; } /* 'î¡' */
+.bpmn-icon-lane-insert-below:before { content: '\e85e'; } /* 'î¡ž' */
+.bpmn-icon-space-tool:before { content: '\e85f'; } /* 'î¡Ÿ' */
+.bpmn-icon-connection-multi:before { content: '\e860'; } /* 'î¡ ' */
+.bpmn-icon-lane:before { content: '\e861'; } /* 'î¡¡' */
+.bpmn-icon-lasso-tool:before { content: '\e862'; } /* 'î¡¢' */
+.bpmn-icon-lane-insert-above:before { content: '\e863'; } /* 'î¡£' */
+.bpmn-icon-lane-divide-three:before { content: '\e864'; } /* 'î¡¤' */
+.bpmn-icon-lane-divide-two:before { content: '\e865'; } /* 'î¡¥' */
+.bpmn-icon-data-input:before { content: '\e866'; } /* 'î¡¦' */
+.bpmn-icon-data-output:before { content: '\e867'; } /* 'î¡§' */
+.bpmn-icon-hand-tool:before { content: '\e868'; } /* 'î¡¨' */
+.bpmn-icon-group:before { content: '\e869'; } /* 'î¡©' */
+.bpmn-icon-transaction:before { content: '\e8c4'; } /* 'î£„' */
