@@ -22,79 +22,7 @@ export default function BpmnEditor({ bpmnXml, highlightedActivityIds = [], onSav
   useEffect(() => {
     if (!containerRef.current || !bpmnXml) return
 
-    const initializeModeler = async () => {
-      try {
-        // @ts-ignore
-        const BpmnModeler = (await import("bpmn-js/dist/bpmn-modeler.production.min.js")).default
-
-        if (modelerRef.current) {
-          try {
-            modelerRef.current.destroy()
-          } catch (err) {
-            console.error("Fehler beim Zerstören des vorherigen Modelers", err)
-          }
-          modelerRef.current = null
-        }
-
-        const modeler = new BpmnModeler({
-          container: containerRef.current
-        })
-
-        modelerRef.current = modeler
-
-        modeler.on("commandStack.changed", () => {
-          try {
-            const commandStack = modeler.get("commandStack")
-            setCanUndo(commandStack.canUndo())
-            setCanRedo(commandStack.canRedo())
-
-            if (onSave) {
-              modeler
-                  .saveXML({ format: true })
-                  .then(({ xml }: { xml: string }) => {
-                    onSave(xml)
-                  })
-                  .catch((err: any) => {
-                    console.error("Fehler beim automatischen Speichern", err)
-                  })
-            }
-          } catch (err) {
-            console.error("Fehler beim Verarbeiten von Änderungen", err)
-          }
-        })
-
-        try {
-          await modeler.importXML(bpmnXml)
-
-          try {
-            modeler.get("canvas").zoom("fit-viewport")
-          } catch (err) {
-            console.error("Fehler beim Zoomen", err)
-          }
-
-          setIsLoaded(true)
-
-          try {
-            const commandStack = modeler.get("commandStack")
-            setCanUndo(commandStack.canUndo())
-            setCanRedo(commandStack.canRedo())
-          } catch (err) {
-            console.error("Fehler beim Aktualisieren des Undo/Redo-Status", err)
-          }
-
-          if (highlightedActivityIds) {
-            highlightActivities(modeler, highlightedActivityIds)
-          }
-        } catch (err) {
-          console.error("Fehler beim Importieren des BPMN-Diagramms", err)
-          setIsLoaded(false)
-        }
-      } catch (err) {
-        console.error("Fehler beim Initialisieren des BPMN-Modelers", err)
-      }
-    }
-
-    initializeModeler().then()
+    initializeModeler(bpmnXml).then()
 
     return () => {
       if (modelerRef.current) {
@@ -112,14 +40,91 @@ export default function BpmnEditor({ bpmnXml, highlightedActivityIds = [], onSav
         styleElementRef.current = null
       }
     }
-  }, [bpmnXml, onSave])
+  }, [onSave])
 
   useEffect(() => {
     if (!modelerRef.current || !isLoaded || !highlightedActivityIds) return
     highlightActivities(modelerRef.current, highlightedActivityIds)
   }, [highlightedActivityIds, isLoaded])
 
-  const highlightActivities = (modeler: any, activityIds: string[]) => {
+  async function handleFileLoaded(content: string) {
+    onSave(content)
+    initializeModeler(content).then()
+  }
+
+  async function initializeModeler(xml: string) {
+    try {
+      // @ts-ignore
+      const BpmnModeler = (await import("bpmn-js/dist/bpmn-modeler.production.min.js")).default
+
+      if (modelerRef.current) {
+        try {
+          modelerRef.current.destroy()
+        } catch (err) {
+          console.error("Fehler beim Zerstören des vorherigen Modelers", err)
+        }
+        modelerRef.current = null
+      }
+
+      const modeler = new BpmnModeler({
+        container: containerRef.current
+      })
+
+      modelerRef.current = modeler
+
+      modeler.on("commandStack.changed", () => {
+        try {
+          const commandStack = modeler.get("commandStack")
+          setCanUndo(commandStack.canUndo())
+          setCanRedo(commandStack.canRedo())
+
+          if (onSave) {
+            modeler
+                .saveXML({ format: true })
+                .then(({ xml }: { xml: string }) => {
+                  onSave(xml)
+                })
+                .catch((err: any) => {
+                  console.error("Fehler beim automatischen Speichern", err)
+                })
+          }
+        } catch (err) {
+          console.error("Fehler beim Verarbeiten von Änderungen", err)
+        }
+      })
+
+      try {
+        await modeler.importXML(xml)
+
+        try {
+          modeler.get("canvas").zoom("fit-viewport")
+        } catch (err) {
+          console.error("Fehler beim Zoomen", err)
+        }
+
+        setIsLoaded(true)
+
+        try {
+          const commandStack = modeler.get("commandStack")
+          setCanUndo(commandStack.canUndo())
+          setCanRedo(commandStack.canRedo())
+        } catch (err) {
+          console.error("Fehler beim Aktualisieren des Undo/Redo-Status", err)
+        }
+
+        if (highlightedActivityIds) {
+          highlightActivities(modeler, highlightedActivityIds)
+        }
+      } catch (err) {
+        console.error("Fehler beim Importieren des BPMN-Diagramms", err)
+        setIsLoaded(false)
+      }
+    } catch (err) {
+      console.error("Fehler beim Initialisieren des BPMN-Modelers", err)
+    }
+  }
+
+  function highlightActivities(modeler: any, activityIds: string[]) {
     try {
       const canvas = modeler.get("canvas")
       const elementRegistry = modeler.get("elementRegistry")
@@ -156,7 +161,7 @@ export default function BpmnEditor({ bpmnXml, highlightedActivityIds = [], onSav
     }
   }
 
-  const handleZoomIn = () => {
+  function handleZoomIn() {
     if (!modelerRef.current || !isLoaded) return
 
     try {
@@ -166,7 +171,7 @@ export default function BpmnEditor({ bpmnXml, highlightedActivityIds = [], onSav
     }
   }
 
-  const handleZoomOut = () => {
+  function handleZoomOut() {
     if (!modelerRef.current || !isLoaded) return
 
     try {
@@ -176,7 +181,7 @@ export default function BpmnEditor({ bpmnXml, highlightedActivityIds = [], onSav
     }
   }
 
-  const handleZoomReset = () => {
+  function handleZoomReset() {
     if (!modelerRef.current || !isLoaded) return
 
     try {
@@ -186,7 +191,7 @@ export default function BpmnEditor({ bpmnXml, highlightedActivityIds = [], onSav
     }
   }
 
-  const handleUndo = () => {
+  function handleUndo() {
     if (!modelerRef.current || !isLoaded || !canUndo) return
 
     try {
@@ -196,7 +201,7 @@ export default function BpmnEditor({ bpmnXml, highlightedActivityIds = [], onSav
     }
   }
 
-  const handleRedo = () => {
+  function handleRedo() {
     if (!modelerRef.current || !isLoaded || !canRedo) return
 
     try {
@@ -206,7 +211,7 @@ export default function BpmnEditor({ bpmnXml, highlightedActivityIds = [], onSav
     }
   }
 
-  const handleExport = async () => {
+  async function handleExport() {
     if (!modelerRef.current || !isLoaded) return
 
     try {
@@ -275,7 +280,7 @@ export default function BpmnEditor({ bpmnXml, highlightedActivityIds = [], onSav
             </Button>
           </div>
           <div className="flex items-center space-x-1">
-            <BpmnUploadButton onFileLoaded={onSave} />
+            <BpmnUploadButton onFileLoaded={handleFileLoaded} />
             <Button
                 variant="outline"
                 size="sm"

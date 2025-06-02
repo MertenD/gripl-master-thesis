@@ -30,7 +30,6 @@ export default function BpmnUploadButton({ onFileLoaded }: FileUploadProps) {
     reader.onload = (e) => {
       const content = e.target?.result as string
       if (content) {
-        console.log("Datei geladen, Inhalt:", content.substring(0, 100) + "...")
         onFileLoaded(content)
       } else {
         console.error("Fehler beim Lesen der Datei: Inhalt ist leer")
