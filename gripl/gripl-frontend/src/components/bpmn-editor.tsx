@@ -1,8 +1,8 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { Button } from "../../../../../bpmn-privacy-analyzer/components/ui/button"
 import { Download, ZoomIn, ZoomOut, RotateCcw, RotateCw } from "lucide-react"
+import {Button} from "@/components/ui/button";
 
 interface BpmnEditorProps {
   bpmnXml: string
@@ -27,6 +27,7 @@ export default function BpmnEditor({ bpmnXml, highlightedActivityIds = [], onSav
     const initializeModeler = async () => {
       try {
         // Dynamischer Import von bpmn-js
+        // @ts-ignore
         const BpmnModeler = (await import("bpmn-js/dist/bpmn-modeler.production.min.js")).default
 
         // Cleanup vorheriger Modeler
