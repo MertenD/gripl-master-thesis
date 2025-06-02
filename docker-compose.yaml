@@ -18,6 +18,7 @@ services:
       - traefik.http.routers.gripl-frontend.entrypoints=websecure
       - traefik.http.routers.gripl-frontend.tls=true
       - traefik.http.services.gripl-frontend.loadbalancer.server.port=3000
+      - com.centurylinklabs.watchtower.enable=true
     networks:
       - web
 
@@ -38,6 +39,7 @@ services:
       - traefik.http.middlewares.gripl-backend-strip-prefix.stripprefix.prefixes=/api
       - traefik.http.routers.gripl-backend.middlewares=gripl-backend-strip-prefix
       - traefik.http.services.gripl-backend.loadbalancer.server.port=8080
+      - com.centurylinklabs.watchtower.enable=true
     networks:
       - web
 
