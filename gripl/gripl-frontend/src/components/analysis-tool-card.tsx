@@ -1,12 +1,47 @@
+"use client"
+
 import {Card, CardContent, CardHeader} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
 import {FileText, RefreshCw} from "lucide-react";
+import {useState} from "react";
 
 interface AnalysisToolCardProps {
     bpmnXml: string;
+    highlightedActivityIds?: string[];
+    setHighlightedActivityIds?: (ids: string[]) => void;
 }
 
-export default function AnalysisToolCard({ bpmnXml }: AnalysisToolCardProps) {
+export default function AnalysisToolCard({ bpmnXml, setHighlightedActivityIds }: AnalysisToolCardProps) {
+
+    const [isAnalyzing, setIsAnalyzing] = useState(false);
+
+    function analyzeDiagram() {
+        setHighlightedActivityIds && setHighlightedActivityIds([]);
+        setIsAnalyzing(true);
+
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/analysis`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/xml",
+            },
+            body: bpmnXml,
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error("Fehler bei der Analyse des Diagramms");
+            }
+            return response.json();
+        }).then(data => {
+            console.log("Analyse abgeschlossen:", data);
+            setIsAnalyzing(false);
+            if (setHighlightedActivityIds) {
+                setHighlightedActivityIds(data.highlightedActivityIds || []);
+            }
+        }).catch(error => {
+            console.error("Fehler bei der Analyse:", error);
+            setIsAnalyzing(false);
+            alert("Fehler bei der Analyse des Diagramms: " + error.message);
+        })
+    }
 
     return <Card>
         <CardHeader>
@@ -14,15 +49,17 @@ export default function AnalysisToolCard({ bpmnXml }: AnalysisToolCardProps) {
         </CardHeader>
         <CardContent className="flex flex-col space-y-4">
             <Button
-                onClick={console.log.bind(console, "Diagramm exportieren")}
+                onClick={analyzeDiagram}
                 variant="default"
+                disabled={isAnalyzing || !bpmnXml}
             >
                 <FileText className="mr-2 h-4 w-4" />
                 Datenschutz analysieren
             </Button>
             <Button
-                onClick={() => console.log("Hervorhebungen zurücksetzen")}
+                onClick={() => setHighlightedActivityIds && setHighlightedActivityIds([])}
                 variant="outline"
+                disabled={!setHighlightedActivityIds || isAnalyzing}
             >
                 <RefreshCw className="mr-2 h-4 w-4" />
                 Hervorhebungen zurücksetzen
