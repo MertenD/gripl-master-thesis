@@ -1,20 +1,22 @@
 "use client"
 
 import React, {useEffect, useRef, useState} from "react"
-import {Download, RotateCcw, RotateCw, ZoomIn, ZoomOut} from "lucide-react"
+import {Download, PlusCircle, RotateCcw, RotateCw, ZoomIn, ZoomOut} from "lucide-react"
 import {Button} from "@/components/ui/button";
 import BpmnUploadButton from "@/components/bpmn-upload-button";
 import {BpmnToolCard} from "@/models/BpmnToolCard";
+import emptyDiagram from "@/data/empty-diagram.bpmn";
 
 interface BpmnEditorProps {
   title?: string
   bpmnXml: string
   highlightedActivityIds?: string[]
+  onNew?: () => void
   onSave: (xml: string) => void
   cards?: BpmnToolCard[]
 }
 
-export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = [], onSave, cards = [] }: BpmnEditorProps) {
+export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = [], onNew, onSave, cards = [] }: BpmnEditorProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const modelerRef = useRef<any>(null)
   const [isLoaded, setIsLoaded] = useState(false)
@@ -284,6 +286,18 @@ export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = []
             </Button>
           </div>
           <div className="flex items-center space-x-1">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                if (onNew) onNew()
+                handleFileLoaded(emptyDiagram).then()
+              }}
+              title="Neues Diagramm erstellen"
+            >
+              <PlusCircle className="h-4 w-4 mr-1" />
+              Neu erstellen
+            </Button>
             <BpmnUploadButton onFileLoaded={handleFileLoaded} />
             <Button
                 variant="outline"
