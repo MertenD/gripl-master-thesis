@@ -10,8 +10,6 @@ services:
     image: mertend/gripl-frontend:latest
     container_name: gripl-frontend
     restart: unless-stopped
-    ports:
-      - "3000:3000"
     environment:
       - API_BASE_URL=http://gripl-backend:8080
     labels:
