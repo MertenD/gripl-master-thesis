@@ -17,7 +17,11 @@ export default function Home() {
   const editorToolCards: BpmnToolCard[] = [
     {
       position: "top-right",
-      content: <AnalysisToolCard bpmnXml={diagram} />
+      content: <AnalysisToolCard
+          bpmnXml={diagram}
+          highlightedActivityIds={highlightedActivityIds}
+          setHighlightedActivityIds={setHighlightedActivityIds}
+      />
     } as BpmnToolCard
   ]
 

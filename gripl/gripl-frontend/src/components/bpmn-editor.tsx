@@ -48,6 +48,7 @@ export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = []
   }, [onSave])
 
   useEffect(() => {
+    console.log("Aktualisiere hervorgehobene Aktivitäten:", highlightedActivityIds)
     if (!modelerRef.current || !isLoaded || !highlightedActivityIds) return
     highlightActivities(modelerRef.current, highlightedActivityIds)
   }, [highlightedActivityIds, isLoaded])
@@ -155,7 +156,7 @@ export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = []
         const styleElement = document.createElement("style")
         styleElement.textContent = `
           .highlight-privacy .djs-visual > :nth-child(1) {
-            fill: rgba(255, 0, 0, 0.2) !important;
+            fill: hsl(var(--destructive)) !important;
           }
         `
         document.head.appendChild(styleElement)

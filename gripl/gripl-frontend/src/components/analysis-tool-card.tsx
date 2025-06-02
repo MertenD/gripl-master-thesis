@@ -11,7 +11,7 @@ interface AnalysisToolCardProps {
     setHighlightedActivityIds?: (ids: string[]) => void;
 }
 
-export default function AnalysisToolCard({ bpmnXml, setHighlightedActivityIds }: AnalysisToolCardProps) {
+export default function AnalysisToolCard({ bpmnXml, highlightedActivityIds, setHighlightedActivityIds }: AnalysisToolCardProps) {
 
     const [isAnalyzing, setIsAnalyzing] = useState(false);
 
@@ -36,7 +36,7 @@ export default function AnalysisToolCard({ bpmnXml, setHighlightedActivityIds }:
             console.log("Analyse abgeschlossen:", data);
             setIsAnalyzing(false);
             if (setHighlightedActivityIds) {
-                setHighlightedActivityIds(data.highlightedActivityIds || []);
+                setHighlightedActivityIds(data || []);
             }
         }).catch(error => {
             console.error("Fehler bei der Analyse:", error);
@@ -61,7 +61,7 @@ export default function AnalysisToolCard({ bpmnXml, setHighlightedActivityIds }:
             <Button
                 onClick={() => setHighlightedActivityIds && setHighlightedActivityIds([])}
                 variant="outline"
-                disabled={!setHighlightedActivityIds || isAnalyzing}
+                disabled={!highlightedActivityIds || highlightedActivityIds.length === 0 || isAnalyzing}
             >
                 <RefreshCw className="mr-2 h-4 w-4" />
                 Hervorhebungen zurücksetzen

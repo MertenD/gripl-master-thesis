@@ -15,8 +15,18 @@ class AnalysisController {
     @PostMapping("/analysis")
     fun analyzeBpmnForGdpr(@RequestBody request: AnalysisRequest): ResponseEntity<List<String>> {
 
-        val gdprCriticalElementIds = listOf("id1", "id2", "id3")
+        // TODO This is a placeholder implementation to test the integration with the frontend
 
-        return ResponseEntity(gdprCriticalElementIds, HttpStatus.OK)
+        // Extract all Activity Element Ids from the BPMN XML
+        val bpmnXml = request.bpmnXml
+        val activityElementIds = bpmnXml
+            .split("<bpmn:task id=\"")
+            .drop(1)
+            .map { it.substringBefore("\"") }
+
+        // Wait for 4 seconds
+        Thread.sleep(2000)
+
+        return ResponseEntity(activityElementIds, HttpStatus.OK)
     }
 }
