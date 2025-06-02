@@ -87,7 +87,16 @@
     stroke: hsl(var(--foreground)) !important;
 }
 
-.djs-shape .djs-visual path {
+.djs-shape .djs-visual polygon {
+    fill: hsl(var(--card)) !important;
+    stroke: hsl(var(--foreground)) !important;
+}
+
+.djs-shape .djs-visual:has(> polygon) > path {
+    fill: hsl(var(--foreground)) !important;
+}
+
+.djs-shape .djs-visual:not(:has(> polygon)) > path {
     fill: hsl(var(--card)) !important;
     stroke: hsl(var(--foreground)) !important;
 }
