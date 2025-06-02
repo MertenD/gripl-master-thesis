@@ -1,7 +1,10 @@
+"use client"
+
 import BpmnEditor from "@/components/bpmn-editor";
+import {useState} from "react";
 
 export default function Home() {
-  const emptyDiagram = `<?xml version="1.0" encoding="UTF-8"?>
+  const [diagram, setDiagram] = useState<string>(`<?xml version="1.0" encoding="UTF-8"?>
     <bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
                       xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" 
                       xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" 
@@ -19,11 +22,11 @@ export default function Home() {
           </bpmndi:BPMNShape>
         </bpmndi:BPMNPlane>
       </bpmndi:BPMNDiagram>
-    </bpmn:definitions>`
+    </bpmn:definitions>`)
 
   return <main className="flex flex-col justify-center items-center h-full w-full">
-    <div className="container h-full border border-card">
-      <BpmnEditor bpmnXml={emptyDiagram} />
+    <div className="container h-full">
+      <BpmnEditor bpmnXml={diagram} onSave={setDiagram} />
     </div>
   </main>
 }

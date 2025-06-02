@@ -3,11 +3,12 @@
 import { useEffect, useRef, useState } from "react"
 import { Download, ZoomIn, ZoomOut, RotateCcw, RotateCw } from "lucide-react"
 import {Button} from "@/components/ui/button";
+import BpmnUploadButton from "@/components/bpmn-upload-button";
 
 interface BpmnEditorProps {
   bpmnXml: string
   highlightedActivityIds?: string[]
-  onSave?: (xml: string) => void
+  onSave: (xml: string) => void
 }
 
 export default function BpmnEditor({ bpmnXml, highlightedActivityIds = [], onSave }: BpmnEditorProps) {
@@ -274,6 +275,7 @@ export default function BpmnEditor({ bpmnXml, highlightedActivityIds = [], onSav
             </Button>
           </div>
           <div className="flex items-center space-x-1">
+            <BpmnUploadButton onFileLoaded={onSave} />
             <Button
                 variant="outline"
                 size="sm"
