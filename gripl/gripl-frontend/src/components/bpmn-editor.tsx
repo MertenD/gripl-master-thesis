@@ -18,19 +18,14 @@ export default function BpmnEditor({ bpmnXml, highlightedActivityIds = [], onSav
   const [canRedo, setCanRedo] = useState(false)
   const styleElementRef = useRef<HTMLStyleElement | null>(null)
 
-  // Initialisiere den Modeler und lade das BPMN XML
   useEffect(() => {
-    // Warten bis die Komponente vollständig gerendert ist
     if (!containerRef.current || !bpmnXml) return
 
-    // Dynamischer Import von bpmn-js, um sicherzustellen, dass es nur im Browser geladen wird
     const initializeModeler = async () => {
       try {
-        // Dynamischer Import von bpmn-js
         // @ts-ignore
         const BpmnModeler = (await import("bpmn-js/dist/bpmn-modeler.production.min.js")).default
 
-        // Cleanup vorheriger Modeler
         if (modelerRef.current) {
           try {
             modelerRef.current.destroy()
@@ -40,15 +35,12 @@ export default function BpmnEditor({ bpmnXml, highlightedActivityIds = [], onSav
           modelerRef.current = null
         }
 
-        // Erstelle eine neue Modeler-Instanz
         const modeler = new BpmnModeler({
           container: containerRef.current
         })
 
-        // Speichere die Referenz
         modelerRef.current = modeler
 
-        // Event-Listener für Änderungen am Diagramm
         modeler.on("commandStack.changed", () => {
           try {
             const commandStack = modeler.get("commandStack")
@@ -128,23 +120,19 @@ export default function BpmnEditor({ bpmnXml, highlightedActivityIds = [], onSav
 
   const highlightActivities = (modeler: any, activityIds: string[]) => {
     try {
-      // Hole die Canvas-API vom Modeler
       const canvas = modeler.get("canvas")
       const elementRegistry = modeler.get("elementRegistry")
 
-      // Setze alle Elemente zurück auf den Standardstil
       elementRegistry.getAll().forEach((element: any) => {
         if (element.id) {
           canvas.removeMarker(element.id, "highlight-privacy")
         }
       })
 
-      // Wenn keine Hervorhebungen gewünscht sind, beenden wir hier
       if (activityIds.length === 0) {
         return
       }
 
-      // Hervorheben der datenschutzrelevanten Aktivitäten
       activityIds.forEach((id) => {
         const element = elementRegistry.get(id)
         if (element) {
@@ -152,7 +140,6 @@ export default function BpmnEditor({ bpmnXml, highlightedActivityIds = [], onSav
         }
       })
 
-      // Füge CSS für die Hervorhebung hinzu, wenn es noch nicht existiert
       if (!styleElementRef.current) {
         const styleElement = document.createElement("style")
         styleElement.textContent = `
@@ -239,14 +226,13 @@ export default function BpmnEditor({ bpmnXml, highlightedActivityIds = [], onSav
 
   return (
       <div className="flex flex-col h-full w-full">
-        <div className="flex flex-wrap items-center justify-between p-2 bg-gray-100 border-b gap-2">
+        <div className="flex flex-wrap items-center justify-between p-2 bg-card border-b gap-2">
           <div className="flex items-center space-x-1">
             <Button
                 variant="outline"
                 size="sm"
                 onClick={handleZoomIn}
                 title="Vergrößern"
-                className="bg-white text-gray-700 border-gray-300"
             >
               <ZoomIn className="h-4 w-4" />
             </Button>
@@ -255,7 +241,6 @@ export default function BpmnEditor({ bpmnXml, highlightedActivityIds = [], onSav
                 size="sm"
                 onClick={handleZoomOut}
                 title="Verkleinern"
-                className="bg-white text-gray-700 border-gray-300"
             >
               <ZoomOut className="h-4 w-4" />
             </Button>
@@ -264,7 +249,6 @@ export default function BpmnEditor({ bpmnXml, highlightedActivityIds = [], onSav
                 size="sm"
                 onClick={handleZoomReset}
                 title="Ansicht zurücksetzen"
-                className="bg-white text-gray-700 border-gray-300"
             >
               <span className="text-xs">100%</span>
             </Button>
@@ -276,7 +260,6 @@ export default function BpmnEditor({ bpmnXml, highlightedActivityIds = [], onSav
                 onClick={handleUndo}
                 disabled={!canUndo}
                 title="Rückgängig"
-                className="bg-white text-gray-700 border-gray-300"
             >
               <RotateCcw className="h-4 w-4" />
             </Button>
@@ -286,7 +269,6 @@ export default function BpmnEditor({ bpmnXml, highlightedActivityIds = [], onSav
                 onClick={handleRedo}
                 disabled={!canRedo}
                 title="Wiederherstellen"
-                className="bg-white text-gray-700 border-gray-300"
             >
               <RotateCw className="h-4 w-4" />
             </Button>
@@ -297,7 +279,6 @@ export default function BpmnEditor({ bpmnXml, highlightedActivityIds = [], onSav
                 size="sm"
                 onClick={handleExport}
                 title="Exportieren"
-                className="bg-white text-gray-700 border-gray-300"
             >
               <Download className="h-4 w-4 mr-1" />
               Exportieren

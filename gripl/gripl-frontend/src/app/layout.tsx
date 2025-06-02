@@ -30,14 +30,12 @@ export default function RootLayout({
 
   return <html lang="en" suppressHydrationWarning>
     <head>
-        {/* Lade die bpmn-js Stylesheets */}
         <title>GRIPL</title>
     </head>
     <body className={`${geistSans.variable} ${geistMono.variable} antialiased h-screen w-screen`}>
       <ThemeProvider
         attribute="class"
-        value="light"
-        enableSystem="false"
+        value="system"
       >
         {children}
       </ThemeProvider>
