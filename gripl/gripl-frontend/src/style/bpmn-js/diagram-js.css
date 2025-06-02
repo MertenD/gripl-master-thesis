@@ -12,7 +12,7 @@
     --bendpoint-stroke-color: hsl(var(--card));
 
     /* Context Pad */
-    --context-pad-entry-background-color: hsl(var(--card));
+    --context-pad-entry-background-color: hsl(var(--background));
     --context-pad-entry-hover-background-color: hsl(var(--muted));
 
     /* Element Drag/Select/hover */
