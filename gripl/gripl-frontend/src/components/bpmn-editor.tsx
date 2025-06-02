@@ -6,12 +6,13 @@ import {Button} from "@/components/ui/button";
 import BpmnUploadButton from "@/components/bpmn-upload-button";
 
 interface BpmnEditorProps {
+  title?: string
   bpmnXml: string
   highlightedActivityIds?: string[]
   onSave: (xml: string) => void
 }
 
-export default function BpmnEditor({ bpmnXml, highlightedActivityIds = [], onSave }: BpmnEditorProps) {
+export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = [], onSave }: BpmnEditorProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const modelerRef = useRef<any>(null)
   const [isLoaded, setIsLoaded] = useState(false)
@@ -234,6 +235,7 @@ export default function BpmnEditor({ bpmnXml, highlightedActivityIds = [], onSav
       <div className="flex flex-col h-full w-full">
         <div className="flex flex-wrap items-center justify-between p-2 bg-card border-b gap-2">
           <div className="flex items-center space-x-1">
+            {title && <h2 className="text-lg font-semibold mr-2">{title}</h2>}
             <Button
                 variant="outline"
                 size="sm"

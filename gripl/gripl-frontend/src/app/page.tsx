@@ -25,8 +25,8 @@ export default function Home() {
     </bpmn:definitions>`)
 
   return <main className="flex flex-col justify-center items-center h-full w-full">
-    <div className="container h-full">
-      <BpmnEditor bpmnXml={diagram} onSave={setDiagram} />
+    <div className="w-full h-full">
+      <BpmnEditor title="GRIPL" bpmnXml={diagram} onSave={setDiagram} />
     </div>
   </main>
 }
