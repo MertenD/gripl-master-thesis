@@ -2,6 +2,8 @@
 
 import BpmnEditor from "@/components/bpmn-editor";
 import {useState} from "react";
+import {BpmnToolCard} from "@/models/BpmnToolCard";
+import AnalysisToolCard from "@/components/analysis-tool-card";
 
 export default function Home() {
   const [diagram, setDiagram] = useState<string>(`<?xml version="1.0" encoding="UTF-8"?>
@@ -24,9 +26,16 @@ export default function Home() {
       </bpmndi:BPMNDiagram>
     </bpmn:definitions>`)
 
+  const editorToolCards: BpmnToolCard[] = [
+    {
+      position: "top-right",
+      content: <AnalysisToolCard bpmnXml={diagram} />
+    } as BpmnToolCard
+  ]
+
   return <main className="flex flex-col justify-center items-center h-full w-full">
     <div className="w-full h-full">
-      <BpmnEditor title="GRIPL" bpmnXml={diagram} onSave={setDiagram} />
+      <BpmnEditor title="GRIPL" bpmnXml={diagram} onSave={setDiagram} cards={editorToolCards} />
     </div>
   </main>
 }

@@ -1,18 +1,20 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
-import { Download, ZoomIn, ZoomOut, RotateCcw, RotateCw } from "lucide-react"
+import React, {useEffect, useRef, useState} from "react"
+import {Download, RotateCcw, RotateCw, ZoomIn, ZoomOut} from "lucide-react"
 import {Button} from "@/components/ui/button";
 import BpmnUploadButton from "@/components/bpmn-upload-button";
+import {BpmnToolCard} from "@/models/BpmnToolCard";
 
 interface BpmnEditorProps {
   title?: string
   bpmnXml: string
   highlightedActivityIds?: string[]
   onSave: (xml: string) => void
+  cards?: BpmnToolCard[]
 }
 
-export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = [], onSave }: BpmnEditorProps) {
+export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = [], onSave, cards = [] }: BpmnEditorProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const modelerRef = useRef<any>(null)
   const [isLoaded, setIsLoaded] = useState(false)
@@ -294,7 +296,23 @@ export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = []
             </Button>
           </div>
         </div>
-        <div ref={containerRef} className="w-full flex-1" />
+        <div ref={containerRef} className="w-full flex-1 relative">
+          { cards && cards.map((card: BpmnToolCard, index: number) => (
+            <div
+              key={`bpmn-editor-card-${index}`}
+              className={`absolute z-10
+                ${card.position === "bottom-left" ? "left-4 bottom-4" : ""}
+                ${card.position === "bottom-right" ? "right-4 bottom-14" : ""}
+                ${card.position === "top-right" ? "right-4 top-4" : ""}
+                ${card.position === "right-center" ? "right-4 top-1/2 transform -translate-y-1/2" : ""}
+                ${card.position === "bottom-center" ? "left-1/2 transform -translate-x-1/2 bottom-4" : ""}
+                ${card.position === "top-center" ? "left-1/2 transform -translate-x-1/2 top-4" : ""}
+              `}
+            >
+              {card.content}
+            </div>
+          ))}
+        </div>
       </div>
   )
 }
