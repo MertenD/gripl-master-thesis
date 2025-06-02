@@ -19,12 +19,14 @@ export default function AnalysisToolCard({ bpmnXml, setHighlightedActivityIds }:
         setHighlightedActivityIds && setHighlightedActivityIds([]);
         setIsAnalyzing(true);
 
-        fetch(`${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/analysis`, {
+        fetch(`${window.location.origin}/api/gdpr/analysis`, {
             method: "POST",
             headers: {
-                "Content-Type": "application/xml",
+                "Content-Type": "application/json",
             },
-            body: bpmnXml,
+            body: JSON.stringify({
+                bpmnXml: bpmnXml,
+            }),
         }).then(response => {
             if (!response.ok) {
                 throw new Error("Fehler bei der Analyse des Diagramms");
