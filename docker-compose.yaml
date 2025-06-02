@@ -1,0 +1,48 @@
+version: "3.8"
+
+services:
+  gripl-frontend:
+    build:
+      context: ./gripl/gripl-frontend
+      dockerfile: Dockerfile
+      args:
+        API_BASE_URL: http://gripl-backend:8080
+    image: mertend/gripl-frontend:latest
+    container_name: gripl-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - API_BASE_URL=http://gripl-backend:8080
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.gripl-frontend.rule=Host(`www.gripl.mertendieckmann.de`) || Host(`gripl.mertendieckmann.de`)
+      - traefik.http.routers.gripl-frontend.entrypoints=websecure
+      - traefik.http.routers.gripl-frontend.tls=true
+      - traefik.http.services.gripl-frontend.loadbalancer.server.port=3000
+    networks:
+      - web
+
+  gripl-backend:
+    build:
+      context: ./gripl/gripl-backend
+      dockerfile: Dockerfile
+    image: mertend/gripl-backend:latest
+    container_name: gripl-backend
+    restart: unless-stopped
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.gripl-backend.rule=Host(`www.gripl.mertendieckmann.de`) && PathPrefix(`/api`) || Host(`gripl.mertendieckmann.de`) && PathPrefix(`/api`)
+      - traefik.http.routers.gripl-backend.entrypoints=websecure
+      - traefik.http.routers.gripl-backend.tls=true
+      - traefik.http.middlewares.gripl-backend-strip-prefix.stripprefix.prefixes=/api
+      - traefik.http.routers.gripl-backend.middlewares=gripl-backend-strip-prefix
+      - traefik.http.services.gripl-backend.loadbalancer.server.port=8080
+    networks:
+      - web
+
+networks:
+  web:
+    external: true

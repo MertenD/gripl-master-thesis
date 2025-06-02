@@ -19,7 +19,7 @@ export default function AnalysisToolCard({ bpmnXml, setHighlightedActivityIds }:
         setHighlightedActivityIds && setHighlightedActivityIds([]);
         setIsAnalyzing(true);
 
-        fetch(`${window.location.origin}/api/gdpr/analysis`, {
+        fetch(`/api/gdpr/analysis`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
