@@ -766,3 +766,23 @@ marker.djs-dragger tspan {
     fill: hsl(var(--foreground)) !important;
     stroke: hsl(var(--foreground)) !important;
 }
+
+.djs-direct-editing-parent {
+    background-color: hsl(var(--card)) !important;
+    border: solid 1px hsl(var(--foreground)) !important;
+}
+
+/* 15. Powered by */
+
+.bjs-powered-by-lightbox .notice {
+    color: hsl(var(--foreground)) !important;
+    background-color: hsl(var(--card)) !important;
+}
+
+.bjs-powered-by-lightbox .backdrop {
+    background-color: rgba(40, 40, 40, 0.4) !important;
+}
+
+.bjs-powered-by-lightbox .notice a {
+    color: hsl(var(--foreground)) !important;
+}

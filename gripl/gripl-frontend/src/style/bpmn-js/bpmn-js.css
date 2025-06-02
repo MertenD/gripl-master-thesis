@@ -10,19 +10,6 @@
     --drilldown-background-color: hsl(var(--primary));
 }
 
-.bjs-powered-by-lightbox .notice {
-    color: hsl(var(--foreground)) !important;
-    background-color: hsl(var(--card)) !important;
-}
-
-.bjs-powered-by-lightbox .backdrop {
-    background-color: rgba(40, 40, 40, 0.4) !important;
-}
-
-.bjs-powered-by-lightbox .notice a {
-    color: hsl(var(--foreground)) !important;
-}
-
 .bjs-breadcrumbs {
     position: absolute;
     display: none;
