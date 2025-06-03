@@ -17,6 +17,8 @@ services:
       - traefik.http.routers.gripl-frontend.rule=Host(`www.gripl.mertendieckmann.de`) || Host(`gripl.mertendieckmann.de`)
       - traefik.http.routers.gripl-frontend.entrypoints=websecure
       - traefik.http.routers.gripl-frontend.tls=true
+      - traefik.http.routers.gripl-frontend.tls.certresolver=lets-encrypt
+      - traefik.docker.network=web
       - traefik.http.services.gripl-frontend.loadbalancer.server.port=3000
       - com.centurylinklabs.watchtower.enable=true
     networks:
@@ -36,6 +38,8 @@ services:
       - traefik.http.routers.gripl-backend.rule=Host(`www.gripl.mertendieckmann.de`) && PathPrefix(`/api`) || Host(`gripl.mertendieckmann.de`) && PathPrefix(`/api`)
       - traefik.http.routers.gripl-backend.entrypoints=websecure
       - traefik.http.routers.gripl-backend.tls=true
+      - traefik.http.routers.gripl-backend.tls.certresolver=lets-encrypt
+      - traefik.docker.network=web
       - traefik.http.middlewares.gripl-backend-strip-prefix.stripprefix.prefixes=/api
       - traefik.http.routers.gripl-backend.middlewares=gripl-backend-strip-prefix
       - traefik.http.services.gripl-backend.loadbalancer.server.port=8080
