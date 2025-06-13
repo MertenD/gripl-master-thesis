@@ -156,7 +156,7 @@ export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = []
         const styleElement = document.createElement("style")
         styleElement.textContent = `
           .highlight-privacy .djs-visual > :nth-child(1) {
-            fill: hsl(var(--destructive)) !important;
+            fill: hsl(var(--destructive) / 50%) !important;
           }
         `
         document.head.appendChild(styleElement)
