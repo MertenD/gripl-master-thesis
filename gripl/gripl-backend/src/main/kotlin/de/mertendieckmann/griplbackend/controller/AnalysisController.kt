@@ -1,6 +1,6 @@
 package de.mertendieckmann.griplbackend.controller
 
-import de.mertendieckmann.griplbackend.chat.BpmnAnalyzer
+import de.mertendieckmann.griplbackend.application.BpmnAnalyzer
 import de.mertendieckmann.griplbackend.dto.AnalysisRequest
 import de.mertendieckmann.griplbackend.dto.AnalysisResponse
 import dev.langchain4j.model.chat.ChatModel
