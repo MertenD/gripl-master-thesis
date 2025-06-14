@@ -1,5 +1,7 @@
 package de.mertendieckmann.griplbackend.dto
 
+typealias ActivityElementId = String
+
 data class AnalysisResponse (
-    val activityElementIds: List<String>
+    val activityElementIds: List<ActivityElementId>
 )

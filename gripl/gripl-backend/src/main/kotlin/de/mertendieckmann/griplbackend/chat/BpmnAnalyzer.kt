@@ -1,5 +1,6 @@
 package de.mertendieckmann.griplbackend.chat
 
+import de.mertendieckmann.griplbackend.dto.ActivityElementId
 import dev.langchain4j.model.chat.ChatModel
 import dev.langchain4j.model.input.PromptTemplate
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -18,7 +19,7 @@ class BpmnAnalyzer(
         .systemMessageProvider { getPromptTemplate().template() }
         .build()
 
-    fun analyzeBpmnForGdpr(bpmnXml: String): List<String> {
+    fun analyzeBpmnForGdpr(bpmnXml: String): List<ActivityElementId> {
         val result = bpmnAnalysisAiService.analyze(bpmnXml)
         log.info { "BPMN Analysis Result: $result" }
         return result.activityElementIds
@@ -28,7 +29,7 @@ class BpmnAnalyzer(
         fun analyze(@UserMessage bpmnXml: String): BpmnAnalysisResult
 
         data class BpmnAnalysisResult(
-            @Description("List of Activity Element IDs relevant for GDPR compliance") val activityElementIds: List<String>
+            @Description("List of Activity Element IDs relevant for GDPR compliance") val activityElementIds: List<ActivityElementId>
         )
     }
 
