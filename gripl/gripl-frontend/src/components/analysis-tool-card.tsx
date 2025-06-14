@@ -4,6 +4,7 @@ import {Card, CardContent, CardHeader} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
 import {FileText, RefreshCw} from "lucide-react";
 import {useState} from "react";
+import {AnalysisRequest, AnalysisResponse} from "@/models/dto/AnalysisDto";
 
 interface AnalysisToolCardProps {
     bpmnXml: string;
@@ -19,24 +20,26 @@ export default function AnalysisToolCard({ bpmnXml, highlightedActivityIds, setH
         setHighlightedActivityIds && setHighlightedActivityIds([]);
         setIsAnalyzing(true);
 
+        const requestBody: AnalysisRequest = {
+            bpmnXml: bpmnXml
+        }
+
         fetch(`/api/gdpr/analysis`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({
-                bpmnXml: bpmnXml,
-            }),
+            body: JSON.stringify(requestBody),
         }).then(response => {
             if (!response.ok) {
                 throw new Error("Fehler bei der Analyse des Diagramms");
             }
             return response.json();
-        }).then(data => {
+        }).then((data: AnalysisResponse) => {
             console.log("Analyse abgeschlossen:", data);
             setIsAnalyzing(false);
             if (setHighlightedActivityIds) {
-                setHighlightedActivityIds(data || []);
+                setHighlightedActivityIds(data.activityElementIds || []);
             }
         }).catch(error => {
             console.error("Fehler bei der Analyse:", error);

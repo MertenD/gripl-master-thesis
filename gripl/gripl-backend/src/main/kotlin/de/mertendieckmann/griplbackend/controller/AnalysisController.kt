@@ -1,6 +1,7 @@
 package de.mertendieckmann.griplbackend.controller
 
 import de.mertendieckmann.griplbackend.dto.AnalysisRequest
+import de.mertendieckmann.griplbackend.dto.AnalysisResponse
 import dev.langchain4j.model.chat.ChatModel
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -16,13 +17,7 @@ class AnalysisController(
 ) {
 
     @PostMapping("/analysis")
-    fun analyzeBpmnForGdpr(@RequestBody request: AnalysisRequest): ResponseEntity<List<String>> {
-
-        // TODO This is a placeholder implementation to test the integration with the frontend
-
-        val response = llm.chat("Hi")
-        // Log the request for debugging purposes
-        println("Received llm response: $response")
+    fun analyzeBpmnForGdpr(@RequestBody request: AnalysisRequest): ResponseEntity<AnalysisResponse> {
 
         // Extract all Activity Element Ids from the BPMN XML
         val bpmnXml = request.bpmnXml
@@ -34,6 +29,7 @@ class AnalysisController(
         // Wait for 4 seconds
         Thread.sleep(2000)
 
-        return ResponseEntity(activityElementIds, HttpStatus.OK)
+        val response = AnalysisResponse(activityElementIds = activityElementIds)
+        return ResponseEntity(response, HttpStatus.OK)
     }
 }
