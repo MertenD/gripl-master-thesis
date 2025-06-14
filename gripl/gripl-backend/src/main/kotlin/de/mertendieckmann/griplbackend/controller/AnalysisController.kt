@@ -21,9 +21,9 @@ class AnalysisController(
     fun analyzeBpmnForGdpr(@RequestBody request: AnalysisRequest): ResponseEntity<AnalysisResponse> {
 
         val analyzer = BpmnAnalyzer(llm = llm)
-        val relevantActivityElementIds = analyzer.analyzeBpmnForGdpr(request.bpmnXml)
+        val analysisResult = analyzer.analyzeBpmnForGdpr(request.bpmnXml)
 
-        val response = AnalysisResponse(activityElementIds = relevantActivityElementIds)
+        val response = AnalysisResponse(relevantElements = analysisResult.elements)
         return ResponseEntity(response, HttpStatus.OK)
     }
 }

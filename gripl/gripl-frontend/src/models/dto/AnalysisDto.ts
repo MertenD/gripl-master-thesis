@@ -3,5 +3,10 @@ export interface AnalysisRequest {
 }
 
 export interface AnalysisResponse {
-    activityElementIds: string[]
+    relevantElements: AnalysisResponseElement[];
+}
+
+export interface AnalysisResponseElement {
+    id: string;
+    reason: string;
 }

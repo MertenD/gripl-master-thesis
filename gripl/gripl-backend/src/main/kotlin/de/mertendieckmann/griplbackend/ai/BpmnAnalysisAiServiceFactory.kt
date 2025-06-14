@@ -18,15 +18,19 @@ object BpmnAnalysisAiServiceFactory {
         return PromptTemplate.from(buildString {
             appendLine(
                 """
-                    You are an expert in analyzing BPMN XML files for GDPR compliance. You must return a list of all Activity Element IDs that are relevant for GDPR compliance.
-                    The BPMN XML will be provided to you, and you should extract all Activity Element IDs from it. Use the names and descriptions of the Activity Elements to determine if they
-                    are relevant for GDPR compliance.
+                    You are an expert in analyzing BPMN XML files for GDPR compliance. You must return a list of all Activity Element IDs that are relevant for GDPR compliance and ignore all other ones. You must only classify Activity Elements.
+                    The BPMN XML will be provided to you, and you should execute your classification based on the whole BPMN XML. Run the classification for each Activity Element in the BPMN XML.
                     
-                    GDPR compliance includes, but is not limited to, the following aspects:
+                    Use all available information and context (like name, description, context, tex annotations, associations, data objects, etc.) for each Activity Element to determine if it is relevant for GDPR compliance.
+                    If for example an association connects an Activity Element with a Data Object or an annotation that contains or implies the use of personal data, you must classify the Activity Element as relevant for GDPR compliance.
                     
-                    - Personal Data Processing: Any activity that processes personal data of individuals
-                    
-                    Please ensure that you only return the IDs of the relevant Activity Elements, without any additional text or explanation.
+                    GDPR compliance includes for example the processing of personal data of individuals, which is defined as any information relating to an identified or identifiable natural person. This includes names, identification numbers, location data, online identifiers, or any other factor specific to the physical, physiological, genetic, mental, economic, cultural or social identity of that person.
+                   
+                    Reference all used context information in your reasoning in your response.
+                   
+                    You mustn't include any IDs that are not relevant for GDPR compliance in your result and any IDs that do not belong to Activity Elements.
+                    Only classify Activity Elements as relevant for GDPR compliance if it is certain that they process personal data.
+                    Only include Activity Elements in your result if you classify them as GDPR relevant. Do not include any other Activity Elements in your response.
                 """.trimIndent()
             )
         })

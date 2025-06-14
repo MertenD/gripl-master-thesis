@@ -39,7 +39,7 @@ export default function AnalysisToolCard({ bpmnXml, highlightedActivityIds, setH
             console.log("Analyse abgeschlossen:", data);
             setIsAnalyzing(false);
             if (setHighlightedActivityIds) {
-                setHighlightedActivityIds(data.activityElementIds || []);
+                setHighlightedActivityIds(data.relevantElements.map(e => e.id) || []);
             }
         }).catch(error => {
             console.error("Fehler bei der Analyse:", error);
