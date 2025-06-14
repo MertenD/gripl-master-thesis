@@ -1,5 +1,6 @@
 package de.mertendieckmann.griplbackend.controller
 
+import de.mertendieckmann.griplbackend.chat.BpmnAnalyzer
 import de.mertendieckmann.griplbackend.dto.AnalysisRequest
 import de.mertendieckmann.griplbackend.dto.AnalysisResponse
 import dev.langchain4j.model.chat.ChatModel
@@ -19,17 +20,10 @@ class AnalysisController(
     @PostMapping("/analysis")
     fun analyzeBpmnForGdpr(@RequestBody request: AnalysisRequest): ResponseEntity<AnalysisResponse> {
 
-        // Extract all Activity Element Ids from the BPMN XML
-        val bpmnXml = request.bpmnXml
-        val activityElementIds = bpmnXml
-            .split("<bpmn:task id=\"")
-            .drop(1)
-            .map { it.substringBefore("\"") }
+        val analyzer = BpmnAnalyzer(llm = llm)
+        val relevantActivityElementIds = analyzer.analyzeBpmnForGdpr(request.bpmnXml)
 
-        // Wait for 4 seconds
-        Thread.sleep(2000)
-
-        val response = AnalysisResponse(activityElementIds = activityElementIds)
+        val response = AnalysisResponse(activityElementIds = relevantActivityElementIds)
         return ResponseEntity(response, HttpStatus.OK)
     }
 }
