@@ -1,11 +1,12 @@
 package de.mertendieckmann.griplbackend.ai
 
+import de.mertendieckmann.griplbackend.model.BpmnElement
 import dev.langchain4j.service.UserMessage
 import jdk.jfr.Description
 
 interface BpmnAnalysisAiService {
 
-    fun analyze(@UserMessage bpmnXml: String): BpmnAnalysisResult
+    fun analyze(@UserMessage bpmnElements: Set<BpmnElement>): BpmnAnalysisResult
 
     data class BpmnAnalysisResult(
         @Description("List of Activity Elements that are classified as relevant for GDPR compliance")

@@ -13,7 +13,10 @@ class BpmnAnalyzer(
     private val bpmnAnalysisAiService = BpmnAnalysisAiServiceFactory.create(llm)
 
     fun analyzeBpmnForGdpr(bpmnXml: String): BpmnAnalysisResult {
-        val result = bpmnAnalysisAiService.analyze(bpmnXml)
+        val extractor = BpmnExtractor()
+        val bpmnElements = extractor.extractBpmnElements(bpmnXml)
+
+        val result = bpmnAnalysisAiService.analyze(bpmnElements)
         log.info { "BPMN Analysis Result: $result" }
         return result
     }

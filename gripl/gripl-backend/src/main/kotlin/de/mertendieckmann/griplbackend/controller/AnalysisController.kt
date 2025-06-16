@@ -23,12 +23,6 @@ class AnalysisController(
 
         // TODO Validate request
 
-        val extractor = BpmnExtractor()
-        extractor.extractBpmnElements(request.bpmnXml)
-
-        // TODO Remove
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(AnalysisResponse(emptyList()))
-
         val analyzer = BpmnAnalyzer(llm = llm)
         val analysisResult = analyzer.analyzeBpmnForGdpr(request.bpmnXml)
 
