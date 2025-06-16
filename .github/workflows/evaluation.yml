@@ -65,7 +65,7 @@ jobs:
         run: |
           rm -rf gh-pages
           mkdir gh-pages
-          cp gripl/gripl-backend/evaluation-report.md gh-pages/README.md
+          cp gripl/gripl-backend/evaluation-report.md gh-pages/evaluation-report.md
 
       - name: Deploy report to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4

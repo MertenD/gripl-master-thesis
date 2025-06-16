@@ -46,6 +46,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
           publish_dir: gh-pages
+          keep_files: true
           commit_message: "Update LaTeX PDF via Action"
 
       - name: Cleanup
