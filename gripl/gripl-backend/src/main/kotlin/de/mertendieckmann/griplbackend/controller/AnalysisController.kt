@@ -1,20 +1,20 @@
 package de.mertendieckmann.griplbackend.controller
 
 import de.mertendieckmann.griplbackend.application.BpmnAnalyzer
-import de.mertendieckmann.griplbackend.dto.AnalysisRequest
-import de.mertendieckmann.griplbackend.dto.AnalysisResponse
+import de.mertendieckmann.griplbackend.evaluation.runner.EvaluationRunner
+import de.mertendieckmann.griplbackend.model.dto.AnalysisRequest
+import de.mertendieckmann.griplbackend.model.dto.AnalysisResponse
 import dev.langchain4j.model.chat.ChatModel
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/gdpr")
 class AnalysisController(
-    private val llm: ChatModel
+    private val llm: ChatModel,
+    private val evaluationRunner: EvaluationRunner
 ) {
 
     @PostMapping("/analysis")
@@ -25,5 +25,10 @@ class AnalysisController(
 
         val response = AnalysisResponse(relevantElements = analysisResult.elements)
         return ResponseEntity(response, HttpStatus.OK)
+    }
+
+    @GetMapping("/evaluation", produces = [MediaType.TEXT_MARKDOWN_VALUE])
+    fun evaluate(): String {
+        return evaluationRunner.run()
     }
 }
