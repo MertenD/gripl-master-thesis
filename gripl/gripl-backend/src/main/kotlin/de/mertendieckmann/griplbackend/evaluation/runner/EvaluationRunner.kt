@@ -28,7 +28,7 @@ class EvaluationRunner(
 
             markdown
                 .append("## Test Case ${entry.id}\n")
-                .append("**Input:** <img src=\"https://gripl.mertendieckmann.de/preview/${entry.id}\" alt=\"Test Case BPMN XML\" height=\"400\" />\n")
+                .append("**Input:** <img src=\"https://gripl.mertendieckmann.de/api/dataset/${entry.id}/preview\" alt=\"Test Case BPMN XML\" height=\"200\" />\n")
                 .append("**Expected:** ${entry.expectedValues.joinToString(", ") { it.value }}\n")
                 .append("**Actual:** ${evaluationResult.joinToString(", ") { it.value }}\n")
                 .append("**Result:** ${if (isSuccessful) "✅ Passed" else "❌ Failed"}\n\n")
