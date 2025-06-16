@@ -12,6 +12,8 @@ RUN mvn exec:java -e -D exec.mainClass=com.microsoft.playwright.CLI -D exec.args
 FROM eclipse-temurin:17-jre
 WORKDIR /app
 
+RUN mvn exec:java -e -D exec.mainClass=com.microsoft.playwright.CLI -D exec.args="install-deps"
+
 COPY --from=builder /app/target/*.jar ./app.jar
 
 EXPOSE 8080
