@@ -14,7 +14,7 @@ class EvaluationDataRepository(
         EvaluationData.fromRow(
             id = rs.getLong("id"),
             bpmnXml = rs.getString("bpmn_xml"),
-            expectedJson = rs.getString("expected_json")
+            expectedJson = rs.getString("expected_values")
         )
     }
 

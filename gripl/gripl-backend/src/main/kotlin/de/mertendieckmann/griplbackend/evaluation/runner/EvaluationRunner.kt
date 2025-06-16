@@ -2,11 +2,13 @@ package de.mertendieckmann.griplbackend.evaluation.runner
 
 import de.mertendieckmann.griplbackend.model.dto.EvaluationData
 import de.mertendieckmann.griplbackend.evaluation.service.Evaluator
+import de.mertendieckmann.griplbackend.repository.EvaluationDataRepository
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Component
 
 @Component
 class EvaluationRunner(
-    private val dataset: List<EvaluationData>,
+    @Qualifier("databaseDataset") private val dataset: List<EvaluationData>,
     private val evaluator: Evaluator
 ) {
     fun run(): String {
