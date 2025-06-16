@@ -51,3 +51,8 @@ jobs:
         with:
           name: evaluation-report
           path: gripl/gripl-backend/evaluation-report.md
+
+      - name: Post evaluation report to summary
+        run: |
+          echo '## GDPR Evaluation Report' >> $GITHUB_STEP_SUMMARY
+          cat gripl/gripl-backend/evaluation-report.md >> $GITHUB_STEP_SUMMARY
