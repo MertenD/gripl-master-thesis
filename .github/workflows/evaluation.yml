@@ -50,4 +50,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: evaluation-report
-          path: evaluation-report.md
+          path: gripl/gripl-backend/evaluation-report.md
