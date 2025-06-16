@@ -32,7 +32,7 @@ services:
     container_name: gripl-backend
     restart: unless-stopped
     depends_on:
-      - postgres
+      - gripl-postgres
     environment:
       - SPRING_PROFILES_ACTIVE=prod
     env_file:
