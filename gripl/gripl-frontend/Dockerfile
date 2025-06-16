@@ -28,6 +28,20 @@ RUN npm run build
 RUN npm run build
 
 FROM node:18-alpine AS runner
+
+FROM node:18-alpine AS runner
+RUN apk update && apk add --no-cache \
+    chromium \
+    nss \
+    freetype \
+    harfbuzz \
+    ttf-freefont \
+    ca-certificates \
+    wget
+
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
+    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
+
 WORKDIR /app
 
 COPY package*.json ./
