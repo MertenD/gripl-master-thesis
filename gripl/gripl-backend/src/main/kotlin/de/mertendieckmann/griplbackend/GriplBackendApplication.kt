@@ -1,12 +1,9 @@
 package de.mertendieckmann.griplbackend
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.boot.runApplication
 
-@SpringBootApplication(
-	exclude = [DataSourceAutoConfiguration::class]
-)
+@SpringBootApplication
 class GriplBackendApplication
 
 fun main(args: Array<String>) {

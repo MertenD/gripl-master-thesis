@@ -1,12 +1,12 @@
 package de.mertendieckmann.griplbackend.evaluation.runner
 
-import de.mertendieckmann.griplbackend.model.DatasetEntry
+import de.mertendieckmann.griplbackend.model.dto.EvaluationData
 import de.mertendieckmann.griplbackend.evaluation.service.Evaluator
 import org.springframework.stereotype.Component
 
 @Component
 class EvaluationRunner(
-    private val dataset: List<DatasetEntry>,
+    private val dataset: List<EvaluationData>,
     private val evaluator: Evaluator
 ) {
     fun run(): String {
@@ -17,17 +17,17 @@ class EvaluationRunner(
         dataset.forEachIndexed { i, entry ->
             total++
 
-            val evaluationResult = evaluator.evaluate(entry.input)
+            val evaluationResult = evaluator.evaluate(entry.bpmnXml)
 
-            val isSuccessful = evaluationResult.map { it.value }.toSet() == entry.expected.map { it.value }.toSet()
+            val isSuccessful = evaluationResult.map { it.value }.toSet() == entry.expectedValues.map { it.value }.toSet()
             if (isSuccessful) {
                 passed++
             }
 
             markdown
                 .append("## Test Case ${i + 1}\n")
-                .append("**Input:** `${entry.input}`\n")
-                .append("**Expected:** ${entry.expected.joinToString(", ") { it.value }}\n")
+                .append("**Input:** `${entry.bpmnXml}`\n")
+                .append("**Expected:** ${entry.expectedValues.joinToString(", ") { it.value }}\n")
                 .append("**Actual:** ${evaluationResult.joinToString(", ") { it.value }}\n")
                 .append("**Result:** ${if (isSuccessful) "✅ Passed" else "❌ Failed"}\n\n")
         }

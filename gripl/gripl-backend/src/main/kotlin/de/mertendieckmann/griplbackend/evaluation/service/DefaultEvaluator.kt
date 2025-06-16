@@ -1,7 +1,7 @@
 package de.mertendieckmann.griplbackend.evaluation.service
 
 import de.mertendieckmann.griplbackend.application.BpmnAnalyzer
-import de.mertendieckmann.griplbackend.model.ExpectedResult
+import de.mertendieckmann.griplbackend.model.dto.ExpectedValue
 import dev.langchain4j.model.chat.ChatModel
 import org.springframework.stereotype.Service
 
@@ -9,9 +9,9 @@ import org.springframework.stereotype.Service
 class DefaultEvaluator(
     private val llm: ChatModel
 ): Evaluator {
-    override fun evaluate(input: String): List<ExpectedResult> {
+    override fun evaluate(input: String): List<ExpectedValue> {
         val analyzer = BpmnAnalyzer(llm = llm)
         val analysisResult = analyzer.analyzeBpmnForGdpr(input)
-        return analysisResult.elements.map { ExpectedResult(value = it.id) }
+        return analysisResult.elements.map { ExpectedValue(value = it.id) }
     }
 }

@@ -2,7 +2,7 @@ package de.mertendieckmann.griplbackend.config
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import de.mertendieckmann.griplbackend.model.DatasetEntry
+import de.mertendieckmann.griplbackend.model.dto.EvaluationData
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.io.ResourceLoader
@@ -13,7 +13,7 @@ class DatasetConfig(
 ) {
 
     @Bean
-    fun dataset(): List<DatasetEntry> {
+    fun dataset(): List<EvaluationData> {
         val resource = loader.getResource("classpath:dataset.json")
         return jacksonObjectMapper().readValue(resource.inputStream)
     }

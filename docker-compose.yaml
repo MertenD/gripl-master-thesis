@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   gripl-frontend:
     build:
@@ -7,6 +5,8 @@ services:
       dockerfile: Dockerfile
       args:
         API_BASE_URL: http://gripl-backend:8080
+    ports:
+      - "3000:3000"
     image: mertend/gripl-frontend:latest
     container_name: gripl-frontend
     restart: unless-stopped
@@ -31,6 +31,8 @@ services:
     image: mertend/gripl-backend:latest
     container_name: gripl-backend
     restart: unless-stopped
+    depends_on:
+      - postgres
     environment:
       - SPRING_PROFILES_ACTIVE=prod
     env_file:
@@ -49,6 +51,20 @@ services:
     networks:
       - web
 
+  gripl-postgres:
+    image: postgres:15
+    container_name: gripl-postgres
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - gripl-postgres-data:/var/lib/postgresql/data
+    networks:
+      - web
+
 networks:
   web:
     external: true
+
+volumes:
+  gripl-postgres-data:
