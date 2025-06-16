@@ -33,7 +33,7 @@ RUN apt-get update && apt-get install -y \
       libxkbcommon0 \
       libpango-1.0-0 \
       libcairo2 \
-      libasound2 \
+      libasound2t64 \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /app/target/*.jar ./app.jar
