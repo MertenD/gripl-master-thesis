@@ -12,9 +12,12 @@ permissions:
 
 env:
   OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  SPRING_DATASOURCE_URL: ${{ secrets.SPRING_DATASOURCE_URL }}
+  SPRING_DATASOURCE_USERNAME: ${{ secrets.SPRING_DATASOURCE_USERNAME }}
+  SPRING_DATASOURCE_PASSWORD: ${{ secrets.SPRING_DATASOURCE_PASSWORD }}
 
 jobs:
-  evaluete:
+  evaluate:
     runs-on: ubuntu-latest
 
     steps:
@@ -35,7 +38,7 @@ jobs:
 
       - name: Wait for application to start
         run: |
-          for i in {1..30}; do
+          for i in {1..60}; do
             if curl --silent --fail http://localhost:8080/actuator/health; then
             echo "✔ Application is up"
             exit 0
