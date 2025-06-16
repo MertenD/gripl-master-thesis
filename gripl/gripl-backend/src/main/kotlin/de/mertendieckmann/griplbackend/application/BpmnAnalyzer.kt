@@ -4,6 +4,7 @@ import de.mertendieckmann.griplbackend.ai.BpmnAnalysisAiService.BpmnAnalysisResu
 import de.mertendieckmann.griplbackend.ai.BpmnAnalysisAiServiceFactory
 import dev.langchain4j.model.chat.ChatModel
 import io.github.oshai.kotlinlogging.KotlinLogging
+import org.springframework.stereotype.Component
 
 class BpmnAnalyzer(
     llm: ChatModel

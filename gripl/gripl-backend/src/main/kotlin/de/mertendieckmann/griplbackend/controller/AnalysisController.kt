@@ -1,6 +1,7 @@
 package de.mertendieckmann.griplbackend.controller
 
 import de.mertendieckmann.griplbackend.application.BpmnAnalyzer
+import de.mertendieckmann.griplbackend.application.BpmnExtractor
 import de.mertendieckmann.griplbackend.evaluation.runner.EvaluationRunner
 import de.mertendieckmann.griplbackend.model.dto.AnalysisRequest
 import de.mertendieckmann.griplbackend.model.dto.AnalysisResponse
@@ -19,6 +20,14 @@ class AnalysisController(
 
     @PostMapping("/analysis")
     fun analyzeBpmnForGdpr(@RequestBody request: AnalysisRequest): ResponseEntity<AnalysisResponse> {
+
+        // TODO Validate request
+
+        val extractor = BpmnExtractor()
+        extractor.extractBpmnElements(request.bpmnXml)
+
+        // TODO Remove
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(AnalysisResponse(emptyList()))
 
         val analyzer = BpmnAnalyzer(llm = llm)
         val analysisResult = analyzer.analyzeBpmnForGdpr(request.bpmnXml)
