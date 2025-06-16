@@ -7,6 +7,8 @@ COPY src ./src
 
 RUN mvn clean package -DskipTests
 
+RUN mvn exec:java -e -D exec.mainClass=com.microsoft.playwright.CLI -D exec.args="install-deps"
+
 FROM eclipse-temurin:17-jre
 WORKDIR /app
 
