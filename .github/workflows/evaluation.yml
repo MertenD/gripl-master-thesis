@@ -56,3 +56,10 @@ jobs:
         run: |
           echo '## GDPR Evaluation Report' >> $GITHUB_STEP_SUMMARY
           cat evaluation-report.md >> $GITHUB_STEP_SUMMARY
+
+      - name: Deploy report to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: latest-evaluation-report.md
+          publish_branch: gh-pages
