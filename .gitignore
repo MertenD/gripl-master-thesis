@@ -2,3 +2,5 @@
 !.idea/modules.xml
 !*.iml
 !.idea/runConfigurations/
+
+.env
