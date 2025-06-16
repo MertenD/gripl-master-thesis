@@ -3,6 +3,7 @@ package de.mertendieckmann.griplbackend.controller
 import BpmnConverter
 import de.mertendieckmann.griplbackend.model.dto.EvaluationData
 import de.mertendieckmann.griplbackend.repository.EvaluationDataRepository
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -17,6 +18,7 @@ import org.springframework.web.server.ResponseStatusException
 class DatasetController(
     private val evaluationDataRepository: EvaluationDataRepository
 ) {
+    private val log = KotlinLogging.logger { }
 
     @GetMapping("/{id}", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getBpmnDataset(@PathVariable("id") id: Long): EvaluationData {
@@ -37,6 +39,7 @@ class DatasetController(
         val svg = try {
             bpmnConverter.convertXmlToSvg(bpmnXml)
         } catch (ex: IllegalArgumentException) {
+            log.error(ex) { "Ungültiges BPMN XML für Id: $id" }
             return ResponseEntity.badRequest().body("Fehler beim Parsen: ${ex.message}")
         } catch (ex: Exception) {
             return ResponseEntity.status(500).body("Serverfehler: ${ex.message}")
