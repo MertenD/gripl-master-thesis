@@ -12,6 +12,14 @@ RUN mvn exec:java -e -D exec.mainClass=com.microsoft.playwright.CLI -D exec.args
 FROM eclipse-temurin:17-jre
 WORKDIR /app
 
+libxcursor1\                                                                ║
+gripl-backend   | ║         libgtk-3-0t64\                                                                          ║
+gripl-backend   | ║         libpangocairo-1.0-0\                                                                    ║
+gripl-backend   | ║         libcairo-gobject2\                                                                      ║
+gripl-backend   | ║         libgdk-pixbuf-2.0-0
+
+
+
 RUN apt-get update && apt-get install -y \
       libglib2.0-0 \
       libnss3 \
@@ -34,6 +42,11 @@ RUN apt-get update && apt-get install -y \
       libpango-1.0-0 \
       libcairo2 \
       libasound2t64 \
+      libxcursor1 \
+      libgtk-3-0t64 \
+      libpangocairo-1.0-0 \
+      libcairo-gobject2 \
+      libgdk-pixbuf-2.0-0 \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /app/target/*.jar ./app.jar
