@@ -34,7 +34,7 @@ jobs:
         run: mvn clean package -DskipTests
 
       - name: Start Sprint Boot Application
-        run: java -jar target/*.jar
+        run: nohup java -jar target/*.jar > app.log 2>&1 &
 
       - name: Wait for application to start
         run: |
