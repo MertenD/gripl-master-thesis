@@ -13,7 +13,6 @@ class BpmnExtractor {
     fun extractBpmnElements(bpmnXml: String): Set<BpmnElement> {
 
         val bpmnModel = Bpmn.readModelFromStream(bpmnXml.byteInputStream())
-        log.info { "Extracting BPMN elements from XML" }
 
         val elements = bpmnModel.getModelElementsByType(BaseElement::class.java).mapNotNull { element ->
             when (element) {
@@ -47,7 +46,10 @@ class BpmnExtractor {
                         id = element.id,
                         name = element.name,
                         incomingFlowElementIds = element.incoming.mapNotNull { bpmnModel.getModelElementById<SequenceFlow>(it.id).source.id },
-                        outgoingFlowElementIds = element.outgoing.mapNotNull { bpmnModel.getModelElementById<SequenceFlow>(it.id).target.id }
+                        outgoingFlowElementIds = element.outgoing.mapNotNull { bpmnModel.getModelElementById<SequenceFlow>(it.id).target.id },
+                        associatedElementIds = bpmnModel.getModelElementsByType(Association::class.java)
+                            .filter { it.source == element }
+                            .mapNotNull { it.target.id }
                     )
                 }
                 is DataStoreReference, is DataObjectReference -> {
