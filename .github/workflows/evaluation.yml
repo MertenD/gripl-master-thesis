@@ -60,6 +60,13 @@ jobs:
           echo '## GDPR Evaluation Report' >> $GITHUB_STEP_SUMMARY
           cat evaluation-report.md >> $GITHUB_STEP_SUMMARY
 
+      - name: Prepare GitHub Pages directory
+        working-directory: .
+        run: |
+          rm -rf gh-pages
+          mkdir gh-pages
+          cp gripl/gripl-backend/evaluation-report.md gh-pages/README.md
+
       - name: Deploy report to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
