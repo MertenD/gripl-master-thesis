@@ -78,9 +78,11 @@ export async function GET(request: NextRequest) {
     `
 
         await page.setContent(html)
+        // @ts-ignore
         await page.waitForFunction(() => typeof window.BpmnJS !== "undefined")
 
         const result = await page.evaluate(async (xml) => {
+            // @ts-ignore
             return await window.convertBpmn(xml)
         }, bpmnXml)
 
