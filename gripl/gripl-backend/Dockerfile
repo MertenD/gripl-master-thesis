@@ -12,7 +12,7 @@ RUN mvn exec:java -e -D exec.mainClass=com.microsoft.playwright.CLI -D exec.args
 FROM mcr.microsoft.com/playwright:latest AS runtime
 USER root
 RUN apt-get update && apt-get install -y openjdk-17-jre-headless \
-    && rm -rf /var/lib/apt/lists/* \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
