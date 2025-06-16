@@ -16,7 +16,7 @@ class EvaluationRunner(
         var total = 0
         var passed = 0
 
-        dataset.forEachIndexed { i, entry ->
+        dataset.forEach { entry ->
             total++
 
             val evaluationResult = evaluator.evaluate(entry.bpmnXml)
@@ -27,7 +27,7 @@ class EvaluationRunner(
             }
 
             markdown
-                .append("## Test Case ${i + 1}\n")
+                .append("## Test Case ${entry.id}\n")
                 .append("**Input:** `${entry.bpmnXml}`\n")
                 .append("**Expected:** ${entry.expectedValues.joinToString(", ") { it.value }}\n")
                 .append("**Actual:** ${evaluationResult.joinToString(", ") { it.value }}\n")
