@@ -3,6 +3,10 @@ name: Evaluation
 on:
   workflow_dispatch:
 
+defaults:
+  run:
+    working-directory: gripl/gripl-backend
+
 jobs:
   evaluete:
     runs-on: ubuntu-latest
