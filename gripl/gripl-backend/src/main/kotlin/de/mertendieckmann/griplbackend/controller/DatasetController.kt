@@ -39,7 +39,7 @@ class DatasetController(
         val svg = try {
             bpmnConverter.convertXmlToSvg(bpmnXml)
         } catch (ex: IllegalArgumentException) {
-            log.error(ex) { "Ungültiges BPMN XML für Id: $id" }
+            log.info(ex) { "Ungültiges BPMN XML für Id: $id" }
             return ResponseEntity.badRequest().body("Fehler beim Parsen: ${ex.message}")
         } catch (ex: Exception) {
             return ResponseEntity.status(500).body("Serverfehler: ${ex.message}")
