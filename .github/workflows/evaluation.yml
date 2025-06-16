@@ -7,6 +7,9 @@ defaults:
   run:
     working-directory: gripl/gripl-backend
 
+env:
+  OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
 jobs:
   evaluete:
     runs-on: ubuntu-latest
