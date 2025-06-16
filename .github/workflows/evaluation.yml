@@ -29,11 +29,16 @@ jobs:
 
       - name: Wait for application to start
         run: |
-          sleep 30
-          while ! curl -s http://localhost:8080/actuator/health | grep '"status":"UP"'; do
-            echo "Waiting for application to start..."
-            sleep 5
+          for i in {1..30}; do
+            if curl --silent --fail http://localhost:8080/actuator/health; then
+            echo "✔ Application is up"
+            exit 0
+            fi
+            echo "Waiting for application..."
+            sleep 2
           done
+          echo "❌ Application did not start in time"
+          exit 1
 
       - name: Run evaluation
         run: curl --fail http://localhost:8080/gdpr/evaluation -o evaluation-report.md
