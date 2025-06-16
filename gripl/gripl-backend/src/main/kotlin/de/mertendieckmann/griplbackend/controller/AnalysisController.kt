@@ -1,7 +1,6 @@
 package de.mertendieckmann.griplbackend.controller
 
 import de.mertendieckmann.griplbackend.application.BpmnAnalyzer
-import de.mertendieckmann.griplbackend.application.BpmnExtractor
 import de.mertendieckmann.griplbackend.evaluation.runner.EvaluationRunner
 import de.mertendieckmann.griplbackend.model.dto.AnalysisRequest
 import de.mertendieckmann.griplbackend.model.dto.AnalysisResponse

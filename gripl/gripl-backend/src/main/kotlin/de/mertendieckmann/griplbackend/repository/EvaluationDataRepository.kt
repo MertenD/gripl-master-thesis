@@ -23,7 +23,7 @@ class EvaluationDataRepository(
     }
 
     fun getEvaluationDataById(id: Long): EvaluationData? {
-        return jdbc.queryForObject("SELECT * FROM evaluation_data WHERE id = ?", mapper, id)
+        return jdbc.query("SELECT * FROM evaluation_data WHERE id = ?", mapper, id).firstOrNull()
     }
 
     fun insertEvaluationData(data: EvaluationData): Int {

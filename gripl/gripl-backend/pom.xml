@@ -101,8 +101,18 @@
 			<version>3.5.0</version>
 		</dependency>
 		<dependency>
+			<groupId>org.camunda.bpm.springboot</groupId>
+			<artifactId>camunda-bpm-spring-boot-starter</artifactId>
+			<version>7.23.0</version>
+		</dependency>
+		<dependency>
 			<groupId>org.camunda.bpm.model</groupId>
 			<artifactId>camunda-bpmn-model</artifactId>
+			<version>7.23.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.camunda.bpm</groupId>
+			<artifactId>camunda-engine</artifactId>
 			<version>7.23.0</version>
 		</dependency>
 	</dependencies>
