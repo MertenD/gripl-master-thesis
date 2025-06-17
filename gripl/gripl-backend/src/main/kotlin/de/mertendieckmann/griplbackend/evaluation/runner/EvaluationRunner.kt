@@ -1,8 +1,7 @@
 package de.mertendieckmann.griplbackend.evaluation.runner
 
-import de.mertendieckmann.griplbackend.model.dto.EvaluationData
 import de.mertendieckmann.griplbackend.evaluation.service.Evaluator
-import de.mertendieckmann.griplbackend.repository.EvaluationDataRepository
+import de.mertendieckmann.griplbackend.model.dto.EvaluationData
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Component
 

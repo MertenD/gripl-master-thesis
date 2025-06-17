@@ -28,7 +28,7 @@ class DatasetController(
         return datasetEntry
     }
 
-    @GetMapping("/{id}/preview", produces = [MediaType.TEXT_XML_VALUE])
+    @GetMapping("/{id}/preview", produces = ["image/svg+xml"])
     fun getSvg(@PathVariable id: Long): ResponseEntity<String> {
         val bpmnConverter = BpmnConverter()
 
@@ -45,6 +45,8 @@ class DatasetController(
             return ResponseEntity.status(500).body("Serverfehler: ${ex.message}")
         }
 
-        return ResponseEntity.ok(svg)
+        return ResponseEntity.ok()
+            .header("Content-Type", "image/svg+xml")
+            .body(svg)
     }
 }
