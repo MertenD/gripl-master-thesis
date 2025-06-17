@@ -1,6 +1,6 @@
 package de.mertendieckmann.griplbackend.controller
 
-import BpmnConverter
+import de.mertendieckmann.griplbackend.application.preview.PreviewGenerator
 import de.mertendieckmann.griplbackend.model.dto.EvaluationData
 import de.mertendieckmann.griplbackend.repository.EvaluationDataRepository
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.server.ResponseStatusException
 
@@ -29,19 +30,25 @@ class DatasetController(
     }
 
     @GetMapping("/{id}/preview", produces = ["image/svg+xml"])
-    fun getSvg(@PathVariable id: Long): ResponseEntity<String> {
-        val bpmnConverter = BpmnConverter()
+    fun getSvg(
+        @PathVariable id: Long,
+        @RequestParam correctIds: List<String> = emptyList(),
+        @RequestParam falsePositiveIds: List<String> = emptyList(),
+        @RequestParam falseNegativeIds: List<String> = emptyList()
+    ): ResponseEntity<String> {
+        val previewGenerator = PreviewGenerator()
 
         val datasetEntry = evaluationDataRepository.getEvaluationDataById(id)
             ?: return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Kein Datensatz gefunden für Id: $id")
         val bpmnXml = datasetEntry.bpmnXml
 
         val svg = try {
-            bpmnConverter.convertXmlToSvg(bpmnXml)
+            previewGenerator.convertXmlToSvg(bpmnXml, correctIds = correctIds, falsePositiveIds = falsePositiveIds, falseNegativeIds = falseNegativeIds)
         } catch (ex: IllegalArgumentException) {
             log.error(ex) { "Ungültiges BPMN XML für Id: $id" }
             return ResponseEntity.badRequest().body("Fehler beim Parsen: ${ex.message}")
         } catch (ex: Exception) {
+            log.error(ex) { "Fehler beim Generieren des SVG für Id: $id" }
             return ResponseEntity.status(500).body("Serverfehler: ${ex.message}")
         }
 

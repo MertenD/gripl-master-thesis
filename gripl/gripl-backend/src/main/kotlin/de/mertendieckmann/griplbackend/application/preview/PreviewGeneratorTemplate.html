@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <script src="https://unpkg.com/bpmn-js@17.0.2/dist/bpmn-viewer.development.js"></script>
+    <style>
+        #canvas { width: 100%; height: 500px; }
+    </style>
+</head>
+<body>
+<div id="canvas"></div>
+<script>
+    function highlightActivities(viewer, correctIds, falsePositiveIds, falseNegativeIds) {
+        try {
+            const canvas = viewer.get("canvas")
+            const elementRegistry = viewer.get("elementRegistry")
+
+            elementRegistry.getAll().forEach((element) => {
+                if (element.id) {
+                    canvas.removeMarker(element.id, "highlight-privacy")
+                }
+            })
+
+            correctIds.forEach((id) => {
+                const element = elementRegistry.get(id)
+                if (element) {
+                    canvas.addMarker(id, "highlight-correct")
+                }
+            })
+
+            falsePositiveIds.forEach((id) => {
+                const element = elementRegistry.get(id)
+                if (element) {
+                    canvas.addMarker(id, "highlight-false-positive")
+                }
+            })
+
+            falseNegativeIds.forEach((id) => {
+                const element = elementRegistry.get(id)
+                if (element) {
+                    canvas.addMarker(id, "highlight-false-negative")
+                }
+            })
+        } catch (err) {
+            console.error("Fehler beim Hervorheben der Aktivitäten", err)
+        }
+    }
+
+    window.convertBpmn = async function(xml, correctIds, falsePositiveIds, falseNegativeIds) {
+        const styles = `
+              .highlight-correct .djs-visual > :nth-child(1) {
+                fill: #00ff0044 !important;
+              }
+
+              .highlight-false-positive .djs-visual > :nth-child(1) {
+                fill: #ff000044 !important;
+              }
+
+              .highlight-false-negative .djs-visual > :nth-child(1) {
+                fill: #ff880044 !important;
+              }
+            `
+
+        try {
+            const viewer = new BpmnJS({ container: '#canvas' });
+            await viewer.importXML(xml);
+            highlightActivities(viewer, correctIds, falsePositiveIds, falseNegativeIds);
+            let { svg } = await viewer.saveSVG();
+            svg = svg.replace(
+                /<svg[^>]*>/,
+                m => `${m}\n<style type="text/css" data-highlight="privacy">${styles}</style>`
+            )
+            return { success: true, svg };
+        } catch (e) {
+            return { success: false, error: e.message };
+        }
+    }
+</script>
+</body>
+</html>
