@@ -2,6 +2,8 @@ package de.mertendieckmann.griplbackend.evaluation.runner
 
 import de.mertendieckmann.griplbackend.evaluation.service.Evaluator
 import de.mertendieckmann.griplbackend.model.dto.EvaluationData
+import org.camunda.bpm.model.bpmn.Bpmn
+import org.camunda.bpm.model.bpmn.instance.Activity
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Component
 
@@ -43,12 +45,22 @@ class EvaluationRunner(
                 .append("&falsePositiveIds=${falsePositiveIds.joinToString(",")}")
                 .append("&falseNegativeIds=${falseNegativeIds.joinToString(",")}")
 
+            val bpmnModel = Bpmn.readModelFromStream(entry.bpmnXml.byteInputStream())
+
+            val expectedNamesWithIds = entry.expectedValues.map {
+                bpmnModel.getModelElementById<Activity>(it.value).name + " (${it.value})"
+            }
+
+            val actualNamesWithIds = evaluationResult.map {
+                bpmnModel.getModelElementById<Activity>(it.value).name + " (${it.value})"
+            }
+
             markdown
                 .append("## Test Case ${entry.id}\n")
-                .append("**Input:** <img src=\"$imageSrc\" alt=\"Test Case BPMN XML\" height=\"200\" />\n")
-                .append("**Expected:** ${entry.expectedValues.joinToString(", ") { it.value }}\n")
-                .append("**Actual:** ${evaluationResult.joinToString(", ") { it.value }}\n")
-                .append("**Result:** ${if (isSuccessful) "✅ Passed" else "❌ Failed"}\n\n")
+                .append("<img src=\"$imageSrc\" alt=\"Test Case BPMN XML\" height=\"200\" />\n\n")
+                .append("- **Expected:** ${expectedNamesWithIds.joinToString(", ") { it }}\n")
+                .append("- **Actual:** ${actualNamesWithIds.joinToString(", ") { it }}\n")
+                .append("- **Result:** ${if (isSuccessful) "✅ Passed" else "❌ Failed"}\n\n")
         }
 
         markdown
