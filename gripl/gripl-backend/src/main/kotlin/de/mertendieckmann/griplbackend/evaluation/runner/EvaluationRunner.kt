@@ -18,7 +18,7 @@ class EvaluationRunner(
         var total = 0
         var passed = 0
 
-        dataset.forEach { entry ->
+        dataset.sortedBy { it.id }.forEach { entry ->
             total++
 
             val evaluationResult = evaluator.evaluate(entry.bpmnXml)

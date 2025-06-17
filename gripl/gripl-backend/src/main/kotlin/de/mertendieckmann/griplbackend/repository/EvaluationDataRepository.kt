@@ -29,7 +29,7 @@ class EvaluationDataRepository(
 
     fun insertEvaluationData(data: EvaluationData): Int {
         return jdbc.update(
-            "INSERT INTO evaluation_data (name, bpmn_xml, expected_values) VALUES (?, ?)",
+            "INSERT INTO evaluation_data (name, bpmn_xml, expected_values) VALUES (?, ?, ?)",
             data.name, data.bpmnXml, data.expectedValues
         )
     }
