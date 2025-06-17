@@ -25,5 +25,6 @@ data class EvaluationData(
 }
 
 data class ExpectedValue(
-    val value: String
+    val value: String,
+    val reason: String? = null
 )
