@@ -13,6 +13,7 @@ class EvaluationDataRepository(
     private val mapper = RowMapper { rs, _ ->
         EvaluationData.fromRow(
             id = rs.getLong("id"),
+            name = rs.getString("name"),
             bpmnXml = rs.getString("bpmn_xml"),
             expectedJson = rs.getString("expected_values")
         )
@@ -28,8 +29,8 @@ class EvaluationDataRepository(
 
     fun insertEvaluationData(data: EvaluationData): Int {
         return jdbc.update(
-            "INSERT INTO evaluation_data (bpmn_xml, expected_values) VALUES (?, ?)",
-            data.bpmnXml, data.expectedValues
+            "INSERT INTO evaluation_data (name, bpmn_xml, expected_values) VALUES (?, ?)",
+            data.name, data.bpmnXml, data.expectedValues
         )
     }
 }

@@ -1,0 +1,1 @@
+alter table evaluation_data add column name text;
