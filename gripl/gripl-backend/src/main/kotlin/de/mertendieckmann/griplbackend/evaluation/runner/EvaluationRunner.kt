@@ -6,6 +6,7 @@ import org.camunda.bpm.model.bpmn.Bpmn
 import org.camunda.bpm.model.bpmn.instance.Activity
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Component
+import kotlin.math.floor
 
 @Component
 class EvaluationRunner(
@@ -44,6 +45,8 @@ class EvaluationRunner(
                 .append("?correctIds=${correctActivityIds.joinToString(",")}")
                 .append("&falsePositiveIds=${falsePositiveIds.joinToString(",")}")
                 .append("&falseNegativeIds=${falseNegativeIds.joinToString(",")}")
+                // The salt is there to prevent caching of the image in for example GitHub and is just an arbitrary number
+                .append("&salt=${floor(Math.random() * 99999)}")
 
             val bpmnModel = Bpmn.readModelFromStream(entry.bpmnXml.byteInputStream())
 
