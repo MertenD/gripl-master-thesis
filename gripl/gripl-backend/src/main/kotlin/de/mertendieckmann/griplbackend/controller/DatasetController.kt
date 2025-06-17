@@ -1,6 +1,6 @@
 package de.mertendieckmann.griplbackend.controller
 
-import de.mertendieckmann.griplbackend.application.preview.PreviewGenerator
+import de.mertendieckmann.griplbackend.application.PreviewGenerator
 import de.mertendieckmann.griplbackend.model.dto.EvaluationData
 import de.mertendieckmann.griplbackend.repository.EvaluationDataRepository
 import io.github.oshai.kotlinlogging.KotlinLogging

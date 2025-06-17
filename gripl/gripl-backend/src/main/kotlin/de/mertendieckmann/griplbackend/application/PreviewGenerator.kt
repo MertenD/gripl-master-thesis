@@ -1,18 +1,15 @@
-package de.mertendieckmann.griplbackend.application.preview
+package de.mertendieckmann.griplbackend.application
 
 import com.microsoft.playwright.Playwright
-import io.github.oshai.kotlinlogging.KotlinLogging
-import java.nio.file.Files
-import java.nio.file.Paths
 
 class PreviewGenerator {
 
-    private val log = KotlinLogging.logger { }
     private val htmlTemplate: String = loadHtmlTemplate()
 
     private fun loadHtmlTemplate(): String {
-        val path = Paths.get("src/main/kotlin/de/mertendieckmann/griplbackend/application/preview/PreviewGeneratorTemplate.html")
-        return Files.readString(path)
+        return javaClass.getResource("/PreviewGeneratorTemplate.html")
+            ?.readText(Charsets.UTF_8)
+            ?: error("PreviewGeneratorTemplate.html nicht gefunden")
     }
 
     fun convertXmlToSvg(bpmnXml: String, correctIds: List<String>, falsePositiveIds: List<String>, falseNegativeIds: List<String>): String {
