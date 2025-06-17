@@ -13,10 +13,10 @@
 ## Test Case 3
 **Input:** <img src="https://gripl.mertendieckmann.de/api/dataset/3/preview" alt="Test Case BPMN XML" height="200" />
 **Expected:** Activity_0vdpsz1, Activity_1dttfxu
-**Actual:** Activity_0vdpsz1, Activity_1dttfxu
-**Result:** ✅ Passed
+**Actual:** Activity_1dttfxu
+**Result:** ❌ Failed
 
 ## Summary
 Total: 3
-Passed: 3
-Failed: 0
+Passed: 2
+Failed: 1
