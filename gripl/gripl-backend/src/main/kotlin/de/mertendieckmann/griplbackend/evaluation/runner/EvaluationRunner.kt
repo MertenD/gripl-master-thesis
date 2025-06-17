@@ -25,9 +25,27 @@ class EvaluationRunner(
                 passed++
             }
 
+            val correctActivityIds = entry.expectedValues.map { it.value }.filter {
+                evaluationResult.map { res -> res.value }.contains(it)
+            }
+
+            val falsePositiveIds = evaluationResult
+                .filter { it.value !in entry.expectedValues.map { ev -> ev.value } }
+                .map { it.value }
+
+            val falseNegativeIds = entry.expectedValues
+                .filter { it.value !in evaluationResult.map { res -> res.value } }
+                .map { it.value }
+
+            val imageSrc = StringBuilder()
+                .append("https://gripl.mertendieckmann.de/api/dataset/${entry.id}/preview")
+                .append("?correctIds=${correctActivityIds.joinToString(",")}")
+                .append("&falsePositiveIds=${falsePositiveIds.joinToString(",")}")
+                .append("&falseNegativeIds=${falseNegativeIds.joinToString(",")}")
+
             markdown
                 .append("## Test Case ${entry.id}\n")
-                .append("**Input:** <img src=\"https://gripl.mertendieckmann.de/api/dataset/${entry.id}/preview\" alt=\"Test Case BPMN XML\" height=\"200\" />\n")
+                .append("**Input:** <img src=\"$imageSrc\" alt=\"Test Case BPMN XML\" height=\"200\" />\n")
                 .append("**Expected:** ${entry.expectedValues.joinToString(", ") { it.value }}\n")
                 .append("**Actual:** ${evaluationResult.joinToString(", ") { it.value }}\n")
                 .append("**Result:** ${if (isSuccessful) "✅ Passed" else "❌ Failed"}\n\n")
