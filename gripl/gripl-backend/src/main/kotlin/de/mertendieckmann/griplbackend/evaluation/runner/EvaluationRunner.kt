@@ -74,7 +74,7 @@ class EvaluationRunner(
 
         markdown
             .append("## Test Case ${entry.id}${if (entry.name !== null) " - ${entry.name}" else ""}\n")
-            .append("<img src=\"$imageSrc\" alt=\"Test Case BPMN XML\" height=\"200\" />\n\n")
+            .append("<img src=\"$imageSrc\" alt=\"Test Case BPMN XML\" />\n\n")
             .append("- **Expected:** ${expectedNamesWithIds.joinToString(", ") { it }}\n")
             .append("- **Actual:** ${actualNamesWithIds.joinToString(", ") { it }}\n")
             .append("- **Result:** ${if (actualNamesWithIds.toSet() == expectedNamesWithIds.toSet()) "✅ Passed" else "❌ Failed"}\n\n")
