@@ -33,6 +33,7 @@ services:
       - gripl-postgres
     environment:
       - SPRING_PROFILES_ACTIVE=prod
+      - PLAYWRIGHT_BROWSERS_PATH=/root/.cache/ms-playwright
     env_file:
       - ./gripl/gripl-backend/.env
     labels:
@@ -46,6 +47,8 @@ services:
       - traefik.http.routers.gripl-backend.middlewares=gripl-backend-strip-prefix
       - traefik.http.services.gripl-backend.loadbalancer.server.port=8080
       - com.centurylinklabs.watchtower.enable=true
+    volumes:
+      - playwright-browsers:/root/.cache/ms-playwright
     networks:
       - web
 
@@ -53,6 +56,8 @@ services:
     image: postgres:15
     container_name: gripl-postgres
     restart: unless-stopped
+    ports:
+      - "5432:5432"
     env_file:
       - .env
     volumes:
@@ -64,8 +69,6 @@ services:
     image: dpage/pgadmin4:7
     container_name: gripl-pgadmin
     restart: unless-stopped
-    ports:
-      - "5432:5432"
     env_file:
       - .env
     depends_on:
@@ -79,6 +82,8 @@ services:
       - traefik.docker.network=web
       - traefik.http.services.gripl-pgadmin.loadbalancer.server.port=80
       - com.centurylinklabs.watchtower.enable=true
+    volumes:
+      - gripl-pgadmin-data:/var/lib/pgadmin
     networks:
       - web
 
@@ -87,4 +92,6 @@ networks:
     external: true
 
 volumes:
+  playwright-browsers:
   gripl-postgres-data:
+  gripl-pgadmin-data:
