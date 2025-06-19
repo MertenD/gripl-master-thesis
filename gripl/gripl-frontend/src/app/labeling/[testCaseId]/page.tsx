@@ -1,0 +1,26 @@
+import {EvaluationData} from "@/models/dto/EvaluationData";
+import LabelingEditor from "@/components/labeling/labeling-editor";
+import React from "react";
+
+export default async function LabelingPageWithEditor({ params }: { params: { testCaseId: number } }) {
+
+    const evaluationData: EvaluationData | null = await fetch(`${process.env.API_BASE_URL}/dataset/${params.testCaseId}`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    })
+        .then(response => response.json() as unknown as EvaluationData)
+        .catch(error => {
+            console.error("There was an error fetching the evaluation data:", error);
+            return null;
+        });
+
+    if (!evaluationData) {
+        return <div className="h-full flex items-center justify-center">
+            <h2 className="font-bold text-2xl">No data found for test case {params.testCaseId}</h2>
+        </div>
+    }
+
+    return <LabelingEditor className="flex-1" evaluationData={evaluationData} />
+}

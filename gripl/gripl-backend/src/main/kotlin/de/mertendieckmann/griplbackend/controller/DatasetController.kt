@@ -2,16 +2,14 @@ package de.mertendieckmann.griplbackend.controller
 
 import de.mertendieckmann.griplbackend.application.PreviewGenerator
 import de.mertendieckmann.griplbackend.model.dto.EvaluationData
+import de.mertendieckmann.griplbackend.model.dto.EvaluationDataMeta
+import de.mertendieckmann.griplbackend.model.dto.EvaluationDataWithOptionalId
 import de.mertendieckmann.griplbackend.repository.EvaluationDataRepository
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
 
 @RestController
@@ -21,12 +19,56 @@ class DatasetController(
 ) {
     private val log = KotlinLogging.logger { }
 
+    @GetMapping("", produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun getAllBpmnDatasetMeta(): List<EvaluationDataMeta> {
+        val datasets = evaluationDataRepository.getAllEvaluationData()
+        if (datasets.isEmpty()) {
+            throw ResponseStatusException(HttpStatus.NOT_FOUND, "No datasets found")
+        }
+        return datasets.map { EvaluationDataMeta(it.id, it.name) }
+    }
+
     @GetMapping("/{id}", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getBpmnDataset(@PathVariable("id") id: Long): EvaluationData {
         val datasetEntry = evaluationDataRepository.getEvaluationDataById(id)
             ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "No dataset entry found for Id: $id")
 
         return datasetEntry
+    }
+
+    @PostMapping("/{id}")
+    fun insertOrUpdateBpmnDataset(@RequestBody evaluationData: EvaluationDataWithOptionalId): ResponseEntity<String> {
+        if (evaluationData.id != null) {
+            val existingEntry = evaluationDataRepository.getEvaluationDataById(evaluationData.id)
+                ?: return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No dataset entry found for Id: ${evaluationData.id}")
+
+            log.info { "Updating existing dataset entry with Id: ${evaluationData.id}" }
+
+            val affectedRows = evaluationDataRepository.updateEvaluationData(EvaluationData(
+                id = existingEntry.id,
+                name = evaluationData.name,
+                bpmnXml = evaluationData.bpmnXml,
+                expectedValues = evaluationData.expectedValues
+            ))
+            return if (affectedRows > 0) {
+                ResponseEntity.ok("Dataset entry updated successfully")
+            } else {
+                ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update dataset entry")
+            }
+        }
+
+        val newEntry = EvaluationDataWithOptionalId(
+            name = evaluationData.name,
+            bpmnXml = evaluationData.bpmnXml,
+            expectedValues = evaluationData.expectedValues
+        )
+
+        val affectedRows = evaluationDataRepository.insertEvaluationData(newEntry)
+        return if (affectedRows > 0) {
+            ResponseEntity.status(HttpStatus.CREATED).body("Dataset entry created successfully")
+        } else {
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to create dataset entry")
+        }
     }
 
     @GetMapping("/{id}/preview", produces = ["image/svg+xml"])

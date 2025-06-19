@@ -12,11 +12,11 @@ interface BpmnEditorProps {
   bpmnXml: string
   highlightedActivityIds?: string[]
   onNew?: () => void
-  onSave: (xml: string) => void
+  onDiagramChanged: (xml: string) => void
   cards?: BpmnToolCard[]
 }
 
-export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = [], onNew, onSave, cards = [] }: BpmnEditorProps) {
+export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = [], onNew, onDiagramChanged, cards = [] }: BpmnEditorProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const modelerRef = useRef<any>(null)
   const [isLoaded, setIsLoaded] = useState(false)
@@ -45,7 +45,7 @@ export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = []
         styleElementRef.current = null
       }
     }
-  }, [onSave])
+  }, [onDiagramChanged])
 
   useEffect(() => {
     console.log("Aktualisiere hervorgehobene Aktivitäten:", highlightedActivityIds)
@@ -54,7 +54,7 @@ export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = []
   }, [highlightedActivityIds, isLoaded])
 
   async function handleFileLoaded(content: string) {
-    onSave(content)
+    onDiagramChanged(content)
     initializeModeler(content).then()
   }
 
@@ -84,11 +84,11 @@ export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = []
           setCanUndo(commandStack.canUndo())
           setCanRedo(commandStack.canRedo())
 
-          if (onSave) {
+          if (onDiagramChanged) {
             modeler
                 .saveXML({ format: true })
                 .then(({ xml }: { xml: string }) => {
-                  onSave(xml)
+                  onDiagramChanged(xml)
                 })
                 .catch((err: any) => {
                   console.error("Fehler beim automatischen Speichern", err)

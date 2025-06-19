@@ -32,7 +32,7 @@ export default function RootLayout({
     <head>
         <title>GRIPL</title>
     </head>
-    <body className={`${geistSans.variable} ${geistMono.variable} antialiased h-screen w-screen container mx-auto`}>
+    <body className={`${geistSans.variable} ${geistMono.variable} antialiased h-screen w-screen`}>
       <ThemeProvider
         attribute="class"
         defaultTheme="system"

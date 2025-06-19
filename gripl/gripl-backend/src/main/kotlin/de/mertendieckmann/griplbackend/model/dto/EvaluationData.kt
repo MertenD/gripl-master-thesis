@@ -28,3 +28,15 @@ data class ExpectedValue(
     val value: String,
     val reason: String? = null
 )
+
+data class EvaluationDataMeta(
+    val id: Long,
+    val name: String?
+)
+
+data class EvaluationDataWithOptionalId(
+    val id: Long? = null,
+    val name: String? = null,
+    val bpmnXml: String,
+    val expectedValues: List<ExpectedValue>
+)

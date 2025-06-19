@@ -32,7 +32,7 @@ export default function Home() {
           bpmnXml={diagram}
           highlightedActivityIds={highlightedActivityIds}
           onNew={handleCreateNewDiagram}
-          onSave={setDiagram}
+          onDiagramChanged={setDiagram}
           cards={editorToolCards}
       />
     </div>
