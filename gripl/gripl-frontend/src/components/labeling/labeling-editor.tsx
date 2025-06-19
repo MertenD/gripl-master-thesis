@@ -21,6 +21,7 @@ export default function LabelingEditor({ className, evaluationData }: LabelingEd
     const [highlightedActivityIds, setHighlightedActivityIds] = useState<string[]>(
         evaluationData.expectedValues.map(exp => exp.value)
     );
+    const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
     function onSave() {
         const requestBody = {
@@ -43,22 +44,28 @@ export default function LabelingEditor({ className, evaluationData }: LabelingEd
                 console.error("Error while saving test case:", response.statusText);
                 throw new Error("Fehler beim Speichern des Testfalls");
             }
-            alert("Test case saved successfully!");
+            setHasUnsavedChanges(false)
+            alert("Test case saved sccessfully!");
         }).catch(error => {
             console.error("Error while saving test case:", error);
             alert("Error while saving test case: " + error.message);
         });
     }
 
+    function handleDiagramChanged(xml: string) {
+        setDiagram(xml)
+        setHasUnsavedChanges(true)
+    }
+
     function handleElementClicked(element: any) {
-        if (!isLabelMode) return
-        if (element.type === "bpmn:Task") {
-            const activityId = element.id;
-            if (highlightedActivityIds.includes(activityId)) {
-                setHighlightedActivityIds(highlightedActivityIds.filter(id => id !== activityId));
-            } else {
-                setHighlightedActivityIds([...highlightedActivityIds, activityId]);
-            }
+        if (!isLabelMode || element.type !== "bpmn:Task") return
+        const activityId = element.id
+        if (highlightedActivityIds.includes(activityId)) {
+            setHighlightedActivityIds(highlightedActivityIds.filter(id => id !== activityId))
+            setHasUnsavedChanges(true)
+        } else {
+            setHighlightedActivityIds([...highlightedActivityIds, activityId])
+            setHasUnsavedChanges(true)
         }
     }
 
@@ -73,6 +80,7 @@ export default function LabelingEditor({ className, evaluationData }: LabelingEd
                     <Button
                         onClick={onSave}
                         variant="default"
+                        disabled={!hasUnsavedChanges}
                     >
                         <Save className="mr-2 h-4 w-4"/>
                         Save Test Case
@@ -93,7 +101,7 @@ export default function LabelingEditor({ className, evaluationData }: LabelingEd
                 bpmnXml={diagram}
                 cards={cards}
                 highlightedActivityIds={highlightedActivityIds}
-                onDiagramChanged={setDiagram}
+                onDiagramChanged={handleDiagramChanged}
                 onElementClicked={handleElementClicked}
                 editorClassName={isLabelMode ? "border border-destructive" : ""}
                 disableEditing={isLabelMode}
