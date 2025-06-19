@@ -28,6 +28,16 @@ class DatasetController(
         return datasets.map { EvaluationDataMeta(it.id, it.name) }
     }
 
+    @PostMapping("")
+    fun insertBpmnDataset(@RequestBody evaluationData: EvaluationDataWithOptionalId): ResponseEntity<Int> {
+        val idOfCreatedEntry = evaluationDataRepository.insertEvaluationData(evaluationData)
+        return if (idOfCreatedEntry != null) {
+            ResponseEntity.status(HttpStatus.CREATED).body(idOfCreatedEntry)
+        } else {
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(-1)
+        }
+    }
+
     @GetMapping("/{id}", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getBpmnDataset(@PathVariable("id") id: Long): EvaluationData {
         val datasetEntry = evaluationDataRepository.getEvaluationDataById(id)
@@ -56,13 +66,19 @@ class DatasetController(
         }
     }
 
-    @PostMapping("")
-    fun insertBpmnDataset(@RequestBody evaluationData: EvaluationDataWithOptionalId): ResponseEntity<Int> {
-        val idOfCreatedEntry = evaluationDataRepository.insertEvaluationData(evaluationData)
-        return if (idOfCreatedEntry != null) {
-            ResponseEntity.status(HttpStatus.CREATED).body(idOfCreatedEntry)
+    @DeleteMapping("/{id}")
+    fun deleteBpmnDataset(@PathVariable("id") id: Long): ResponseEntity<String> {
+        if (evaluationDataRepository.getEvaluationDataById(id) == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No dataset entry found for Id: $id")
+        }
+
+        log.info { "Deleting dataset entry with Id: $id" }
+
+        val affectedRows = evaluationDataRepository.deleteEvaluationData(id)
+        return if (affectedRows > 0) {
+            ResponseEntity.ok("Dataset entry deleted successfully")
         } else {
-            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(-1)
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete dataset entry")
         }
     }
 

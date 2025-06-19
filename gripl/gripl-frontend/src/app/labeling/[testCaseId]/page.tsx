@@ -10,14 +10,18 @@ export default async function LabelingPageWithEditor({ params }: { params: { tes
             "Content-Type": "application/json",
         },
     })
-        .then(response => response.json() as unknown as EvaluationData)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json() as unknown as EvaluationData
+        })
         .catch(error => {
             console.error("There was an error fetching the evaluation data:", error);
             return null;
         });
-
     if (!evaluationData) {
-        return <div className="h-full flex items-center justify-center">
+        return <div className="h-full w-full flex items-center justify-center">
             <h2 className="font-bold text-2xl">No data found for test case {params.testCaseId}</h2>
         </div>
     }

@@ -70,7 +70,8 @@ export default function CreateTestCaseButton() {
                         return response.json();
                     }).then(id => {
                         console.log("Created test case with ID:", id);
-                        router.push(`/labeling/${id}`);
+                        router.push(`/labeling/${id}`)
+                        router.refresh()
                         setShowCreateTestCaseDialog(false);
                     }).catch(error => {
                         console.error("There was an error creating the test case:", error);

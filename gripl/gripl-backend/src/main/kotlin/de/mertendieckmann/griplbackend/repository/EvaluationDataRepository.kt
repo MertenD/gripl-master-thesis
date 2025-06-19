@@ -70,4 +70,9 @@ class EvaluationDataRepository(
             ps.setLong(4, data.id)
         }
     }
+
+    fun deleteEvaluationData(id: Long): Int {
+        val sql = "DELETE FROM evaluation_data WHERE id = ?"
+        return jdbc.update(sql, id)
+    }
 }
