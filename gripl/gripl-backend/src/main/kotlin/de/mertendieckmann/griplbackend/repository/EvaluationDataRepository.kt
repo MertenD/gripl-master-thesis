@@ -31,23 +31,23 @@ class EvaluationDataRepository(
         return jdbc.query("SELECT * FROM evaluation_data WHERE id = ?", mapper, id).firstOrNull()
     }
 
-    fun insertEvaluationData(data: EvaluationDataWithOptionalId): Int {
+    fun insertEvaluationData(data: EvaluationDataWithOptionalId): Int? {
         val sql = """
             INSERT INTO evaluation_data (name, bpmn_xml, expected_values)
             VALUES (?, ?, ?::jsonb)
+            RETURNING id
         """.trimIndent()
 
-        return jdbc.update(sql) { ps ->
-            ps.setString(1, data.name)
-            ps.setString(2, data.bpmnXml)
+        val json  = objectMapper.writeValueAsString(data.expectedValues)
+        val value = PGobject().apply { type = "jsonb"; this.value = json }
 
-            val json = objectMapper.writeValueAsString(data.expectedValues)
-            val pg   = PGobject().apply {
-                type  = "jsonb"
-                value = json
-            }
-            ps.setObject(3, pg)
-        }
+        return jdbc.queryForObject(
+            sql,
+            Int::class.java,
+            data.name,
+            data.bpmnXml,
+            value
+        )!!
     }
 
     fun updateEvaluationData(data: EvaluationData): Int {

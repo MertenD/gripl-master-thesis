@@ -37,37 +37,32 @@ class DatasetController(
     }
 
     @PostMapping("/{id}")
-    fun insertOrUpdateBpmnDataset(@RequestBody evaluationData: EvaluationDataWithOptionalId): ResponseEntity<String> {
-        if (evaluationData.id != null) {
-            val existingEntry = evaluationDataRepository.getEvaluationDataById(evaluationData.id)
-                ?: return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No dataset entry found for Id: ${evaluationData.id}")
+    fun updateBpmnDataset(@RequestBody evaluationData: EvaluationData): ResponseEntity<String> {
+        val existingEntry = evaluationDataRepository.getEvaluationDataById(evaluationData.id)
+            ?: return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No dataset entry found for Id: ${evaluationData.id}")
 
-            log.info { "Updating existing dataset entry with Id: ${evaluationData.id}" }
+        log.info { "Updating existing dataset entry with Id: ${evaluationData.id}" }
 
-            val affectedRows = evaluationDataRepository.updateEvaluationData(EvaluationData(
-                id = existingEntry.id,
-                name = evaluationData.name,
-                bpmnXml = evaluationData.bpmnXml,
-                expectedValues = evaluationData.expectedValues
-            ))
-            return if (affectedRows > 0) {
-                ResponseEntity.ok("Dataset entry updated successfully")
-            } else {
-                ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update dataset entry")
-            }
-        }
-
-        val newEntry = EvaluationDataWithOptionalId(
+        val affectedRows = evaluationDataRepository.updateEvaluationData(EvaluationData(
+            id = existingEntry.id,
             name = evaluationData.name,
             bpmnXml = evaluationData.bpmnXml,
             expectedValues = evaluationData.expectedValues
-        )
-
-        val affectedRows = evaluationDataRepository.insertEvaluationData(newEntry)
+        ))
         return if (affectedRows > 0) {
-            ResponseEntity.status(HttpStatus.CREATED).body("Dataset entry created successfully")
+            ResponseEntity.ok("Dataset entry updated successfully")
         } else {
-            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to create dataset entry")
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update dataset entry")
+        }
+    }
+
+    @PostMapping("")
+    fun insertBpmnDataset(@RequestBody evaluationData: EvaluationDataWithOptionalId): ResponseEntity<Int> {
+        val idOfCreatedEntry = evaluationDataRepository.insertEvaluationData(evaluationData)
+        return if (idOfCreatedEntry != null) {
+            ResponseEntity.status(HttpStatus.CREATED).body(idOfCreatedEntry)
+        } else {
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(-1)
         }
     }
 
