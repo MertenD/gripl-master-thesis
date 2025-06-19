@@ -2,7 +2,7 @@ import {EvaluationData} from "@/models/dto/EvaluationData";
 import LabelingEditor from "@/components/labeling/labeling-editor";
 import React from "react";
 
-export default async function LabelingPageWithEditor({ params }: { params: { testCaseId: string } }) {
+export default async function LabelingPageWithEditor({ params }: { params: Promise<{ testCaseId: string }> }) {
 
     const evaluationData: EvaluationData | null = await fetch(`${process.env.API_BASE_URL}/dataset/${params.testCaseId}`, {
         method: "GET",
