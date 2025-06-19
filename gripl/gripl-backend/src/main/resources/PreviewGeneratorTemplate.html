@@ -67,6 +67,10 @@
             highlightActivities(viewer, correctIds, falsePositiveIds, falseNegativeIds);
             let { svg } = await viewer.saveSVG();
             svg = svg.replace(
+                /<svg/,
+                m => `${m} style="background-color: #FFFFFF;"`
+            );
+            svg = svg.replace(
                 /<svg[^>]*>/,
                 m => `${m}\n<style type="text/css" data-highlight="privacy">${styles}</style>`
             )
