@@ -1,0 +1,57 @@
+\chapter{Einleitung}\label{chap:intro}
+\begin{itemize}
+    \item Kontext \& Motivation: BPMN-basierte Geschäftsprozesse, Bedarf an DSGVO-Konformität, Chancen/Risiken von LLMs.
+    \item Problemstellung \& Zielsetzung
+    \item Forschungsfragen und Hypothesen.
+    \item Aufbau der Arbeit: kurzer Überblick über die folgenden Kapitel.
+\end{itemize}
+
+\chapter{Theoretischer Hintergrund}\label{chap:background}
+\begin{itemize}
+    \item \textbf{BPMN}: Notation, modellgetriebene Analyse von Geschäftsprozessen.
+    \item \textbf{Datenschutzrecht}: GDPR erklären.
+    \item \textbf{Large Language Models}: Architektur, Training, Grenzen, Open-Source-Modelle \& Datenschutz.
+    \item Forschungslücken und aktueller Stand zur LLM-basierten Prozessanalyse.
+\end{itemize}
+
+\chapter{Kriterien für die Modellauswahl}\label{chap:criteria}
+Siehe Excel
+
+\chapter{Konzept \& Methodik}\label{chap:method}
+\begin{itemize}
+    \item Software-Architektur (Gesamtübersicht, Modul- und Datenflussdiagramme).
+    \item Datenaufbereitung: BPMN-Parsing, Tokenisierung, Anonymisierung.
+    \item Klassifikations-Pipeline: Prompt-Design bzw. Fine-Tuning, Label-Schema für GDPR-Kritikalität.
+    \item Implementierungsdetails: genutzte Frameworks, Deployment (Docker u.\,a.), ...
+\end{itemize}
+
+\chapter{Datensatz \& Testdesign}\label{chap:data}
+\begin{itemize}
+    \item Generierung bzw. Sammlung repräsentativer BPMN-Modelle.
+    \item Label-Prozess, Qualitätskontrolle
+    \item Daten-Splits (Train/Validation/Test), falls Finetuning im Spiel ist
+\end{itemize}
+
+\chapter{Evaluationsexperimente}\label{chap:evaluation}
+\begin{itemize}
+    \item Versuchsaufbau
+    \item Vergleichsbaselines und alternative Ansätze.
+    \item Metriken (Precision, Recall, F1, AUC, Confidence-Scores) \& Signifikanztests.
+    \item Automatisiertes Testframework, Reproduzierbarkeit der Experimente.
+    \item Fehlerquellen und Gegenmaßnahmen.
+\end{itemize}
+
+\chapter{Ergebnisse \& Diskussion}\label{chap:results}
+\begin{itemize}
+    \item Quantitative Resultate (Tabellen, Diagramme, Statistik).
+    \item Qualitative Analyse
+    \item Vergleich der Modelle \& Ansätze; Interpretation der Unterschiede.
+    \item Limitationen der Studie und Einflussfaktoren.
+\end{itemize}
+
+\chapter{Fazit \& Ausblick}\label{chap:conclusion}
+\begin{itemize}
+    \item Zusammenfassung der Haupterkenntnisse bezogen auf die Forschungsfragen.
+    \item Praktische Implikationen für Unternehmen \& Regulatoren.
+    \item Empfehlungen für zukünftige Arbeiten (Modell-Verbesserungen, zusätzliche Datenquellen, Pilotprojekte).
+\end{itemize}
