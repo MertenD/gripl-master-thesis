@@ -14,9 +14,13 @@ interface BpmnEditorProps {
   onNew?: () => void
   onDiagramChanged: (xml: string) => void
   cards?: BpmnToolCard[]
+  onElementClicked?: (element: any) => void
+  editorClassName?: string
+  disableEditing?: boolean
 }
 
-export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = [], onNew, onDiagramChanged, cards = [] }: BpmnEditorProps) {
+export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = [], onNew, onDiagramChanged, cards = [],
+                                     onElementClicked, editorClassName, disableEditing }: BpmnEditorProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const modelerRef = useRef<any>(null)
   const [isLoaded, setIsLoaded] = useState(false)
@@ -45,7 +49,7 @@ export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = []
         styleElementRef.current = null
       }
     }
-  }, [onDiagramChanged])
+  }, [onDiagramChanged, onElementClicked, disableEditing])
 
   useEffect(() => {
     console.log("Aktualisiere hervorgehobene Aktivitäten:", highlightedActivityIds)
@@ -60,8 +64,11 @@ export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = []
 
   async function initializeModeler(xml: string) {
     try {
-      // @ts-ignore
-      const BpmnModeler = (await import("bpmn-js/dist/bpmn-modeler.production.min.js")).default
+      const BpmnModeler = disableEditing ?
+          // @ts-ignore
+          (await import("bpmn-js/dist/bpmn-navigated-viewer.production.min.js")).default :
+          // @ts-ignore
+          (await import("bpmn-js/dist/bpmn-modeler.production.min.js")).default
 
       if (modelerRef.current) {
         try {
@@ -77,6 +84,14 @@ export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = []
       })
 
       modelerRef.current = modeler
+
+      const eventBus = modeler.get("eventBus")
+
+      eventBus.on("element.click", (e: any) => {
+        const element = e.element
+        if (!element || element.labelTarget) return
+        onElementClicked?.(element)
+      })
 
       modeler.on("commandStack.changed", () => {
         try {
@@ -311,7 +326,7 @@ export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = []
             </Button>
           </div>
         </div>
-        <div ref={containerRef} className="w-full flex-1 relative">
+        <div ref={containerRef} className={`w-full flex-1 relative ${editorClassName}`}>
           { cards && cards.map((card: BpmnToolCard, index: number) => (
             <div
               key={`bpmn-editor-card-${index}`}

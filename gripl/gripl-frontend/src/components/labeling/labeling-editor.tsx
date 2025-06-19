@@ -7,7 +7,8 @@ import {Card, CardContent, CardHeader} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
 import {Save} from "lucide-react";
 import {useState} from "react";
-import emptyDiagram from "@/data/empty-diagram.bpmn";
+import {Switch} from "@/components/ui/switch";
+import {Label} from "@/components/ui/label";
 
 interface LabelingEditorProps {
     className?: string;
@@ -15,14 +16,20 @@ interface LabelingEditorProps {
 }
 
 export default function LabelingEditor({ className, evaluationData }: LabelingEditorProps) {
-    const [diagram, setDiagram] = useState<string>(emptyDiagram as string)
+    const [diagram, setDiagram] = useState<string>(evaluationData.bpmnXml)
+    const [isLabelMode, setIsLabelMode] = useState<boolean>(false);
+    const [highlightedActivityIds, setHighlightedActivityIds] = useState<string[]>(
+        evaluationData.expectedValues.map(exp => exp.value)
+    );
 
     function onSave() {
         const requestBody = {
             id: evaluationData?.id || undefined,
             bpmnXml: diagram,
             name: evaluationData?.name || "",
-            expectedValues: evaluationData?.expectedValues || []
+            expectedValues: highlightedActivityIds
+                .filter(id => diagram.includes(id))
+                .map(id => { return { value: id } })
         }
 
         fetch(`/api/dataset/${evaluationData.id}`, {
@@ -43,6 +50,18 @@ export default function LabelingEditor({ className, evaluationData }: LabelingEd
         });
     }
 
+    function handleElementClicked(element: any) {
+        if (!isLabelMode) return
+        if (element.type === "bpmn:Task") {
+            const activityId = element.id;
+            if (highlightedActivityIds.includes(activityId)) {
+                setHighlightedActivityIds(highlightedActivityIds.filter(id => id !== activityId));
+            } else {
+                setHighlightedActivityIds([...highlightedActivityIds, activityId]);
+            }
+        }
+    }
+
     const cards = [
         {
             position: "top-right",
@@ -55,9 +74,13 @@ export default function LabelingEditor({ className, evaluationData }: LabelingEd
                         onClick={onSave}
                         variant="default"
                     >
-                        <Save className="mr-2 h-4 w-4" />
+                        <Save className="mr-2 h-4 w-4"/>
                         Save Test Case
                     </Button>
+                    <div className="flex items-center space-x-2">
+                        <Switch id="label-mode" onCheckedChange={setIsLabelMode}/>
+                        <Label htmlFor="label-mode">Label Mode</Label>
+                    </div>
                 </CardContent>
             </Card>
         } as BpmnToolCard
@@ -67,10 +90,13 @@ export default function LabelingEditor({ className, evaluationData }: LabelingEd
         <div className={`h-full ${className}`}>
             <BpmnEditor
                 title={evaluationData.name || ""}
-                bpmnXml={evaluationData.bpmnXml}
+                bpmnXml={diagram}
                 cards={cards}
-                highlightedActivityIds={evaluationData.expectedValues.map(exp => exp.value)}
+                highlightedActivityIds={highlightedActivityIds}
                 onDiagramChanged={setDiagram}
+                onElementClicked={handleElementClicked}
+                editorClassName={isLabelMode ? "border border-destructive" : ""}
+                disableEditing={isLabelMode}
             />
         </div>
     );
