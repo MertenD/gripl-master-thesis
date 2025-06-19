@@ -29,7 +29,7 @@ class EvaluationRunner(
                 passed++
             }
 
-            buildMarkdownForCase(markdown, entry, evaluationResult)
+            buildMarkdownForTestCase(markdown, entry, evaluationResult)
         }
 
         markdown
@@ -41,7 +41,7 @@ class EvaluationRunner(
         return markdown.toString()
     }
 
-    fun buildMarkdownForCase(markdown: StringBuilder, entry: EvaluationData, evaluationResult: List<ExpectedValue>) {
+    fun buildMarkdownForTestCase(markdown: StringBuilder, entry: EvaluationData, evaluationResult: List<ExpectedValue>) {
         val bpmnModel = Bpmn.readModelFromStream(entry.bpmnXml.byteInputStream())
 
         val correctActivityIds = entry.expectedValues.map { it.value }.filter {
