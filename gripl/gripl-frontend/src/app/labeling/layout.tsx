@@ -2,6 +2,8 @@ import React from "react";
 import DatasetList from "@/components/labeling/dataset-list";
 import {EvaluationDataMeta} from "@/models/dto/EvaluationData";
 
+export const dynamic = 'force-dynamic';
+
 export default async function LabelingPageLayout({ children }: Readonly<{ children: React.ReactNode }>) {
 
     const evaluationMetadata: EvaluationDataMeta[] = await fetch(`${process.env.API_BASE_URL}/dataset`, {
