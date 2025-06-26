@@ -4,7 +4,6 @@ import de.mertendieckmann.griplbackend.ai.BpmnAnalysisAiService.BpmnAnalysisResu
 import de.mertendieckmann.griplbackend.ai.BpmnAnalysisAiServiceFactory
 import dev.langchain4j.model.chat.ChatModel
 import io.github.oshai.kotlinlogging.KotlinLogging
-import org.springframework.stereotype.Component
 
 class BpmnAnalyzer(
     llm: ChatModel
@@ -18,6 +17,7 @@ class BpmnAnalyzer(
 
         val result = bpmnAnalysisAiService.analyze(bpmnElements)
         log.info { "BPMN Analysis Result: $result" }
-        return result
+
+        return result.filterForValidActivities(bpmnElements)
     }
 }

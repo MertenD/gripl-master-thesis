@@ -13,10 +13,11 @@ interface BpmnAnalysisAiService {
         var elements: List<Element>
     ) {
         init {
-            elements = elements.filter { it.isRelevant }
+            elements = elements
+                .filter { it.isRelevant }
         }
 
-        @Description("Represents an Activity Element that is classified as relevant for GDPR compliance")
+        @Description("Represents an Activity/Task Element that is classified as relevant for GDPR compliance")
         data class Element(
             @Description("The ID of the Activity Element")
             val id: String,
@@ -25,5 +26,12 @@ interface BpmnAnalysisAiService {
             @Description("Indicates whether the Activity Element is relevant for GDPR compliance")
             val isRelevant: Boolean = true
         )
+
+        fun filterForValidActivities(bpmnElements: Set<BpmnElement>): BpmnAnalysisResult {
+            val existingActivityIds = bpmnElements.filter { it.type.typeName == "task" }.map { it.id }.toSet()
+            return BpmnAnalysisResult(
+                elements = elements.filter { it.id in existingActivityIds }
+            )
+        }
     }
 }
