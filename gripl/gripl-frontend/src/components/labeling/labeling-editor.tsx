@@ -58,7 +58,8 @@ export default function LabelingEditor({ className, evaluationData }: LabelingEd
     }
 
     function handleElementClicked(element: any) {
-        if (!isLabelMode || element.type !== "bpmn:Task") return
+        console.log("Element clicked:", element);
+        if (!isLabelMode || !element.type.includes("Task")) return
         const activityId = element.id
         if (highlightedActivityIds.includes(activityId)) {
             setHighlightedActivityIds(highlightedActivityIds.filter(id => id !== activityId))
