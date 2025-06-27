@@ -66,6 +66,7 @@ export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = []
 
   async function handleFileLoaded(content: string) {
     onDiagramChanged(content)
+    savedViewboxRef.current = null
     initializeModeler(content).then()
   }
 
@@ -79,8 +80,6 @@ export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = []
 
       if (modelerRef.current) {
         try {
-          const oldCanvas = modelerRef.current.get("canvas");
-          savedViewboxRef.current = oldCanvas.viewbox();
           modelerRef.current.destroy()
         } catch (err) {
           console.error("Fehler beim Zerstören des vorherigen Modelers", err)
