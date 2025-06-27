@@ -31,7 +31,6 @@ export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = []
   const [canUndo, setCanUndo] = useState(false)
   const [canRedo, setCanRedo] = useState(false)
   const styleElementRef = useRef<HTMLStyleElement | null>(null)
-  const savedViewboxRef = useRef<{ x: number; y: number; width: number; height: number } | null>(null);
   const disableEditingRef = useRef(disableEditing)
 
   useEffect(() => {
@@ -41,13 +40,6 @@ export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = []
 
     return () => {
       if (modelerRef.current) {
-        try {
-          const canvas = modelerRef.current.get("canvas");
-          savedViewboxRef.current = canvas.viewbox();
-        } catch (err) {
-          console.warn("Konnte Viewbox nicht lesen", err);
-        }
-
         try {
           modelerRef.current.destroy()
         } catch (err) {
@@ -90,7 +82,6 @@ export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = []
 
   async function handleFileLoaded(content: string) {
     onDiagramChanged(content)
-    savedViewboxRef.current = null
     initializeModeler(content).then()
   }
 
@@ -153,11 +144,7 @@ export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = []
         await modeler.importXML(xml)
 
         const canvas = modeler.get("canvas");
-        if (savedViewboxRef.current) {
-          canvas.viewbox(savedViewboxRef.current);
-        } else {
-          canvas.zoom("fit-viewport");
-        }
+        canvas.zoom("fit-viewport");
 
         setIsLoaded(true)
 
