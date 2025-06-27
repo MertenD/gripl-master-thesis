@@ -27,6 +27,7 @@ export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = []
   const [canUndo, setCanUndo] = useState(false)
   const [canRedo, setCanRedo] = useState(false)
   const styleElementRef = useRef<HTMLStyleElement | null>(null)
+  const savedViewboxRef = useRef<{ x: number; y: number; width: number; height: number } | null>(null);
 
   useEffect(() => {
     if (!containerRef.current || !bpmnXml) return
@@ -35,6 +36,13 @@ export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = []
 
     return () => {
       if (modelerRef.current) {
+        try {
+          const canvas = modelerRef.current.get("canvas");
+          savedViewboxRef.current = canvas.viewbox();
+        } catch (err) {
+          console.warn("Konnte Viewbox nicht lesen", err);
+        }
+
         try {
           modelerRef.current.destroy()
         } catch (err) {
@@ -52,7 +60,6 @@ export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = []
   }, [disableEditing])
 
   useEffect(() => {
-    console.log("Aktualisiere hervorgehobene Aktivitäten:", highlightedActivityIds)
     if (!modelerRef.current || !isLoaded || !highlightedActivityIds) return
     highlightActivities(modelerRef.current, highlightedActivityIds)
   }, [highlightedActivityIds, isLoaded])
@@ -72,6 +79,8 @@ export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = []
 
       if (modelerRef.current) {
         try {
+          const oldCanvas = modelerRef.current.get("canvas");
+          savedViewboxRef.current = oldCanvas.viewbox();
           modelerRef.current.destroy()
         } catch (err) {
           console.error("Fehler beim Zerstören des vorherigen Modelers", err)
@@ -117,10 +126,11 @@ export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = []
       try {
         await modeler.importXML(xml)
 
-        try {
-          modeler.get("canvas").zoom("fit-viewport")
-        } catch (err) {
-          console.error("Fehler beim Zoomen", err)
+        const canvas = modeler.get("canvas");
+        if (savedViewboxRef.current) {
+          canvas.viewbox(savedViewboxRef.current);
+        } else {
+          canvas.zoom("fit-viewport");
         }
 
         setIsLoaded(true)
