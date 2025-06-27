@@ -6,7 +6,7 @@ import {BpmnToolCard} from "@/models/BpmnToolCard";
 import {Card, CardContent, CardHeader} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
 import {Save} from "lucide-react";
-import {useState} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 import {Switch} from "@/components/ui/switch";
 import {Label} from "@/components/ui/label";
 
@@ -18,10 +18,20 @@ interface LabelingEditorProps {
 export default function LabelingEditor({ className, evaluationData }: LabelingEditorProps) {
     const [diagram, setDiagram] = useState<string>(evaluationData.bpmnXml)
     const [isLabelMode, setIsLabelMode] = useState<boolean>(false);
+    const isLabelModeRef = useRef(isLabelMode);
     const [highlightedActivityIds, setHighlightedActivityIds] = useState<string[]>(
         evaluationData.expectedValues.map(exp => exp.value)
     );
+    const highlightedActivityIdsRef = useRef(highlightedActivityIds)
     const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+
+    useEffect(() => {
+        isLabelModeRef.current = isLabelMode
+    }, [isLabelMode])
+
+    useEffect(() => {
+        highlightedActivityIdsRef.current = highlightedActivityIds
+    }, [highlightedActivityIds]);
 
     function onSave() {
         const requestBody = {
@@ -57,18 +67,17 @@ export default function LabelingEditor({ className, evaluationData }: LabelingEd
         setHasUnsavedChanges(true)
     }
 
-    function handleElementClicked(element: any) {
-        console.log("Element clicked:", element);
-        if (!isLabelMode || !element.type.includes("Task")) return
+    const handleElementClicked = useCallback((element: any) => {
+        if (!isLabelModeRef.current || !element.type.includes("Task")) return
         const activityId = element.id
-        if (highlightedActivityIds.includes(activityId)) {
-            setHighlightedActivityIds(highlightedActivityIds.filter(id => id !== activityId))
+        if (highlightedActivityIdsRef.current.includes(activityId)) {
+            setHighlightedActivityIds(highlightedActivityIdsRef.current.filter(id => id !== activityId))
             setHasUnsavedChanges(true)
         } else {
-            setHighlightedActivityIds([...highlightedActivityIds, activityId])
+            setHighlightedActivityIds([...highlightedActivityIdsRef.current, activityId])
             setHasUnsavedChanges(true)
         }
-    }
+    }, [])
 
     const cards = [
         {

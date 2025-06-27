@@ -6,6 +6,10 @@ import {Button} from "@/components/ui/button";
 import BpmnUploadButton from "@/components/bpmn-upload-button";
 import {BpmnToolCard} from "@/models/BpmnToolCard";
 import emptyDiagram from "@/data/empty-diagram.bpmn";
+// @ts-ignore
+import DisableModelingModule from 'bpmn-js-token-simulation/lib/features/disable-modeling';
+// @ts-ignore
+import { TOGGLE_MODE_EVENT } from 'bpmn-js-token-simulation/lib/util/EventHelper';
 
 interface BpmnEditorProps {
   title?: string
@@ -28,6 +32,7 @@ export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = []
   const [canRedo, setCanRedo] = useState(false)
   const styleElementRef = useRef<HTMLStyleElement | null>(null)
   const savedViewboxRef = useRef<{ x: number; y: number; width: number; height: number } | null>(null);
+  const disableEditingRef = useRef(disableEditing)
 
   useEffect(() => {
     if (!containerRef.current || !bpmnXml) return
@@ -57,6 +62,25 @@ export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = []
         styleElementRef.current = null
       }
     }
+  }, [])
+
+  useEffect(() => {
+    if (!containerRef.current || !modelerRef.current || !bpmnXml) return
+
+    disableEditingRef.current = disableEditing
+
+    if (disableEditing) {
+      const selection = modelerRef.current.get("selection")
+      selection.select([]);
+    }
+
+    modelerRef.current
+        .get('eventBus')
+        .fire(TOGGLE_MODE_EVENT, { active: disableEditing })
+
+    document
+        .querySelector('.djs-palette')
+        ?.toggleAttribute('hidden', disableEditing);
   }, [disableEditing])
 
   useEffect(() => {
@@ -72,11 +96,9 @@ export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = []
 
   async function initializeModeler(xml: string) {
     try {
-      const BpmnModeler = disableEditing ?
-          // @ts-ignore
-          (await import("bpmn-js/dist/bpmn-navigated-viewer.production.min.js")).default :
-          // @ts-ignore
+      const BpmnModeler = // @ts-ignore
           (await import("bpmn-js/dist/bpmn-modeler.production.min.js")).default
+
 
       if (modelerRef.current) {
         try {
@@ -88,7 +110,8 @@ export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = []
       }
 
       const modeler = new BpmnModeler({
-        container: containerRef.current
+        container: containerRef.current,
+        additionalModules: [ DisableModelingModule ]
       })
 
       modelerRef.current = modeler
@@ -99,6 +122,10 @@ export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = []
         const element = e.element
         if (!element || element.labelTarget) return
         onElementClicked?.(element)
+        if (disableEditingRef.current) {
+          const selection = modeler.get("selection")
+          selection.select([]);
+        }
       })
 
       modeler.on("commandStack.changed", () => {
