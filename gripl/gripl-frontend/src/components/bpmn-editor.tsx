@@ -49,7 +49,7 @@ export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = []
         styleElementRef.current = null
       }
     }
-  }, [onDiagramChanged, onElementClicked, disableEditing])
+  }, [disableEditing])
 
   useEffect(() => {
     console.log("Aktualisiere hervorgehobene Aktivitäten:", highlightedActivityIds)
