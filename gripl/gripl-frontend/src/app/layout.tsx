@@ -44,7 +44,7 @@ export default function RootLayout({
         <SidebarProvider className="h-full w-full">
           <AppSidebar />
           <SidebarInset className="h-full w-full">
-            <header className="h-16 px-2 flex flex-row items-center justify-start space-x-4 bg-sidebar">
+            <header className="h-16 flex-shrink-0 px-2 flex flex-row items-center justify-start space-x-4 bg-sidebar sticky top-0 z-10">
               <SidebarTrigger/>
               <AppBreadCrumbs />
             </header>

@@ -44,7 +44,7 @@ export default function TestCaseCard({ metadata } : TestCaseCardProps) {
         <Card className="flex-1 relative">
             <Link href={`/labeling/${metadata.id}`}>
                 <div className="p-4">
-                    <h2 className="text-lg font-bold mb-6">{metadata.name || "Test Case"} ({metadata.id})</h2>
+                    <h2 className="text-lg font-bold mb-6 mr-12">{metadata.name || "Test Case"} ({metadata.id})</h2>
                     { isLoading && !svgPreview && <Skeleton className="h-28 w-full" /> }
                     { svgPreview && <Image
                         src={`data:image/svg+xml;utf8,${encodeURIComponent(svgPreview)}`}

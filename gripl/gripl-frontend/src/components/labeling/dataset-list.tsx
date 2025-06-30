@@ -13,7 +13,7 @@ export default function DatasetList({ className, evaluationMetadata }: DatasetLi
             <h2 className="font-bold text-2xl p-4 pb-4">Test Cases</h2>
             <CreateTestCaseButton />
         </div>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 overflow-y-auto gap-4 px-4">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 overflow-y-auto gap-4 px-4 pb-4">
             {evaluationMetadata.map((meta) =>
                 <TestCaseCard metadata={meta} key={meta.id} />
             )}
