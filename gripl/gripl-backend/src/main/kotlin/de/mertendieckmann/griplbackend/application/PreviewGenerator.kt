@@ -12,7 +12,7 @@ class PreviewGenerator {
             ?: error("PreviewGeneratorTemplate.html nicht gefunden")
     }
 
-    fun convertXmlToSvg(bpmnXml: String, correctIds: List<String>, falsePositiveIds: List<String>, falseNegativeIds: List<String>): String {
+    fun convertXmlToSvg(bpmnXml: String, correctIds: List<String>, falsePositiveIds: List<String>, falseNegativeIds: List<String>, theme: String = "light"): String {
         Playwright.create().use { pw ->
             val browser = pw.chromium().launch(
                 com.microsoft.playwright.BrowserType.LaunchOptions()
@@ -30,7 +30,7 @@ class PreviewGenerator {
                 val falsePositiveIdsString = falsePositiveIds.joinToString(",", "[", "]") { "\"$it\"" }
                 val falseNegativeIdsString = falseNegativeIds.joinToString(",", "[", "]") { "\"$it\"" }
 
-                val result = page.evaluate("""xml => window.convertBpmn(xml, $correctIdsString, $falsePositiveIdsString, $falseNegativeIdsString)""", bpmnXml)
+                val result = page.evaluate("""xml => window.convertBpmn(xml, $correctIdsString, $falsePositiveIdsString, $falseNegativeIdsString, "$theme")""", bpmnXml)
 
                 val success = (result as Map<*, *>)["success"] as Boolean
                 if (!success) {

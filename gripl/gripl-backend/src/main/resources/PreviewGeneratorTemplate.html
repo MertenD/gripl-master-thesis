@@ -6,6 +6,918 @@
     <style>
         #canvas { width: 100%; height: 500px; }
     </style>
+    <style id="diagramCss">
+        .djs-container {
+            /* Canvas */
+            --canvas-fill-color: var(--card);
+
+            /* Bendpoint */
+            --bendpoint-fill-color: hsl(var(--primary));
+            --bendpoint-stroke-color: hsl(var(--card));
+
+            /* Context Pad */
+            --context-pad-entry-background-color: hsl(var(--background));
+            --context-pad-entry-hover-background-color: hsl(var(--muted));
+
+            /* Element Drag/Select/hover */
+            --element-dragger-color: hsl(var(--primary));
+            --element-hover-outline-fill-color: hsl(var(--primary));
+            --element-selected-outline-stroke-color: hsl(var(--primary));
+            --element-selected-outline-secondary-stroke-color: hsl(var(--ring));
+
+            /* Lasso (mit 15 % Transparenz) */
+            --lasso-fill-color: hsl(var(--primary)/0.15);
+            --lasso-stroke-color: hsl(var(--primary));
+
+            /* Palette */
+            --palette-entry-color: hsl(var(--foreground));
+            --palette-entry-hover-color: hsl(var(--primary));
+            --palette-entry-selected-color: hsl(var(--primary));
+            --palette-separator-color: hsl(var(--border));
+            --palette-toggle-hover-background-color: hsl(var(--muted));
+            --palette-background-color: hsl(var(--card));
+            --palette-border-color: hsl(var(--border));
+
+            /* Popup */
+            --popup-body-background-color: hsl(var(--card));
+            --popup-header-entry-selected-color: hsl(var(--primary));
+            --popup-header-entry-selected-background-color: hsl(var(--muted));
+            --popup-header-separator-color: hsl(var(--border));
+            --popup-background-color: hsl(var(--background));
+            --popup-border-color: hsl(var(--border));
+
+            /* Resizer */
+            --resizer-fill-color: hsl(var(--primary));
+            --resizer-stroke-color: hsl(var(--card));
+
+            /* Suche */
+            --search-container-background-color: hsl(var(--background));
+            --search-container-border-color: hsl(var(--primary));
+            --search-container-box-shadow-color: hsl(var(--ring));
+            --search-container-box-shadow-inset-color: hsl(var(--border));
+            --search-input-border-color: hsl(var(--border));
+            --search-result-border-color: hsl(var(--border));
+            --search-result-highlight-color: hsl(var(--foreground));
+            --search-result-selected-color: hsl(var(--primary)/0.3);
+
+            /* Shape-Interaction */
+            --shape-attach-allowed-stroke-color: hsl(var(--primary));
+            --shape-connect-allowed-fill-color: hsl(var(--background));
+            --shape-drop-allowed-fill-color: hsl(var(--background));
+            --shape-drop-not-allowed-fill-color: hsl(var(--destructive));
+            --shape-resize-preview-stroke-color: hsl(var(--primary));
+
+            /* Snap-Linien */
+            --snap-line-stroke-color: hsl(var(--primary)/0.3);
+
+            /* Space-Tool */
+            --space-tool-crosshair-stroke-color: hsl(var(--foreground));
+
+            /* Tooltip-Error */
+            --tooltip-error-background-color: hsl(var(--destructive));
+            --tooltip-error-border-color: hsl(var(--destructive));
+            --tooltip-error-color: hsl(var(--destructive));
+        }
+
+        /* 1. Elements on Canvas */
+
+        .djs-shape .djs-visual circle {
+            fill: hsl(var(--card)) !important;
+            stroke: hsl(var(--foreground)) !important;
+        }
+
+        .djs-shape .djs-visual rect {
+            fill: hsl(var(--card)) !important;
+            stroke: hsl(var(--foreground)) !important;
+        }
+
+        .djs-shape .djs-visual polygon {
+            fill: hsl(var(--card)) !important;
+            stroke: hsl(var(--foreground)) !important;
+        }
+
+        .djs-shape .djs-visual:has(> polygon) > path {
+            fill: hsl(var(--foreground)) !important;
+        }
+
+        .djs-shape .djs-visual:not(:has(> polygon)) > path {
+            fill: hsl(var(--card)) !important;
+            stroke: hsl(var(--foreground)) !important;
+        }
+
+        .djs-label {
+            fill: hsl(var(--foreground)) !important;
+        }
+
+        /* 2. Outline-Stile */
+        .djs-outline,
+        .djs-selection-outline {
+            fill: none;
+            shape-rendering: geometricPrecision;
+            stroke-width: 2px;
+        }
+
+        .djs-outline {
+            visibility: hidden;
+        }
+
+        .djs-selection-outline {
+            stroke: var(--element-selected-outline-stroke-color);
+        }
+
+        .djs-element.selected .djs-outline {
+            visibility: visible;
+            stroke: var(--element-selected-outline-stroke-color);
+        }
+
+        .djs-multi-select .djs-element.selected .djs-outline {
+            stroke: var(--element-selected-outline-secondary-stroke-color);
+        }
+
+        .djs-shape.connect-ok .djs-visual > :nth-child(1) {
+            fill: var(--shape-connect-allowed-fill-color) !important;
+        }
+
+        .djs-shape.connect-not-ok .djs-visual > :nth-child(1),
+        .djs-shape.drop-not-ok .djs-visual > :nth-child(1) {
+            fill: var(--shape-drop-not-allowed-fill-color) !important;
+        }
+
+        .djs-shape.new-parent .djs-visual > :nth-child(1) {
+            fill: var(--shape-drop-allowed-fill-color) !important;
+        }
+
+        svg.drop-not-ok {
+            background: var(--shape-drop-not-allowed-fill-color) !important;
+        }
+
+        svg.new-parent {
+            background: var(--shape-drop-allowed-fill-color) !important;
+        }
+
+        /* Override move cursor during drop and connect */
+        .drop-not-ok,
+        .connect-not-ok,
+        .drop-not-ok *,
+        .connect-not-ok * {
+            cursor: not-allowed !important;
+        }
+
+        .drop-ok,
+        .connect-ok,
+        .drop-ok *,
+        .connect-ok * {
+            cursor: default !important;
+        }
+
+        .djs-element.attach-ok .djs-visual > :nth-child(1) {
+            stroke-width: 5px !important;
+            stroke: var(--shape-attach-allowed-stroke-color) !important;
+        }
+
+        .djs-frame.connect-not-ok .djs-visual > :nth-child(1),
+        .djs-frame.drop-not-ok .djs-visual > :nth-child(1) {
+            stroke-width: 3px !important;
+            stroke: var(--shape-drop-not-allowed-fill-color) !important;
+            fill: none !important;
+        }
+
+        /* 3. Selection Box (Lasso) */
+        .djs-lasso-overlay {
+            fill: var(--lasso-fill-color);
+            stroke: var(--lasso-stroke-color);
+            stroke-width: 2px;
+            shape-rendering: geometricPrecision;
+            pointer-events: none;
+        }
+
+        /* 4. Resize-Stile */
+        .djs-resize-overlay {
+            fill: none;
+            stroke-dasharray: 5 1 3 1;
+            stroke: var(--shape-resize-preview-stroke-color);
+            pointer-events: none;
+        }
+
+        .djs-resizer-hit {
+            fill: none;
+            pointer-events: all;
+        }
+
+        .djs-resizer-visual {
+            fill: var(--resizer-fill-color);
+            stroke-width: 1px;
+            stroke: var(--resizer-stroke-color);
+            shape-rendering: geometricPrecision;
+        }
+
+        .djs-resizer:hover .djs-resizer-visual {
+            stroke: var(--resizer-stroke-color);
+            stroke-opacity: 1;
+        }
+
+        .djs-cursor-resize-ns,
+        .djs-resizer-n,
+        .djs-resizer-s {
+            cursor: ns-resize;
+        }
+
+        .djs-cursor-resize-ew,
+        .djs-resizer-e,
+        .djs-resizer-w {
+            cursor: ew-resize;
+        }
+
+        .djs-cursor-resize-nwse,
+        .djs-resizer-nw,
+        .djs-resizer-se {
+            cursor: nwse-resize;
+        }
+
+        .djs-cursor-resize-nesw,
+        .djs-resizer-ne,
+        .djs-resizer-sw {
+            cursor: nesw-resize;
+        }
+
+        .djs-shape.djs-resizing > .djs-outline {
+            visibility: hidden !important;
+        }
+
+        .djs-shape.djs-resizing > .djs-resizer {
+            visibility: hidden;
+        }
+
+        .djs-dragger > .djs-resizer {
+            visibility: hidden;
+        }
+
+        /* 5. Drag-Stile */
+        .djs-dragger * {
+            fill: none !important;
+            stroke: var(--element-dragger-color) !important;
+        }
+
+        .djs-dragger tspan,
+        .djs-dragger text {
+            fill: var(--element-dragger-color) !important;
+            stroke: none !important;
+        }
+
+        marker.djs-dragger circle,
+        marker.djs-dragger path,
+        marker.djs-dragger polygon,
+        marker.djs-dragger polyline,
+        marker.djs-dragger rect {
+            fill: var(--element-dragger-color) !important;
+            stroke: none !important;
+        }
+
+        marker.djs-dragger text,
+        marker.djs-dragger tspan {
+            fill: none !important;
+            stroke: var(--element-dragger-color) !important;
+        }
+
+        .djs-dragging {
+            opacity: 0.3;
+        }
+
+        .djs-dragging,
+        .djs-dragging > * {
+            pointer-events: none !important;
+        }
+
+        .djs-dragging .djs-context-pad,
+        .djs-dragging .djs-outline {
+            display: none !important;
+        }
+
+        /* 6. Pointer-Events für Visual/Hits */
+        .djs-visual,
+        .djs-outline {
+            pointer-events: none;
+        }
+
+        .djs-element.attach-ok .djs-hit {
+            stroke-width: 60px !important;
+        }
+
+        /* Alle Pointer-Ereignisse für Hit-Shapes */
+        .djs-element > .djs-hit-all,
+        .djs-element > .djs-hit-no-move {
+            pointer-events: all;
+        }
+
+        .djs-element > .djs-hit-stroke,
+        .djs-element > .djs-hit-click-stroke {
+            pointer-events: stroke;
+        }
+
+        .djs-cursor-grab {
+            cursor: -webkit-grab;
+            cursor: -moz-grab;
+            cursor: grab;
+        }
+
+        .djs-cursor-grabbing {
+            cursor: -webkit-grabbing;
+            cursor: -moz-grabbing;
+            cursor: grabbing;
+        }
+
+        .djs-cursor-crosshair {
+            cursor: crosshair;
+        }
+
+        .djs-cursor-move {
+            cursor: move;
+        }
+
+        /* 7. Snapping-Stile */
+        .djs-snap-line {
+            stroke: var(--snap-line-stroke-color);
+            stroke-linecap: round;
+            stroke-width: 2px;
+            pointer-events: none;
+        }
+
+        .djs-crosshair {
+            stroke: var(--space-tool-crosshair-stroke-color);
+            stroke-linecap: round;
+            stroke-width: 1px;
+            pointer-events: none;
+            shape-rendering: geometricPrecision;
+            stroke-dasharray: 5, 5;
+        }
+
+        /* 8. Palette */
+        .djs-palette {
+            position: absolute;
+            left: 20px;
+            top: 20px;
+            box-sizing: border-box;
+            width: 48px;
+        }
+
+        .djs-palette .separator {
+            margin: 5px;
+            padding-top: 5px;
+            border: none;
+            border-bottom: solid 1px var(--palette-separator-color);
+            clear: both;
+        }
+
+        .djs-palette .entry:before {
+            vertical-align: initial;
+        }
+
+        .djs-palette .djs-palette-toggle {
+            cursor: pointer;
+        }
+
+        .djs-palette .entry,
+        .djs-palette .djs-palette-toggle {
+            color: var(--palette-entry-color);
+            font-size: 30px;
+            text-align: center;
+        }
+
+        .djs-palette .entry {
+            float: left;
+        }
+
+        .djs-palette .entry img {
+            max-width: 100%;
+        }
+
+        .djs-palette .djs-palette-entries:after {
+            content: '';
+            display: table;
+            clear: both;
+        }
+
+        .djs-palette .djs-palette-toggle:hover {
+            background: var(--palette-toggle-hover-background-color);
+        }
+
+        .djs-palette .entry:hover {
+            color: var(--palette-entry-hover-color);
+        }
+
+        .djs-palette .highlighted-entry {
+            color: var(--palette-entry-selected-color) !important;
+        }
+
+        .djs-palette .entry,
+        .djs-palette .djs-palette-toggle {
+            width: 46px;
+            height: 46px;
+            line-height: 46px;
+            cursor: default;
+        }
+
+        /* Palette Open / Two-Column Layout */
+        .djs-palette.two-column.open {
+            width: 94px;
+        }
+
+        .djs-palette:not(.open) .djs-palette-entries {
+            display: none;
+        }
+
+        .djs-palette:not(.open) {
+            overflow: hidden;
+        }
+
+        .djs-palette.open .djs-palette-toggle {
+            display: none;
+        }
+
+        /* 9. Context-Pad */
+        .djs-overlay-context-pad {
+            width: 72px;
+            z-index: 100;
+        }
+
+        .djs-context-pad {
+            position: absolute;
+            display: none;
+            pointer-events: none;
+            line-height: 1;
+        }
+
+        .djs-context-pad .entry {
+            width: 22px;
+            height: 22px;
+            text-align: center;
+            display: inline-block;
+            font-size: 22px;
+            margin: 0 2px 2px 0;
+            border-radius: 3px;
+            cursor: default;
+            background-color: var(--context-pad-entry-background-color);
+            box-shadow: 0 0 2px 1px var(--context-pad-entry-background-color);
+            pointer-events: all;
+            vertical-align: middle;
+        }
+
+        .djs-context-pad .entry:hover {
+            background: var(--context-pad-entry-hover-background-color);
+        }
+
+        .djs-context-pad.open {
+            display: block;
+        }
+
+        /* 10. Popup-Stile */
+        .djs-popup .entry {
+            line-height: 20px;
+            white-space: nowrap;
+            cursor: default;
+        }
+
+        .djs-popup .entry:before {
+            vertical-align: middle;
+            font-size: 20px;
+        }
+
+        .djs-popup .entry > span {
+            vertical-align: middle;
+            font-size: 14px;
+        }
+
+        .djs-popup .entry:hover,
+        .djs-popup .entry.active:hover {
+            background: var(--popup-header-entry-selected-background-color);
+        }
+
+        .djs-popup .entry.disabled {
+            background: inherit;
+        }
+
+        .djs-popup .djs-popup-header .entry {
+            display: inline-block;
+            padding: 2px 3px 2px 3px;
+            border: solid 1px transparent;
+            border-radius: 3px;
+        }
+
+        .djs-popup .djs-popup-header .entry.active {
+            color: var(--popup-header-entry-selected-color);
+            border: solid 1px var(--popup-header-entry-selected-color);
+            background-color: var(--popup-header-entry-selected-background-color);
+        }
+
+        .djs-popup-body .entry {
+            padding: 4px 5px;
+        }
+
+        .djs-popup-body .entry > span {
+            margin-left: 5px;
+        }
+
+        .djs-popup-body {
+            background-color: var(--popup-body-background-color);
+        }
+
+        .djs-popup-header {
+            border-bottom: 1px solid var(--popup-header-separator-color);
+        }
+
+        .djs-popup-header .entry {
+            margin: 1px;
+            margin-left: 3px;
+        }
+
+        .djs-popup-header .entry:last-child {
+            margin-right: 3px;
+        }
+
+        .djs-palette {
+            background: var(--palette-background-color);
+            border: solid 1px var(--palette-border-color);
+            border-radius: 2px;
+        }
+
+        .djs-popup {
+            background: var(--popup-background-color);
+            border: solid 1px var(--popup-border-color);
+            border-radius: 2px;
+        }
+
+        /* 11. Touch- und Bendpoint-Stile */
+        .djs-shape,
+        .djs-connection {
+            touch-action: none;
+        }
+
+        .djs-segment-dragger,
+        .djs-bendpoint {
+            display: none;
+        }
+
+        .djs-segment-dragger .djs-visual {
+            display: none;
+            fill: var(--bendpoint-fill-color);
+            stroke: var(--bendpoint-stroke-color);
+            stroke-width: 1px;
+            stroke-opacity: 1;
+        }
+
+        .djs-segment-dragger:hover .djs-visual {
+            display: block;
+        }
+
+        .djs-bendpoint .djs-visual {
+            fill: var(--bendpoint-fill-color);
+            stroke: var(--bendpoint-stroke-color);
+            stroke-width: 1px;
+        }
+
+        .djs-segment-dragger:hover,
+        .djs-bendpoints.hover .djs-segment-dragger,
+        .djs-bendpoints.selected .djs-segment-dragger,
+        .djs-bendpoint:hover,
+        .djs-bendpoints.hover .djs-bendpoint,
+        .djs-bendpoints.selected .djs-bendpoint {
+            display: block;
+        }
+
+        .djs-drag-active .djs-bendpoints * {
+            display: none;
+        }
+
+        .djs-bendpoints:not(.hover) .floating {
+            display: none;
+        }
+
+        .djs-segment-dragger:hover .djs-visual,
+        .djs-segment-dragger.djs-dragging .djs-visual,
+        .djs-bendpoint:hover .djs-visual,
+        .djs-bendpoint.floating .djs-visual {
+            fill: var(--bendpoint-fill-color);
+            stroke: var(--bendpoint-stroke-color);
+            stroke-opacity: 1;
+        }
+
+        .djs-bendpoint.floating .djs-hit {
+            pointer-events: none;
+        }
+
+        .djs-segment-dragger .djs-hit,
+        .djs-bendpoint .djs-hit {
+            fill: none;
+            pointer-events: all;
+        }
+
+        .djs-segment-dragger.horizontal .djs-hit {
+            cursor: ns-resize;
+        }
+
+        .djs-segment-dragger.vertical .djs-hit {
+            cursor: ew-resize;
+        }
+
+        .djs-segment-dragger.djs-dragging .djs-hit {
+            pointer-events: none;
+        }
+
+        .djs-updating,
+        .djs-updating > * {
+            pointer-events: none !important;
+        }
+
+        .djs-updating .djs-context-pad,
+        .djs-updating .djs-outline,
+        .djs-updating .djs-bendpoint,
+        .djs-multi-select .djs-bendpoint,
+        .djs-multi-select .djs-segment-dragger,
+        .connect-ok .djs-bendpoint,
+        .connect-not-ok .djs-bendpoint,
+        .drop-ok .djs-bendpoint,
+        .drop-not-ok .djs-bendpoint {
+            display: none !important;
+        }
+
+        .djs-segment-dragger.djs-dragging,
+        .djs-bendpoint.djs-dragging {
+            display: block;
+            opacity: 1.0;
+        }
+
+        /* 12. Tooltip-Stile */
+        .djs-tooltip-error {
+            width: 160px;
+            padding: 6px;
+            background: var(--tooltip-error-background-color);
+            border: solid 1px var(--tooltip-error-border-color);
+            border-radius: 2px;
+            color: var(--tooltip-error-color);
+            font-size: 12px;
+            line-height: 16px;
+            opacity: 0.75;
+        }
+
+        .djs-tooltip-error:hover {
+            opacity: 1;
+        }
+
+        /* 13. Suchfeld */
+        .djs-search-container {
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            margin-left: auto;
+            margin-right: auto;
+            width: 25%;
+            min-width: 300px;
+            max-width: 400px;
+            z-index: 10;
+            font-size: 1.05em;
+            opacity: 0.9;
+            background: var(--search-container-background-color);
+            border: solid 1px var(--search-container-border-color);
+            border-radius: 2px;
+            box-shadow:
+                    0 0 0 2px var(--search-container-box-shadow-color),
+                    0 0 0 1px var(--search-container-box-shadow-inset-color) inset;
+        }
+
+        .djs-search-container:not(.open) {
+            display: none;
+        }
+
+        .djs-search-input input {
+            font-size: 1.05em;
+            width: 100%;
+            padding: 6px 10px;
+            border: 1px solid var(--search-input-border-color);
+            box-sizing: border-box;
+        }
+
+        .djs-search-input input:focus {
+            outline: none;
+            border-color: var(--search-input-border-color);
+        }
+
+        .djs-search-results {
+            position: relative;
+            overflow-y: auto;
+            max-height: 200px;
+        }
+
+        .djs-search-results:hover {
+            cursor: pointer;
+        }
+
+        .djs-search-result {
+            width: 100%;
+            padding: 6px 10px;
+            background: white;
+            border-bottom: solid 1px var(--search-result-border-color);
+            border-radius: 1px;
+        }
+
+        .djs-search-highlight {
+            color: var(--search-result-highlight-color);
+        }
+
+        .djs-search-result-primary {
+            margin: 0 0 10px;
+        }
+
+        .djs-search-result-secondary {
+            font-family: monospace;
+            margin: 0;
+        }
+
+        .djs-search-result:hover {
+            background: var(--search-result-selected-color);
+        }
+
+        .djs-search-result-selected {
+            background: var(--search-result-selected-color);
+        }
+
+        .djs-search-result-selected:hover {
+            background: var(--search-result-selected-color);
+        }
+
+        .djs-search-overlay {
+            background: var(--search-result-selected-color);
+        }
+
+        /* 14. Ausblenden von Elementen */
+        .djs-element-hidden,
+        .djs-element-hidden .djs-hit,
+        .djs-element-hidden .djs-outline,
+        .djs-label-hidden .djs-label {
+            display: none !important;
+        }
+
+        .djs-element .djs-hit-stroke,
+        .djs-element .djs-hit-click-stroke,
+        .djs-element .djs-hit-all {
+            cursor: move;
+        }
+
+        /* 15. Connection-Stile */
+
+        .djs-connection .djs-visual {
+            stroke: hsl(var(--foreground)) !important;
+            stroke-width: 2px !important;
+        }
+
+        .djs-connection .djs-visual > path {
+            stroke: hsl(var(--foreground)) !important;
+            stroke-width: 2px !important;
+        }
+
+        .djs-connection marker path {
+            fill: hsl(var(--foreground)) !important;
+            stroke: hsl(var(--foreground)) !important;
+        }
+
+        .djs-direct-editing-parent {
+            background-color: hsl(var(--card)) !important;
+            border: solid 1px hsl(var(--foreground)) !important;
+        }
+
+        /* 15. Powered by */
+
+        .bjs-powered-by-lightbox .notice {
+            color: hsl(var(--foreground)) !important;
+            background-color: hsl(var(--card)) !important;
+        }
+
+        .bjs-powered-by-lightbox .backdrop {
+            background-color: rgba(40, 40, 40, 0.4) !important;
+        }
+
+        .bjs-powered-by-lightbox .notice a {
+            color: hsl(var(--foreground)) !important;
+        }
+
+        .bjs-container {
+            --bjs-font-family: Arial, sans-serif;
+
+            --breadcrumbs-item-color: hsl(var(--primary));
+            --breadcrumbs-arrow-color: hsl(0 0% 0%);
+
+            --drilldown-fill-color: hsl(var(--card));
+            --drilldown-background-color: hsl(var(--primary));
+        }
+
+        .bjs-breadcrumbs {
+            position: absolute;
+            display: none;
+            flex-wrap: wrap;
+            align-items: center;
+            top: 30px;
+            left: 30px;
+            padding: 0px;
+            margin: 0px;
+            font-family: var(--breadcrumbs-font-family);
+            font-size: 16px;
+            line-height: normal;
+        }
+
+        .bjs-breadcrumbs-shown .bjs-breadcrumbs {
+            display: flex;
+        }
+
+        .djs-palette-shown .bjs-breadcrumbs {
+            left: 90px;
+        }
+
+        .djs-palette-shown.djs-palette-two-column .bjs-breadcrumbs {
+            left: 140px;
+        }
+
+        .bjs-breadcrumbs li {
+            display: inline-flex;
+            padding-bottom: 5px;
+        }
+
+        .bjs-breadcrumbs li a {
+            cursor: pointer;
+            color: var(--breadcrumbs-item-color);
+        }
+
+        .bjs-breadcrumbs li:last-of-type a {
+            color: inherit;
+            cursor: default;
+        }
+
+        .bjs-breadcrumbs li:not(:first-child)::before {
+            content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" /><path d="M0 0h24v24H0z" fill="none" /></svg>');
+            padding: 0 8px;
+            color: var(--breadcrumbs-arrow-color);
+            height: 1em;
+        }
+
+        .bjs-breadcrumbs .bjs-crumb {
+            display: inline-block;
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .bjs-drilldown {
+            width: 20px;
+            height: 20px;
+
+            padding: 0px;
+            margin-left: -20px;
+
+            cursor: pointer;
+            border: none;
+            border-radius: 2px;
+            outline: none;
+
+            fill: var(--drilldown-fill-color);
+            background-color: var(--drilldown-background-color);
+        }
+
+        .bjs-drilldown-empty {
+            display: none;
+        }
+
+        .selected .bjs-drilldown-empty {
+            display: inherit;
+        }
+
+        [data-popup="align-elements"] .djs-popup-body {
+            display: flex;
+        }
+
+        [data-popup="align-elements"] .djs-popup-body [data-group] + [data-group] {
+            border-left: 1px solid var(--popup-border-color);
+        }
+
+        [data-popup="align-elements"] [data-group="align"] {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        [data-popup="align-elements"] .djs-popup-body .entry {
+            padding: 6px 8px;
+        }
+
+        [data-popup="align-elements"] .djs-popup-body .entry img {
+            display: block;
+
+            height: 20px;
+            width: 20px;
+        }
+
+        [data-popup="align-elements"] .bjs-align-elements-menu-entry {
+            display: inline-block;
+        }
+    </style>
 </head>
 <body>
 <div id="canvas"></div>
@@ -46,20 +958,108 @@
         }
     }
 
-    window.convertBpmn = async function(xml, correctIds, falsePositiveIds, falseNegativeIds) {
-        const styles = `
-              .highlight-correct .djs-visual > :nth-child(1) {
-                fill: #BEFFBE !important;
-              }
+    window.convertBpmn = async function(xml, correctIds, falsePositiveIds, falseNegativeIds, theme) {
+        const darkTheme = `
+            :root {
+                --background: 215 28% 12%;
+                --foreground: 210 10% 90%;
+                --muted: 215 25% 18%;
+                --muted-foreground: 210 10% 65%;
+                --popover: 215 28% 14%;
+                --popover-foreground: 210 10% 90%;
+                --card: 215 28% 16%;
+                --card-foreground: 210 10% 90%;
+                --border: 215 25% 22%;
+                --input: 215 25% 22%;
+                --primary: 142 65% 40%;
+                --primary-foreground: 0 0% 100%;
+                --secondary: 215 25% 20%;
+                --secondary-foreground: 210 10% 80%;
+                --accent: 142 65% 40%;
+                --accent-foreground: 0 0% 100%;
+                --destructive: 0 70% 60%;
+                --destructive-foreground: 0 0% 100%;
+                --warning: 38 90% 55%;
+                --warning-foreground: 38 80% 10%;
+                --ring: 142 65% 40%;
 
-              .highlight-false-positive .djs-visual > :nth-child(1) {
-                fill: #FFBEBE !important;
-              }
+                /* Sidebar colors aligned with GitHub style */
+                --sidebar-background: 215 28% 10%;
+                --sidebar-foreground: 210 10% 80%;
+                --sidebar-primary: 142 65% 40%;
+                --sidebar-primary-foreground: 0 0% 100%;
+                --sidebar-accent: 142 65% 40%;
+                --sidebar-accent-foreground: 0 0% 100%;
+                --sidebar-border: 215 25% 18%;
+                --sidebar-ring: 142 65% 40%;
+            }
 
-              .highlight-false-negative .djs-visual > :nth-child(1) {
-                fill: #FFE1BE !important;
-              }
-            `
+            .highlight-correct .djs-visual > :nth-child(1) {
+              fill: #2A6C2A !important;
+            }
+
+            .highlight-false-positive .djs-visual > :nth-child(1) {
+              fill: #B73131 !important;
+            }
+
+            .highlight-false-negative .djs-visual > :nth-child(1) {
+              fill: #BB731E !important;
+            }
+        `
+
+        const lightTheme = `
+            :root {
+              --background: 210 15% 94%;
+              --foreground: 210 60% 10%;
+              --muted: 210 20% 85%;
+              --muted-foreground: 210 40% 30%;
+              --popover: 210 15% 94%;
+              --popover-foreground: 210 60% 10%;
+              --card: 0 0% 100%;
+              --card-foreground: 210 60% 10%;
+              --border: 210 25% 75%;
+              --input: 210 25% 75%;
+              --primary: 142 80% 28%;
+              --primary-foreground: 0 0% 100%;
+              --secondary: 210 25% 80%;
+              --secondary-foreground: 210 60% 15%;
+              --accent: 142 70% 30%;
+              --accent-foreground: 0 0% 100%;
+              --destructive: 0 90% 35%;
+              --destructive-foreground: 0 0% 100%;
+              --warning: 38 95% 50%;
+              --warning-foreground: 38 100% 95%;
+              --ring: 142 80% 28%;
+              --radius: 0.5rem;
+
+              /* Sidebar colors with improved contrast */
+              --sidebar-background: 210 20% 90%;
+              --sidebar-foreground: 210 60% 15%;
+              --sidebar-primary: 142 80% 28%;
+              --sidebar-primary-foreground: 0 0% 100%;
+              --sidebar-accent: 142 70% 30%;
+              --sidebar-accent-foreground: 0 0% 100%;
+              --sidebar-border: 210 25% 75%;
+              --sidebar-ring: 142 80% 28%;
+            }
+
+            .highlight-correct .djs-visual > :nth-child(1) {
+              fill: #BEFFBE !important;
+            }
+
+            .highlight-false-positive .djs-visual > :nth-child(1) {
+              fill: #FFBEBE !important;
+            }
+
+            .highlight-false-negative .djs-visual > :nth-child(1) {
+              fill: #FFE1BE !important;
+            }
+        `
+
+        const themeMap = {
+            "light": lightTheme,
+            "dark": darkTheme
+        }
 
         try {
             const viewer = new BpmnJS({ container: '#canvas' });
@@ -68,12 +1068,23 @@
             let { svg } = await viewer.saveSVG();
             svg = svg.replace(
                 /<svg/,
-                m => `${m} style="background-color: #FFFFFF;"`
+                m => `${m} style="background-color: hsl(var(--background));"`
             );
+
+            const diagramCss = document
+                .getElementById('diagramCss')
+                .textContent;
+
             svg = svg.replace(
                 /<svg[^>]*>/,
-                m => `${m}\n<style type="text/css" data-highlight="privacy">${styles}</style>`
+                m => `${m}\n<style type="text/css">${themeMap[theme] || lightTheme}\n${diagramCss}</style>`
             )
+
+            svg = svg.replace(
+                /(<defs[\s\S]*?<marker[^>]*?>[\s\S]*?<path[^>]*?style="[^"]*?)\bfill\s*:\s*[^;"]+;/g,
+                `$1fill: hsl(var(--foreground));`
+            );
+
             return { success: true, svg };
         } catch (e) {
             return { success: false, error: e.message };

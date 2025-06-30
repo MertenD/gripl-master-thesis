@@ -87,7 +87,8 @@ class DatasetController(
         @PathVariable id: Long,
         @RequestParam correctIds: List<String> = emptyList(),
         @RequestParam falsePositiveIds: List<String> = emptyList(),
-        @RequestParam falseNegativeIds: List<String> = emptyList()
+        @RequestParam falseNegativeIds: List<String> = emptyList(),
+        @RequestParam theme: String = "light"
     ): ResponseEntity<String> {
         val previewGenerator = PreviewGenerator()
 
@@ -96,7 +97,7 @@ class DatasetController(
         val bpmnXml = datasetEntry.bpmnXml
 
         val svg = try {
-            previewGenerator.convertXmlToSvg(bpmnXml, correctIds = correctIds, falsePositiveIds = falsePositiveIds, falseNegativeIds = falseNegativeIds)
+            previewGenerator.convertXmlToSvg(bpmnXml, correctIds = correctIds, falsePositiveIds = falsePositiveIds, falseNegativeIds = falseNegativeIds, theme = theme)
         } catch (ex: IllegalArgumentException) {
             log.error(ex) { "Ungültiges BPMN XML für Id: $id" }
             return ResponseEntity.badRequest().body("Fehler beim Parsen: ${ex.message}")

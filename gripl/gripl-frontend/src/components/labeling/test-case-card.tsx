@@ -7,6 +7,7 @@ import {EvaluationDataMeta} from "@/models/dto/EvaluationData";
 import Image from "next/image";
 import {useEffect, useState} from "react";
 import {Skeleton} from "@/components/ui/skeleton";
+import {useTheme} from "next-themes";
 
 interface TestCaseCardProps {
     metadata: EvaluationDataMeta
@@ -14,6 +15,7 @@ interface TestCaseCardProps {
 
 export default function TestCaseCard({ metadata } : TestCaseCardProps) {
 
+    const themeProps = useTheme();
     const [svgPreview, setSvgPreview] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -21,7 +23,7 @@ export default function TestCaseCard({ metadata } : TestCaseCardProps) {
         const fetchSvgPreview = async () => {
             setIsLoading(true);
             try {
-                const response = await fetch(`/api/dataset/${metadata.id}/preview`);
+                const response = await fetch(`/api/dataset/${metadata.id}/preview?theme=${themeProps.resolvedTheme}`);
 
                 if (!response.ok) {
                     throw new Error(`Failed to fetch preview for test case ${metadata.id}: ${response.statusText}`);
@@ -38,7 +40,7 @@ export default function TestCaseCard({ metadata } : TestCaseCardProps) {
         };
 
         fetchSvgPreview().then();
-    }, []);
+    }, [themeProps.resolvedTheme]);
 
     return <div className="flex flex-row items-center justify-between space-x-2 h-min">
         <Card className="flex-1 relative">
