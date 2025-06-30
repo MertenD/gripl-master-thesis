@@ -28,7 +28,6 @@ export default function Home() {
   return <main className="flex flex-col justify-center items-center h-full w-full">
     <div className="w-full h-full">
       <BpmnEditor
-          title="GRIPL"
           bpmnXml={diagram}
           highlightedActivityIds={highlightedActivityIds}
           onNew={handleCreateNewDiagram}

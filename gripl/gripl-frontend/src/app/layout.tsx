@@ -6,6 +6,9 @@ import "@/style/globals.css";
 import "@/style/bpmn-js/bpmn-js.css";
 import "@/style/bpmn-js/font-bpmn.css";
 import "@/style/bpmn-js/diagram-js.css";
+import {SidebarInset, SidebarProvider, SidebarTrigger} from "@/components/ui/sidebar";
+import AppSidebar from "@/components/app-sidebar";
+import AppBreadCrumbs from "@/components/app-breadcrumbs";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -38,7 +41,16 @@ export default function RootLayout({
         defaultTheme="system"
         enableSystem={true}
       >
-        {children}
+        <SidebarProvider className="h-full w-full">
+          <AppSidebar />
+          <SidebarInset className="h-full w-full">
+            <header className="h-16 px-2 flex flex-row items-center justify-start space-x-4 bg-sidebar">
+              <SidebarTrigger/>
+              <AppBreadCrumbs />
+            </header>
+            {children}
+          </SidebarInset>
+        </SidebarProvider>
       </ThemeProvider>
     </body>
   </html>
