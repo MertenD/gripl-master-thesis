@@ -278,7 +278,7 @@ export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = []
       <div className="flex flex-col h-full w-full">
         <div className="flex flex-wrap items-center justify-between p-2 bg-card border-b gap-2">
           <div className="flex items-center space-x-1">
-            {title && <h2 className="text-lg font-semibold mr-2">{title}</h2>}
+            {title && <h2 className="text-lg font-semibold mr-4 ml-2">{title}</h2>}
             <Button
                 variant="outline"
                 size="sm"

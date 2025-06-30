@@ -17,6 +17,14 @@ const nextConfig: NextConfig = {
             },
         ];
     },
+    images: {
+        remotePatterns: [{
+            protocol: process.env.API_BASE_URL?.startsWith('https') ? 'https' : 'http',
+            hostname: process.env.API_BASE_URL?.replace(/^https?:\/\//, '').split(':')[0] || 'localhost',
+            port: process.env.API_BASE_URL?.includes(':8080') ? '8080' : '',
+            pathname: '/**',
+        }]
+    }
 };
 
 export default nextConfig;

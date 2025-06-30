@@ -1,3 +1,5 @@
+"use client"
+
 import {Button} from "@/components/ui/button";
 import {ConfirmationDialog} from "@/components/confirmation-dialog";
 import React, {useState} from "react";
