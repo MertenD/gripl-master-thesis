@@ -22,7 +22,7 @@ export default function AppSidebar() {
     const pages = [
         {
             href: "/",
-            label: "Modeling",
+            label: "Sandbox",
             icon: <Workflow />
         },
         {

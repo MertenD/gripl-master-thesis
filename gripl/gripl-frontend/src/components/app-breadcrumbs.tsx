@@ -9,7 +9,7 @@ export default function AppBreadCrumbs() {
 
     const pathname = usePathname()
     const crumbs = generateBreadcrumbs(pathname, {
-        "": 'Modeling'
+        "": 'Sandbox'
     })
 
     console.log("Breadcrumbs:", crumbs)
