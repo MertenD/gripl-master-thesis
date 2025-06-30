@@ -4,7 +4,7 @@ import React from "react";
 
 export default async function LabelingPageWithEditor({ params }: { params: Promise<{ testCaseId: string }> }) {
 
-    const { testCaseId } = await params;
+    const {testCaseId} = await params;
     const evaluationData: EvaluationData | null = await fetch(`${process.env.API_BASE_URL}/dataset/${testCaseId}`, {
         method: "GET",
         headers: {
@@ -28,5 +28,5 @@ export default async function LabelingPageWithEditor({ params }: { params: Promi
         </div>
     }
 
-    return <LabelingEditor className="flex-1" evaluationData={evaluationData} />
+    return <LabelingEditor className="flex-1" evaluationData={evaluationData}/>
 }

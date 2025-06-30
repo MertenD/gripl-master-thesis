@@ -7,8 +7,8 @@ import "@/style/bpmn-js/bpmn-js.css";
 import "@/style/bpmn-js/font-bpmn.css";
 import "@/style/bpmn-js/diagram-js.css";
 import {SidebarInset, SidebarProvider, SidebarTrigger} from "@/components/ui/sidebar";
-import AppSidebar from "@/components/app-sidebar";
-import AppBreadCrumbs from "@/components/app-breadcrumbs";
+import AppSidebar from "@/components/navigation/app-sidebar";
+import AppBreadCrumbs from "@/components/navigation/app-breadcrumbs";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

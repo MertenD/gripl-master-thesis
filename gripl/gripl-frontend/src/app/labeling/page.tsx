@@ -1,9 +1,23 @@
 import React from "react";
+import {EvaluationDataMeta} from "@/models/dto/EvaluationData";
+import DatasetList from "@/components/labeling/dataset-list";
 
-export default function LabelingPage() {
+export default async function LabelingPage() {
 
-    return <div className={`h-full flex-1`}>
-        <h2 className="font-bold text-2xl p-4 pb-4">No BPMN XML provided</h2>
-        <p className="p-4">Please select a test case to view or edit the BPMN diagram.</p>
-    </div>
+    const evaluationMetadata: EvaluationDataMeta[] = await fetch(`${process.env.API_BASE_URL}/dataset`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    })
+        .then(data => {
+            console.log("Data", data);
+            return data.json()
+        })
+        .catch(error => {
+            console.log("There was an error fetching the dataset metadata:", error);
+            return []
+        })
+
+    return <DatasetList evaluationMetadata={evaluationMetadata}/>
 }
