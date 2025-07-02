@@ -18,7 +18,10 @@ import org.springframework.web.bind.annotation.*
 @CrossOrigin(
     origins = ["\${app.frontend.base-url}"],
     allowCredentials = "true",
-    methods = [RequestMethod.GET]
+    allowedHeaders = ["*"],
+    methods = [
+        RequestMethod.GET
+    ]
 )
 class AnalysisController(
     private val llm: ChatModel,

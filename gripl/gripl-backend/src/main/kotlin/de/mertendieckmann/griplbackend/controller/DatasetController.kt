@@ -16,7 +16,13 @@ import org.springframework.web.server.ResponseStatusException
 @CrossOrigin(
     origins = ["\${app.frontend.base-url}"],
     allowCredentials = "true",
-    methods = [RequestMethod.GET]
+    allowedHeaders = ["*"],
+    methods = [
+        RequestMethod.GET,
+        RequestMethod.POST,
+        RequestMethod.DELETE,
+        RequestMethod.OPTIONS
+    ]
 )
 @RequestMapping("/dataset")
 class DatasetController(
