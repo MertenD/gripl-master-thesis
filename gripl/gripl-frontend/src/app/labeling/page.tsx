@@ -4,7 +4,7 @@ import DatasetList from "@/components/labeling/dataset-list";
 
 export default async function LabelingPage() {
 
-    const evaluationMetadata: EvaluationDataMeta[] = await fetch(`${process.env.API_BASE_URL}/dataset`, {
+    const evaluationMetadata: EvaluationDataMeta[] = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/dataset`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",

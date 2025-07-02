@@ -7,8 +7,8 @@ import {
     SidebarMenuItem
 } from "@/components/ui/sidebar";
 import Link from "next/link";
-import {Newspaper, Tag, Workflow} from "lucide-react";
-import {ReactNode} from "react";
+import {ChartBarDecreasing, Newspaper, Tag, Workflow} from "lucide-react";
+import React, {ReactNode} from "react";
 import Image from "next/image";
 
 interface Page {
@@ -29,6 +29,11 @@ export default function AppSidebar() {
             href: "/labeling",
             label: "Labeling",
             icon: <Tag />
+        },
+        {
+            href: "/evaluation",
+            label: "Evaluation",
+            icon: <ChartBarDecreasing />
         },
         {
             href: "/thesis",

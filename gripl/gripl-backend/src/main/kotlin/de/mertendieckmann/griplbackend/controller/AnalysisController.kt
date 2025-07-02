@@ -5,8 +5,8 @@ import de.mertendieckmann.griplbackend.evaluation.runner.EvaluationRunner
 import de.mertendieckmann.griplbackend.model.dto.AnalysisRequest
 import de.mertendieckmann.griplbackend.model.dto.AnalysisResponse
 import dev.langchain4j.model.chat.ChatModel
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -14,6 +14,11 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/gdpr")
+@CrossOrigin(
+    origins = ["\${app.frontend.base-url}"],
+    allowCredentials = "true",
+    methods = [RequestMethod.GET]
+)
 class AnalysisController(
     private val llm: ChatModel,
     private val evaluationRunner: EvaluationRunner
@@ -39,7 +44,7 @@ class AnalysisController(
     }
 
     @GetMapping("/evaluation/stream", produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
-    fun evaluateStream(): Flow<String> = flow {
+    suspend fun evaluateStream(): Flow<String> = flow {
         evaluationRunner.run {
             emit(it)
         }

@@ -22,7 +22,7 @@ RUN npm ci --force
 
 COPY . .
 
-ENV API_BASE_URL=$API_BASE_URL
+ENV NEXT_PUBLIC_API_BASE_URL=$API_BASE_URL
 RUN npm run build
 
 RUN npm run build

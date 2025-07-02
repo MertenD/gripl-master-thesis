@@ -9,7 +9,7 @@ services:
     container_name: gripl-frontend
     restart: unless-stopped
     environment:
-      - API_BASE_URL=http://gripl-backend:8080
+      - NEXT_PUBLIC_API_BASE_URL=http://gripl-backend:8080
     labels:
       - traefik.enable=true
       - traefik.http.routers.gripl-frontend.rule=Host(`www.gripl.mertendieckmann.de`) || Host(`gripl.mertendieckmann.de`)
