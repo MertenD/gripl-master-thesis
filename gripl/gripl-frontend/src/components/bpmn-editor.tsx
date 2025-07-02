@@ -43,7 +43,7 @@ export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = []
         try {
           modelerRef.current.destroy()
         } catch (err) {
-          console.error("Fehler beim Zerstören des Modelers", err)
+          console.error("Fehler bei m Zerstören des Modelers", err)
         }
         modelerRef.current = null
         setIsLoaded(false)
@@ -145,6 +145,7 @@ export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = []
 
         const canvas = modeler.get("canvas");
         canvas.zoom("fit-viewport");
+        modelerRef.current.get("zoomScroll").stepZoom(-1)
 
         setIsLoaded(true)
 
