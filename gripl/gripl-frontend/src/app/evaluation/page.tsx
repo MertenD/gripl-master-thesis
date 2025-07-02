@@ -2,33 +2,69 @@
 
 import {Button} from "@/components/ui/button";
 import {useState} from "react";
-import {MarkdownContent} from "@/components/markdown-content";
+import {EvaluationReport, EvaluationReportSummary, TestCaseReport} from "@/models/dto/ReportData";
+import TestCaseReportCard from "@/components/evaluation/test-case-report-card";
+import EvaluationReportSummaryCard from "@/components/evaluation/evaluation-report-summary-card";
 
 export default function EvaluationPage() {
-    const [report, setReport] = useState<string>("")
+    const [testCases, setTestCases] = useState<TestCaseReport[]>([])
+    const [summary, setSummary] = useState<EvaluationReportSummary | null>(null)
 
-    const handleEvaluationStart = () => {
-        const eventSource = new EventSource(`${process.env.NEXT_PUBLIC_API_BASE_URL}/gdpr/evaluation/stream`)
+    const handleEvaluationStart = async () => {
+        setTestCases([])
+        setSummary(null)
 
-        eventSource.onmessage = (e) => {
-            console.log("Received SSE message:", e.data)
-            setReport(prevReport => prevReport + e.data + "\n")
+        const res = await fetch(
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/gdpr/evaluation/stream`,
+            {credentials: "include"} // falls CORS mit Credentials
+        )
+        if (!res.ok || !res.body) {
+            console.error("Request failed:", res.status, res.statusText)
+            return
         }
 
-        eventSource.onerror = (err) => {
-            console.error("SSE error:", err)
-            eventSource.close()
-        }
+        const reader = res.body.getReader()
+        const decoder = new TextDecoder()
+        let buffer = ""
 
-        return () => {
-            eventSource.close()
+        while (true) {
+            const {done, value} = await reader.read()
+            if (done) break
+
+            buffer += decoder.decode(value, {stream: true})
+            const lines = buffer.split("\n")
+
+            for (let i = 0; i < lines.length - 1; i++) {
+                const line = lines[i].trim()
+                if (!line) continue
+
+                try {
+                    const obj = JSON.parse(line) as EvaluationReport
+                    if (obj.type === "testCase") {
+                        setTestCases(prev => [...prev, obj as TestCaseReport])
+                    } else if (obj.type === "summary") {
+                        setSummary(obj as EvaluationReportSummary)
+                    } else {
+                        console.warn("Unknown report type:", obj)
+                    }
+                } catch (e) {
+                    console.error("Failed to parse NDJSON line:", e);
+                }
+            }
+
+            buffer = lines[lines.length - 1]
         }
     }
 
-    return <div className="h-full w-full">
-        <Button variant="default" onClick={handleEvaluationStart}>
+    return <div className="h-full w-full p-6">
+        <Button variant="default" onClick={handleEvaluationStart} className="mb-4">
             Start Evaluation
         </Button>
-        { report !== "" &&  <MarkdownContent content={report} /> }
+        <div className="mb-4">
+            {summary && <EvaluationReportSummaryCard reportSummary={summary}/>}
+        </div>
+        <div className="flex flex-col space-y-4 pb-6">
+            {testCases.map((report) => <TestCaseReportCard report={report} key={report.testCaseId}/>)}
+        </div>
     </div>
 }

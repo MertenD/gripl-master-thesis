@@ -1,8 +1,7 @@
 package de.mertendieckmann.griplbackend.evaluation.runner
 
 import de.mertendieckmann.griplbackend.evaluation.service.Evaluator
-import de.mertendieckmann.griplbackend.model.dto.EvaluationData
-import de.mertendieckmann.griplbackend.model.dto.ExpectedValue
+import de.mertendieckmann.griplbackend.model.dto.*
 import org.camunda.bpm.model.bpmn.Bpmn
 import org.camunda.bpm.model.bpmn.instance.Activity
 import org.springframework.beans.factory.annotation.Qualifier
@@ -14,7 +13,7 @@ class EvaluationRunner(
     @Qualifier("databaseDataset") private val dataset: List<EvaluationData>,
     private val evaluator: Evaluator
 ) {
-    suspend fun run(emitter: suspend (String) -> Unit) {
+    suspend fun run(emitter: suspend (EvaluationReport) -> Unit) {
         var total = 0
         var passed = 0
 
@@ -28,20 +27,62 @@ class EvaluationRunner(
                 passed++
             }
 
-            val testCaseMarkdown = buildMarkdownForTestCase(entry, evaluationResult)
-            emitter(testCaseMarkdown)
+            val correctActivityIds = entry.expectedValues.map { it.value }.filter {
+                evaluationResult.map { res -> res.value }.contains(it)
+            }
+
+            val falsePositiveIds = evaluationResult
+                .filter { it.value !in entry.expectedValues.map { ev -> ev.value } }
+                .map { it.value }
+
+            val falseNegativeIds = entry.expectedValues
+                .filter { it.value !in evaluationResult.map { res -> res.value } }
+                .map { it.value }
+
+            val imageSrc = StringBuilder()
+                .append("https://gripl.mertendieckmann.de/api/dataset/${entry.id}/preview")
+                .append("?correctIds=${correctActivityIds.joinToString(",")}")
+                .append("&falsePositiveIds=${falsePositiveIds.joinToString(",")}")
+                .append("&falseNegativeIds=${falseNegativeIds.joinToString(",")}")
+                // The salt is there to prevent caching of the image in for example GitHub and is just an arbitrary number
+                .append("&salt=${floor(Math.random() * 99999)}")
+                .toString()
+
+            val bpmnModel = Bpmn.readModelFromStream(entry.bpmnXml.byteInputStream())
+
+            val expectedNamesWithIds = entry.expectedValues.map {
+                bpmnModel.getModelElementById<Activity>(it.value).name + " (${it.value})"
+            }
+
+            val actualNamesWithIds = evaluationResult.map {
+                bpmnModel.getModelElementById<Activity>(it.value).name + " (${it.value})"
+            }
+
+            val result = TestCaseReport(
+                testVaseId = entry.id,
+                testCaseName = entry.name,
+                imageSrc = imageSrc,
+                correctActivityIds = correctActivityIds,
+                falsePositiveIds = falsePositiveIds,
+                falseNegativeIds = falseNegativeIds,
+                expectedNamesWithIds = expectedNamesWithIds,
+                actualNamesWithIds = actualNamesWithIds,
+                isSuccessful = isSuccessful,
+                result = evaluationResult
+            )
+
+            emitter(result)
         }
 
-        val summary = StringBuilder()
-            .append("## Summary\n")
-            .append("Total: $total\n")
-            .append("Passed: $passed\n")
-            .append("Failed: ${total - passed}\n")
-            .toString()
+        val summary = EvaluationReportSummary(
+            total = total,
+            passed = passed,
+            failed = total - passed
+        )
         emitter(summary)
     }
 
-    fun buildMarkdownForTestCase(entry: EvaluationData, evaluationResult: List<ExpectedValue>): String {
+    /*fun buildMarkdownForTestCase(entry: EvaluationData, evaluationResult: List<ExpectedValue>): String {
         val bpmnModel = Bpmn.readModelFromStream(entry.bpmnXml.byteInputStream())
 
         val correctActivityIds = entry.expectedValues.map { it.value }.filter {
@@ -95,5 +136,5 @@ class EvaluationRunner(
         markdown.append("\n</details>\n\n")
 
         return markdown.toString()
-    }
+    }*/
 }

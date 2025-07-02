@@ -50,7 +50,7 @@ jobs:
           exit 1
 
       - name: Run evaluation
-        run: curl --fail http://localhost:8080/gdpr/evaluation -o evaluation-report.md
+        run: curl --fail http://localhost:8080/gdpr/evaluation/markdown -o evaluation-report.md
 
       - name: Upload evaluation report
         uses: actions/upload-artifact@v4

@@ -4,6 +4,7 @@ import de.mertendieckmann.griplbackend.application.BpmnAnalyzer
 import de.mertendieckmann.griplbackend.evaluation.runner.EvaluationRunner
 import de.mertendieckmann.griplbackend.model.dto.AnalysisRequest
 import de.mertendieckmann.griplbackend.model.dto.AnalysisResponse
+import de.mertendieckmann.griplbackend.model.dto.EvaluationReport
 import dev.langchain4j.model.chat.ChatModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -36,15 +37,15 @@ class AnalysisController(
         return ResponseEntity(response, HttpStatus.OK)
     }
 
-    @GetMapping("/evaluation", produces = [MediaType.TEXT_MARKDOWN_VALUE])
+    @GetMapping("/evaluation/markdown", produces = [MediaType.TEXT_MARKDOWN_VALUE])
     suspend fun evaluate(): String {
-        var report = ""
-        evaluationRunner.run { report += it }
-        return report
+        val reports = mutableListOf<EvaluationReport>()
+        evaluationRunner.run { reports.add(it) }
+        return reports.joinToString("\n\n") { it.toMarkdown() }
     }
 
-    @GetMapping("/evaluation/stream", produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
-    suspend fun evaluateStream(): Flow<String> = flow {
+    @GetMapping("/evaluation/stream", produces = [MediaType.APPLICATION_NDJSON_VALUE])
+    suspend fun evaluateStream(): Flow<EvaluationReport> = flow {
         evaluationRunner.run {
             emit(it)
         }

@@ -13,6 +13,11 @@ import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
 
 @RestController
+@CrossOrigin(
+    origins = ["\${app.frontend.base-url}"],
+    allowCredentials = "true",
+    methods = [RequestMethod.GET]
+)
 @RequestMapping("/dataset")
 class DatasetController(
     private val evaluationDataRepository: EvaluationDataRepository
