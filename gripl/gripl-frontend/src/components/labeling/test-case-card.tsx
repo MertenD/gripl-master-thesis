@@ -43,7 +43,7 @@ export default function TestCaseCard({ metadata } : TestCaseCardProps) {
     }, [themeProps.resolvedTheme]);
 
     return <div className="flex flex-row items-center justify-between space-x-2 h-min">
-        <Card className="flex-1 relative">
+        <Card className="flex-1 relative hover:bg-card/40">
             <Link href={`/labeling/${metadata.id}`}>
                 <div className="p-4">
                     <h2 className="text-lg font-bold mb-6 mr-12">{metadata.name || "Test Case"} ({metadata.id})</h2>
