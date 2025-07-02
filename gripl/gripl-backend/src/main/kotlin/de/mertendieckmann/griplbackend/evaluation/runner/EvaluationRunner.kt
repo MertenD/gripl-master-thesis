@@ -14,8 +14,7 @@ class EvaluationRunner(
     @Qualifier("databaseDataset") private val dataset: List<EvaluationData>,
     private val evaluator: Evaluator
 ) {
-    fun run(): String {
-        val markdown = StringBuilder()
+    suspend fun run(emitter: suspend (String) -> Unit) {
         var total = 0
         var passed = 0
 
@@ -29,19 +28,20 @@ class EvaluationRunner(
                 passed++
             }
 
-            buildMarkdownForTestCase(markdown, entry, evaluationResult)
+            val testCaseMarkdown = buildMarkdownForTestCase(entry, evaluationResult)
+            emitter(testCaseMarkdown)
         }
 
-        markdown
+        val summary = StringBuilder()
             .append("## Summary\n")
             .append("Total: $total\n")
             .append("Passed: $passed\n")
             .append("Failed: ${total - passed}\n")
-
-        return markdown.toString()
+            .toString()
+        emitter(summary)
     }
 
-    fun buildMarkdownForTestCase(markdown: StringBuilder, entry: EvaluationData, evaluationResult: List<ExpectedValue>) {
+    fun buildMarkdownForTestCase(entry: EvaluationData, evaluationResult: List<ExpectedValue>): String {
         val bpmnModel = Bpmn.readModelFromStream(entry.bpmnXml.byteInputStream())
 
         val correctActivityIds = entry.expectedValues.map { it.value }.filter {
@@ -72,6 +72,8 @@ class EvaluationRunner(
             bpmnModel.getModelElementById<Activity>(it.value).name + " (${it.value})"
         }
 
+        val markdown = StringBuilder()
+
         markdown
             .append("## Test Case ${entry.id}${if (entry.name !== null) " - ${entry.name}" else ""}\n")
             .append("<img src=\"$imageSrc\" alt=\"Test Case BPMN XML\" />\n\n")
@@ -91,5 +93,7 @@ class EvaluationRunner(
         }
 
         markdown.append("\n</details>\n\n")
+
+        return markdown.toString()
     }
 }

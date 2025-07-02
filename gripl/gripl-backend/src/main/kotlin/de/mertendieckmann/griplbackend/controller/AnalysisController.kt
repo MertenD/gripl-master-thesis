@@ -5,6 +5,8 @@ import de.mertendieckmann.griplbackend.evaluation.runner.EvaluationRunner
 import de.mertendieckmann.griplbackend.model.dto.AnalysisRequest
 import de.mertendieckmann.griplbackend.model.dto.AnalysisResponse
 import dev.langchain4j.model.chat.ChatModel
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.Flow
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -30,7 +32,16 @@ class AnalysisController(
     }
 
     @GetMapping("/evaluation", produces = [MediaType.TEXT_MARKDOWN_VALUE])
-    fun evaluate(): String {
-        return evaluationRunner.run()
+    suspend fun evaluate(): String {
+        var report = ""
+        evaluationRunner.run { report += it }
+        return report
+    }
+
+    @GetMapping("/evaluation/stream", produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
+    fun evaluateStream(): Flow<String> = flow {
+        evaluationRunner.run {
+            emit(it)
+        }
     }
 }
