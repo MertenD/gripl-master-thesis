@@ -20,7 +20,8 @@ import org.springframework.web.bind.annotation.*
     allowCredentials = "true",
     allowedHeaders = ["*"],
     methods = [
-        RequestMethod.GET
+        RequestMethod.GET,
+        RequestMethod.POST,
     ]
 )
 class AnalysisController(
