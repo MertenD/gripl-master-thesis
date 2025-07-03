@@ -4,12 +4,12 @@ services:
       context: ./gripl/gripl-frontend
       dockerfile: Dockerfile
       args:
-        API_BASE_URL: http://gripl-backend:8080
+        API_BASE_URL: https://gripl.mertendieckmann.de/api
     image: mertend/gripl-frontend:latest
     container_name: gripl-frontend
     restart: unless-stopped
     environment:
-      - NEXT_PUBLIC_API_BASE_URL=http://gripl-frontend:3000/api
+      - NEXT_PUBLIC_API_BASE_URL=https://gripl.mertendieckmann.de/api
     labels:
       - traefik.enable=true
       - traefik.http.routers.gripl-frontend.rule=Host(`www.gripl.mertendieckmann.de`) || Host(`gripl.mertendieckmann.de`)
@@ -34,7 +34,7 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=prod
       - PLAYWRIGHT_BROWSERS_PATH=/root/.cache/ms-playwright
-      - FRONTEND_BASE_URL=http://gripl-frontend:3000
+      - FRONTEND_BASE_URL=https://gripl.mertendieckmann.de
     env_file:
       - ./gripl/gripl-backend/.env
     labels:
