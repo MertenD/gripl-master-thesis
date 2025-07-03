@@ -2,17 +2,27 @@
 
 import {Button} from "@/components/ui/button";
 import {useState} from "react";
-import {EvaluationReport, EvaluationReportSummary, TestCaseReport} from "@/models/dto/ReportData";
+import {
+    EvaluationReport,
+    EvaluationReportStepInfo,
+    EvaluationReportSummary,
+    TestCaseReport
+} from "@/models/dto/ReportData";
 import TestCaseReportCard from "@/components/evaluation/test-case-report-card";
 import EvaluationReportSummaryCard from "@/components/evaluation/evaluation-report-summary-card";
+import {Spinner} from "@/components/ui/spinner";
 
 export default function EvaluationPage() {
     const [testCases, setTestCases] = useState<TestCaseReport[]>([])
     const [summary, setSummary] = useState<EvaluationReportSummary | null>(null)
+    const [currentStepInfo, setCurrentStepInfo] = useState<EvaluationReportStepInfo | null>(null)
+    const [isLoading, setIsLoading] = useState(false)
 
     const handleEvaluationStart = async () => {
         setTestCases([])
         setSummary(null)
+        setCurrentStepInfo(null)
+        setIsLoading(true)
 
         const res = await fetch(
             `${process.env.NEXT_PUBLIC_API_BASE_URL}/gdpr/evaluation/stream`,
@@ -44,6 +54,8 @@ export default function EvaluationPage() {
                         setTestCases(prev => [...prev, obj as TestCaseReport])
                     } else if (obj.type === "summary") {
                         setSummary(obj as EvaluationReportSummary)
+                    } else if (obj.type === "stepInfo") {
+                        setCurrentStepInfo(obj as EvaluationReportStepInfo)
                     } else {
                         console.warn("Unknown report type:", obj)
                     }
@@ -54,11 +66,19 @@ export default function EvaluationPage() {
 
             buffer = lines[lines.length - 1]
         }
+
+        setIsLoading(false);
     }
 
     return <div className="h-full w-full p-6">
-        <Button variant="default" onClick={handleEvaluationStart} className="mb-4">
-            Start Evaluation
+        <Button variant="default" disabled={isLoading} onClick={handleEvaluationStart} className="mb-4">
+            {!isLoading && "Start Evaluation"}
+            {isLoading && <div className="flex flex-row space-x-4">
+                <Spinner className="h-4 w-4 text-foreground" />
+                {currentStepInfo && <p>
+                    Evaluating {currentStepInfo?.currentTestCaseName}... ({currentStepInfo.currentTestCaseNumber} / {currentStepInfo.totalTestCases})
+                </p>}
+            </div>}
         </Button>
         <div className="mb-4">
             {summary && <EvaluationReportSummaryCard reportSummary={summary}/>}

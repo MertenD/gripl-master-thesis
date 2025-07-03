@@ -13,12 +13,18 @@ class EvaluationRunner(
     @Qualifier("databaseDataset") private val dataset: List<EvaluationData>,
     private val evaluator: Evaluator
 ) {
-    suspend fun run(emitter: suspend (EvaluationReport) -> Unit) {
+    suspend fun run(emitReport: suspend (EvaluationReport) -> Unit) {
         var total = 0
         var passed = 0
 
         dataset.sortedBy { it.id }.forEach { entry ->
             total++
+
+            emitReport(EvaluationReportStepInfo(
+                currentTestCaseName = entry.name ?: "Test Case ${entry.id}",
+                currentTestCaseNumber = total,
+                totalTestCases = dataset.size,
+            ))
 
             val evaluationResult = evaluator.evaluate(entry.bpmnXml)
 
@@ -71,7 +77,7 @@ class EvaluationRunner(
                 result = evaluationResult
             )
 
-            emitter(result)
+            emitReport(result)
         }
 
         val summary = EvaluationReportSummary(
@@ -79,6 +85,6 @@ class EvaluationRunner(
             passed = passed,
             failed = total - passed
         )
-        emitter(summary)
+        emitReport(summary)
     }
 }

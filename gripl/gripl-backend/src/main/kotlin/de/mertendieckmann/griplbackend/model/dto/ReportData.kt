@@ -10,7 +10,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
 )
 @JsonSubTypes(
     JsonSubTypes.Type(TestCaseReport::class, name = "testCase"),
-    JsonSubTypes.Type(EvaluationReportSummary::class, name = "summary")
+    JsonSubTypes.Type(EvaluationReportSummary::class, name = "summary"),
+    JsonSubTypes.Type(EvaluationReportStepInfo::class, name = "stepInfo")
 )
 sealed class EvaluationReport {
     abstract fun toMarkdown(): String
@@ -59,5 +60,15 @@ data class EvaluationReportSummary(
             |Passed: $passed
             |Failed: $failed
         """.trimMargin()
+    }
+}
+
+data class EvaluationReportStepInfo(
+    val currentTestCaseName: String,
+    val currentTestCaseNumber: Int,
+    val totalTestCases: Int,
+): EvaluationReport() {
+    override fun toMarkdown(): String {
+        return ""
     }
 }

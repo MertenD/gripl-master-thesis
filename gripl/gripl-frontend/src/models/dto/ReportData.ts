@@ -19,4 +19,11 @@ export interface EvaluationReportSummary {
     failed: number;
 }
 
-export type EvaluationReport = TestCaseReport | EvaluationReportSummary;
+export interface EvaluationReportStepInfo {
+    type: "stepInfo";
+    currentTestCaseName: string;
+    currentTestCaseNumber: number;
+    totalTestCases: number;
+}
+
+export type EvaluationReport = TestCaseReport | EvaluationReportSummary | EvaluationReportStepInfo;
