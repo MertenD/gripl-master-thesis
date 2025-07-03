@@ -45,7 +45,7 @@ class AnalysisController(
     suspend fun evaluate(): String {
         val reports = mutableListOf<EvaluationReport>()
         evaluationRunner.run { reports.add(it) }
-        return reports.joinToString("\n\n") { it.toMarkdown() }
+        return reports.joinToString("\n\n") { it.markdown }
     }
 
     @GetMapping("/evaluation/stream", produces = [MediaType.APPLICATION_NDJSON_VALUE])

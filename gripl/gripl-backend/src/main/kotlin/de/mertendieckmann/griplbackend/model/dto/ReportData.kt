@@ -13,7 +13,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
     JsonSubTypes.Type(EvaluationReportSummary::class, name = "summary"),
     JsonSubTypes.Type(EvaluationReportStepInfo::class, name = "stepInfo")
 )
-sealed class EvaluationReport {
+sealed class EvaluationReport{
+    val markdown: String by lazy { toMarkdown() }
     abstract fun toMarkdown(): String
 }
 
@@ -29,6 +30,7 @@ data class TestCaseReport(
     val isSuccessful: Boolean,
     val result: List<ExpectedValue>
 ): EvaluationReport() {
+
     override fun toMarkdown(): String {
         return """
             |## Test Case $testVaseId${if (testCaseName != null) " - $testCaseName" else ""}
@@ -53,6 +55,7 @@ data class EvaluationReportSummary(
     val passed: Int,
     val failed: Int
 ): EvaluationReport() {
+
     override fun toMarkdown(): String {
         return """
             |## Summary
@@ -69,6 +72,10 @@ data class EvaluationReportStepInfo(
     val totalTestCases: Int,
 ): EvaluationReport() {
     override fun toMarkdown(): String {
-        return ""
+        return """
+            |## Step Info
+            |Current Test Case: $currentTestCaseName
+            |Test Case $currentTestCaseNumber of $totalTestCases
+        """.trimMargin()
     }
 }

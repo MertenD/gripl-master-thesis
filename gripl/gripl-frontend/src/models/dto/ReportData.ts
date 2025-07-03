@@ -10,6 +10,7 @@ export interface TestCaseReport {
     actualNamesWithIds: string[];
     isSuccessful: boolean;
     result: { value: string; reason?: string }[];
+    markdown: string;
 }
 
 export interface EvaluationReportSummary {
@@ -17,6 +18,7 @@ export interface EvaluationReportSummary {
     total: number;
     passed: number;
     failed: number;
+    markdown: string;
 }
 
 export interface EvaluationReportStepInfo {
@@ -24,6 +26,7 @@ export interface EvaluationReportStepInfo {
     currentTestCaseName: string;
     currentTestCaseNumber: number;
     totalTestCases: number;
+    markdown: string;
 }
 
 export type EvaluationReport = TestCaseReport | EvaluationReportSummary | EvaluationReportStepInfo;

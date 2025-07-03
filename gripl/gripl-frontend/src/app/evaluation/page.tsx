@@ -26,7 +26,7 @@ export default function EvaluationPage() {
 
         const res = await fetch(
             `${process.env.NEXT_PUBLIC_API_BASE_URL}/gdpr/evaluation/stream`,
-            {credentials: "include"} // falls CORS mit Credentials
+            {credentials: "include"}
         )
         if (!res.ok || !res.body) {
             console.error("Request failed:", res.status, res.statusText)
@@ -70,16 +70,44 @@ export default function EvaluationPage() {
         setIsLoading(false);
     }
 
+    const handleDownloadMarkdownReport = () => {
+        if (!summary || !testCases) {
+            console.warn("Some data is missing for the report download.");
+            alert("Something went wrong while preparing the report. Please try again later.");
+            return;
+        }
+
+        const testCasesMarkdown = testCases.map((report => report.markdown))
+        const summaryMarkdown = summary.markdown;
+        const fullMarkdown = [testCasesMarkdown, summaryMarkdown].flat().join("\n\n");
+        const blob = new Blob([fullMarkdown], {type: "text/markdown"});
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "evaluation_report.md";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+
+        URL.revokeObjectURL(url);
+    }
+
     return <div className="h-full w-full p-6">
-        <Button variant="default" disabled={isLoading} onClick={handleEvaluationStart} className="mb-4">
-            {!isLoading && "Start Evaluation"}
-            {isLoading && <div className="flex flex-row space-x-4">
-                <Spinner className="h-4 w-4 text-foreground" />
-                {currentStepInfo && <p>
-                    Evaluating {currentStepInfo?.currentTestCaseName}... ({currentStepInfo.currentTestCaseNumber} / {currentStepInfo.totalTestCases})
-                </p>}
-            </div>}
-        </Button>
+        <div className="flex flex-row justify-between items-center mb-4">
+            <Button variant="default" disabled={isLoading} onClick={handleEvaluationStart}>
+                {!isLoading && "Start Evaluation"}
+                {isLoading && <div className="flex flex-row space-x-4">
+                    <Spinner className="h-4 w-4 text-foreground" />
+                    {currentStepInfo && <p>
+                        Evaluating {currentStepInfo?.currentTestCaseName}... ({currentStepInfo.currentTestCaseNumber} / {currentStepInfo.totalTestCases})
+                    </p>}
+                </div>}
+            </Button>
+            <Button variant="secondary" disabled={isLoading || !summary || !testCases} onClick={handleDownloadMarkdownReport}>
+                Download Markdown Report
+            </Button>
+        </div>
         <div className="mb-4">
             {summary && <EvaluationReportSummaryCard reportSummary={summary}/>}
         </div>
