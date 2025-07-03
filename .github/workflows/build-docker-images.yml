@@ -29,7 +29,7 @@ jobs:
           push: true
           tags: mertend/gripl-frontend:latest
           build-args: |
-            API_BASE_URL=http://gripl-backend:8080
+            API_BASE_URL=https://gripl.mertendieckmann.de/api
 
       - name: Build and push backend Docker image
         uses: docker/build-push-action@v4
