@@ -77,9 +77,9 @@ export default function EvaluationPage() {
             return;
         }
 
-        const testCasesMarkdown = testCases.map((report => report.markdown))
         const summaryMarkdown = summary.markdown;
-        const fullMarkdown = [testCasesMarkdown, summaryMarkdown].flat().join("\n\n");
+        const testCasesMarkdown = testCases.map((report => report.markdown))
+        const fullMarkdown = [summaryMarkdown, testCasesMarkdown].flat().join("\n\n");
         const blob = new Blob([fullMarkdown], {type: "text/markdown"});
         const url = URL.createObjectURL(blob);
 

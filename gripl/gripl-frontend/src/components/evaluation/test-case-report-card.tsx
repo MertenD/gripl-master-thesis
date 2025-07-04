@@ -19,7 +19,8 @@ export default function TestCaseReportCard({ report }: TestCaseReportCardProps) 
         const fetchSvgPreview = async () => {
             setIsLoading(true);
             try {
-                const response = await fetch("/" + report.imageSrc.split("//")[1].split("/").slice(1).join("/"));
+                const relativeImageSrc = "/" + report.imageSrc.split("//")[1].split("/").slice(1).join("/");
+                const response = await fetch(`${relativeImageSrc}&theme=${themeProps.resolvedTheme || "light"}`);
 
                 if (!response.ok) {
                     throw new Error(`Failed to fetch preview for test case ${report.testCaseId}: ${response.statusText}`);
