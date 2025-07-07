@@ -65,7 +65,7 @@ class EvaluationRunner(
             }
 
             val result = TestCaseReport(
-                testVaseId = entry.id,
+                testCaseId = entry.id,
                 testCaseName = entry.name,
                 imageSrc = imageSrc,
                 correctActivityIds = correctActivityIds,

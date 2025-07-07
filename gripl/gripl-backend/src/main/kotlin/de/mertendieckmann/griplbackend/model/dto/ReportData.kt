@@ -19,7 +19,7 @@ sealed class EvaluationReport{
 }
 
 data class TestCaseReport(
-    val testVaseId: Long,
+    val testCaseId: Long,
     val testCaseName: String? = null,
     val imageSrc: String,
     val correctActivityIds: List<String>,
@@ -33,7 +33,7 @@ data class TestCaseReport(
 
     override fun toMarkdown(): String {
         return """
-            |## Test Case $testVaseId${if (testCaseName != null) " - $testCaseName" else ""}
+            |## Test Case $testCaseId${if (testCaseName != null) " - $testCaseName" else ""}
             |<img src="$imageSrc" alt="Test Case BPMN XML" />
             |
             |- **Expected:** ${expectedNamesWithIds.joinToString(", ")}
