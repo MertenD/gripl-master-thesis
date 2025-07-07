@@ -16,7 +16,8 @@ const nextConfig: NextConfig = {
                 destination: `${process.env.NEXT_PUBLIC_API_BASE_URL}/:path*`,
             }
         ];
-    }
+    },
+    reactStrictMode: false
 };
 
 export default nextConfig;
