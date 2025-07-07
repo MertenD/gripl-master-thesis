@@ -45,7 +45,7 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm ci --only=production
+RUN npm ci --only=production --force
 
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
