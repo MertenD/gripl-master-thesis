@@ -39,7 +39,7 @@ services:
       - ./gripl/gripl-backend/.env
     labels:
       - traefik.enable=true
-      - traefik.http.routers.gripl-backend.rule=Host(`www.gripl.mertendieckmann.de`) && PathPrefix(`/api`) || Host(`gripl.mertendieckmann.de`) && PathPrefix(`/api`)
+      - traefik.http.routers.gripl-backend.rule=Host(`www.gripl.mertendieckmann.de`) && PathPrefix(`/api/`) || Host(`gripl.mertendieckmann.de`) && PathPrefix(`/api/`)
       - traefik.http.routers.gripl-backend.entrypoints=websecure
       - traefik.http.routers.gripl-backend.tls=true
       - traefik.http.routers.gripl-backend.tls.certresolver=lets-encrypt
