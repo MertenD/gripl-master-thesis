@@ -16,7 +16,7 @@ export default function AnalysisToolCard({ bpmnXml, highlightedActivityIds, setH
 
     const [isAnalyzing, setIsAnalyzing] = useState(false);
 
-    function analyzeDiagram() {
+    function handleAnalyzeClick() {
         setHighlightedActivityIds && setHighlightedActivityIds([]);
         setIsAnalyzing(true);
 
@@ -54,7 +54,7 @@ export default function AnalysisToolCard({ bpmnXml, highlightedActivityIds, setH
         </CardHeader>
         <CardContent className="flex flex-col space-y-4">
             <Button
-                onClick={analyzeDiagram}
+                onClick={handleAnalyzeClick}
                 variant="default"
                 disabled={isAnalyzing || !bpmnXml}
             >
