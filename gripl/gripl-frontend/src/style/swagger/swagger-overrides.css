@@ -1,5 +1,5 @@
 .swagger-ui,
-.swagger-ui *:not([style*="color"]):not(span[style]):not(.json-schema-2020-12__attribute) {
+.swagger-ui *:not([style*="color"]):not(span[style]):not(.json-schema-2020-12__attribute):not(.opblock-summary-method) {
     color: var(--foreground) !important;
 }
 
@@ -25,6 +25,6 @@
     fill: hsl(var(--foreground)) !important;
 }
 
-.swagger-ui .opblock-summary-method {
+.opblock-summary-method {
     color: hsl(var(--card)) !important;
 }
