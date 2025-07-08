@@ -5,6 +5,7 @@ import de.mertendieckmann.griplbackend.evaluation.runner.EvaluationRunner
 import de.mertendieckmann.griplbackend.model.dto.AnalysisRequest
 import de.mertendieckmann.griplbackend.model.dto.AnalysisResponse
 import de.mertendieckmann.griplbackend.model.dto.EvaluationReport
+import de.mertendieckmann.griplbackend.model.dto.EvaluationReportStepInfo
 import dev.langchain4j.model.chat.ChatModel
 import io.swagger.v3.oas.annotations.Operation
 import kotlinx.coroutines.flow.Flow
@@ -53,7 +54,9 @@ class AnalysisController(
     @GetMapping("/evaluation/markdown", produces = [MediaType.TEXT_MARKDOWN_VALUE])
     suspend fun evaluate(): String {
         val reports = mutableListOf<EvaluationReport>()
-        evaluationRunner.run { reports.add(it) }
+        evaluationRunner.run {
+            if (it !is EvaluationReportStepInfo) reports.add(it)
+        }
         return reports.joinToString("\n\n") { it.markdown }
     }
 
