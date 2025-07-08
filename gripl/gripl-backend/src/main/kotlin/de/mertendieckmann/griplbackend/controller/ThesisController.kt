@@ -1,5 +1,6 @@
 package de.mertendieckmann.griplbackend.controller
 
+import io.swagger.v3.oas.annotations.Operation
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.http.CacheControl
 import org.springframework.http.ContentDisposition
@@ -20,6 +21,10 @@ class ThesisController {
     private val thesisUrl = "https://raw.githubusercontent.com/MertenD/gripl-master-thesis/gh-pages/main.pdf"
     private val restTemplate = RestTemplate()
 
+    @Operation(
+        summary = "Fetches the main thesis PDF",
+        description = "Retrieves the main thesis PDF from github pages and returns it. This endpoint exists to avoid the automatic download of the PDF by the browser, if fetched directly from the repository."
+    )
     @GetMapping("/pdf")
     fun getThesisPdf(): ResponseEntity<ByteArrayResource> {
         val response = restTemplate.getForEntity(thesisUrl, ByteArray::class.java)

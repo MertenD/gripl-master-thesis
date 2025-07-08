@@ -1,5 +1,5 @@
 .swagger-ui,
-.swagger-ui * {
+.swagger-ui *:not([style*="color"]):not(span[style]):not(.json-schema-2020-12__attribute) {
     color: var(--foreground) !important;
 }
 
@@ -12,11 +12,6 @@
 }
 
 .swagger-ui .opblock .opblock-section-header {
-    background: hsl(var(--card)) !important;
-    color: hsl(var(--foreground)) !important;
-}
-
-.swagger-ui .opblock-body pre.microlight {
     background: hsl(var(--card)) !important;
     color: hsl(var(--foreground)) !important;
 }
