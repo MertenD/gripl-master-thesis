@@ -1,7 +1,7 @@
 "use client"
 
 import BpmnEditor from "@/components/bpmn-editor";
-import {EvaluationData} from "@/models/dto/EvaluationData";
+import {EvaluationData, ExpectedValues} from "@/models/dto/EvaluationData";
 import {BpmnToolCard} from "@/models/BpmnToolCard";
 import {Card, CardContent, CardHeader} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
@@ -10,7 +10,7 @@ import {useState} from "react";
 import {Switch} from "@/components/ui/switch";
 import {Label} from "@/components/ui/label";
 import {BpmnEditorEvent} from "@/models/BpmnEditorEvent";
-import {Textarea} from "@/components/ui/textarea";
+import LabelingEditorLabelCard from "@/components/labeling/labeling-editor-label-card";
 
 interface LabelingEditorProps {
     className?: string;
@@ -20,9 +20,7 @@ interface LabelingEditorProps {
 export default function LabelingEditor({ className, evaluationData }: LabelingEditorProps) {
     const [diagram, setDiagram] = useState<string>(evaluationData.bpmnXml)
     const [isLabelMode, setIsLabelMode] = useState<boolean>(false);
-    const [highlightedActivityIds, setHighlightedActivityIds] = useState<string[]>(
-        evaluationData.expectedValues.map(exp => exp.value)
-    );
+    const [criticalActivities, setCriticalActivities] = useState<ExpectedValues[]>(evaluationData.expectedValues);
     const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
     const [selectedElement, setSelectedElement] = useState<any | null>(null);
 
@@ -31,9 +29,7 @@ export default function LabelingEditor({ className, evaluationData }: LabelingEd
             id: evaluationData?.id || undefined,
             bpmnXml: diagram,
             name: evaluationData?.name || "",
-            expectedValues: highlightedActivityIds
-                .filter(id => diagram.includes(id))
-                .map(id => { return { value: id } })
+            expectedValues: criticalActivities.filter(critical => diagram.includes(critical.value))
         }
 
         fetch(`/api/dataset/${evaluationData.id}`, {
@@ -60,13 +56,17 @@ export default function LabelingEditor({ className, evaluationData }: LabelingEd
         setHasUnsavedChanges(true)
     }
 
-    function handleElementLabelingChange(elementId: string, isChecked: boolean) {
+    function handleElementLabelingChange(elementId: string, isChecked: boolean, reason: string) {
         if (isChecked) {
-            if (!highlightedActivityIds.includes(elementId)) {
-                setHighlightedActivityIds([...highlightedActivityIds, elementId])
+            if (!criticalActivities.some(critical => critical.value === elementId)) {
+                setCriticalActivities([...criticalActivities, { value: elementId, reason: reason }]);
+            } else {
+                setCriticalActivities(criticalActivities.map(critical =>
+                    critical.value === elementId ? { ...critical, reason: reason } : critical
+                ));
             }
         } else {
-            setHighlightedActivityIds(highlightedActivityIds.filter(id => id !== elementId))
+            setCriticalActivities(criticalActivities.filter(critical => critical.value !== elementId))
         }
         setHasUnsavedChanges(true)
     }
@@ -102,33 +102,12 @@ export default function LabelingEditor({ className, evaluationData }: LabelingEd
         },
         {
             position: "top-right",
-            content: selectedElement && isLabelMode && <Card>
-                <CardHeader>
-                    <h2 className="text-lg font-semibold">{selectedElement.businessObject.name}</h2>
-                </CardHeader>
-                <CardContent>
-                    <div className="flex items-center space-x-2">
-                        <Switch
-                            id="label-mode"
-                            defaultChecked={highlightedActivityIds.includes(selectedElement.id)}
-                            onCheckedChange={(checked) => handleElementLabelingChange(selectedElement.id, checked)}
-                        />
-                        <Label htmlFor="label-mode">Is GDPR critical</Label>
-                    </div>
-                    <div className="mt-4 flex flex-col space-y-2">
-                        <Label htmlFor="reason">Reason for labeling</Label>
-                        <Textarea
-                            id="reason"
-                            className="p-2 border rounded"
-                            placeholder="Enter reason for labeling this activity..."
-                            rows={5}
-                            onChange={(event) => {
-                              // TODO
-                            }}
-                        />
-                    </div>
-                </CardContent>
-            </Card>
+            content: selectedElement && isLabelMode && <LabelingEditorLabelCard
+                elementName={selectedElement.businessObject.name || "No Name"}
+                elementId={selectedElement.id}
+                criticalActivities={criticalActivities}
+                onLabelingChange={handleElementLabelingChange}
+            />
         }
     ]
 
@@ -138,7 +117,7 @@ export default function LabelingEditor({ className, evaluationData }: LabelingEd
                 title={evaluationData.name || ""}
                 bpmnXml={diagram}
                 cards={cards}
-                highlightedActivityIds={highlightedActivityIds}
+                highlightedActivityIds={criticalActivities.map(critical => critical.value)}
                 onDiagramChanged={handleDiagramChanged}
                 editorClassName={isLabelMode ? "border border-destructive" : ""}
                 disableEditing={isLabelMode}

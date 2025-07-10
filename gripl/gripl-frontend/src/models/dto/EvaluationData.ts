@@ -7,6 +7,7 @@ export interface EvaluationData {
 
 export interface ExpectedValues {
     value: string
+    reason?: string
 }
 
 export interface EvaluationDataMeta {
