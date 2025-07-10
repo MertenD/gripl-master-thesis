@@ -19,7 +19,6 @@ interface BpmnEditorProps {
   onNew?: () => void
   onDiagramChanged: (xml: string) => void
   cards?: BpmnToolCard[]
-  onElementClicked?: (element: any) => void
   editorClassName?: string
   disableEditing?: boolean
   onEvent?: (type: BpmnEditorEvent, event: any) => void
@@ -27,7 +26,7 @@ interface BpmnEditorProps {
 }
 
 export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = [], onNew, onDiagramChanged, cards = [],
-                                     onElementClicked, editorClassName, disableEditing, onEvent, onModelerChanged }: BpmnEditorProps) {
+                                     editorClassName, disableEditing, onEvent, onModelerChanged }: BpmnEditorProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const modelerRef = useRef<any>(null)
   const [isLoaded, setIsLoaded] = useState(false)
@@ -69,11 +68,6 @@ export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = []
     if (!containerRef.current || !modelerRef.current || !bpmnXml) return
 
     disableEditingRef.current = disableEditing
-
-    if (disableEditing) {
-      const selection = modelerRef.current.get("selection")
-      selection.select([]);
-    }
 
     modelerRef.current
         .get('eventBus')
@@ -125,16 +119,6 @@ export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = []
           }
         });
       });
-
-      eventBus.on("element.click", (e: any) => {
-        const element = e.element
-        if (!element || element.labelTarget) return
-        onElementClicked?.(element)
-        if (disableEditingRef.current) {
-          const selection = modeler.get("selection")
-          selection.select([]);
-        }
-      })
 
       modeler.on("commandStack.changed", () => {
         try {
@@ -368,19 +352,31 @@ export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = []
           </div>
         </div>
         <div ref={containerRef} className={`w-full flex-1 relative ${editorClassName}`}>
-          { cards && cards.map((card: BpmnToolCard, index: number) => (
+          {cards && Object.entries(
+            cards.reduce((acc, card) => {
+              if (!acc[card.position]) {
+                acc[card.position] = [];
+              }
+              acc[card.position].push(card);
+              return acc;
+            }, {} as Record<string, BpmnToolCard[]>)
+          ).map(([position, positionCards]) => (
             <div
-              key={`bpmn-editor-card-${index}`}
-              className={`absolute z-10
-                ${card.position === "bottom-left" ? "left-4 bottom-4" : ""}
-                ${card.position === "bottom-right" ? "right-4 bottom-14" : ""}
-                ${card.position === "top-right" ? "right-4 top-4" : ""}
-                ${card.position === "right-center" ? "right-4 top-1/2 transform -translate-y-1/2" : ""}
-                ${card.position === "bottom-center" ? "left-1/2 transform -translate-x-1/2 bottom-4" : ""}
-                ${card.position === "top-center" ? "left-1/2 transform -translate-x-1/2 top-4" : ""}
-              `}
+                key={`bpmn-editor-position-${position}`}
+                className={`absolute z-10 gap-4
+                  ${position === "bottom-left" ? "left-4 bottom-4 flex-flex-col items-start" : ""}
+                  ${position === "bottom-right" ? "right-4 bottom-14 flex flex-col items-end" : ""}
+                  ${position === "top-right" ? "right-4 top-4 flex flex-col items-end" : ""}
+                  ${position === "right-center" ? "right-4 top-1/2 transform -translate-y-1/2 flex flex-col" : ""}
+                  ${position === "bottom-center" ? "left-1/2 transform -translate-x-1/2 bottom-4 flex flex-row items-end" : ""}
+                  ${position === "top-center" ? "left-1/2 transform -translate-x-1/2 top-4 flex flex-row items-start" : ""}
+                `}
             >
-              {card.content}
+              {positionCards.map((card, index) => (
+                  <div key={`card-${position}-${index}`}>
+                    {card.content}
+                  </div>
+              ))}
             </div>
           ))}
         </div>

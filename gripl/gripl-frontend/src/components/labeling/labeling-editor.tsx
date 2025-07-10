@@ -6,9 +6,11 @@ import {BpmnToolCard} from "@/models/BpmnToolCard";
 import {Card, CardContent, CardHeader} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
 import {Save} from "lucide-react";
-import {useCallback, useEffect, useRef, useState} from "react";
+import {useState} from "react";
 import {Switch} from "@/components/ui/switch";
 import {Label} from "@/components/ui/label";
+import {BpmnEditorEvent} from "@/models/BpmnEditorEvent";
+import {Textarea} from "@/components/ui/textarea";
 
 interface LabelingEditorProps {
     className?: string;
@@ -18,20 +20,11 @@ interface LabelingEditorProps {
 export default function LabelingEditor({ className, evaluationData }: LabelingEditorProps) {
     const [diagram, setDiagram] = useState<string>(evaluationData.bpmnXml)
     const [isLabelMode, setIsLabelMode] = useState<boolean>(false);
-    const isLabelModeRef = useRef(isLabelMode);
     const [highlightedActivityIds, setHighlightedActivityIds] = useState<string[]>(
         evaluationData.expectedValues.map(exp => exp.value)
     );
-    const highlightedActivityIdsRef = useRef(highlightedActivityIds)
     const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
-
-    useEffect(() => {
-        isLabelModeRef.current = isLabelMode
-    }, [isLabelMode])
-
-    useEffect(() => {
-        highlightedActivityIdsRef.current = highlightedActivityIds
-    }, [highlightedActivityIds]);
+    const [selectedElement, setSelectedElement] = useState<any | null>(null);
 
     function onSave() {
         const requestBody = {
@@ -67,19 +60,24 @@ export default function LabelingEditor({ className, evaluationData }: LabelingEd
         setHasUnsavedChanges(true)
     }
 
-    const handleElementClicked = useCallback((element: any) => {
-        if (!isLabelModeRef.current || !element.type.includes("Task")) return
-        const activityId = element.id
-        if (highlightedActivityIdsRef.current.includes(activityId)) {
-            setHighlightedActivityIds(highlightedActivityIdsRef.current.filter(id => id !== activityId))
-            setHasUnsavedChanges(true)
+    function handleElementLabelingChange(elementId: string, isChecked: boolean) {
+        if (isChecked) {
+            if (!highlightedActivityIds.includes(elementId)) {
+                setHighlightedActivityIds([...highlightedActivityIds, elementId])
+            }
         } else {
-            setHighlightedActivityIds([...highlightedActivityIdsRef.current, activityId])
-            setHasUnsavedChanges(true)
+            setHighlightedActivityIds(highlightedActivityIds.filter(id => id !== elementId))
         }
-    }, [])
+        setHasUnsavedChanges(true)
+    }
 
-    const cards = [
+    function handleEditorEvent(type: BpmnEditorEvent, event: any) {
+        if (type === BpmnEditorEvent.SelectionChanged) {
+            setSelectedElement(event.newSelection.length === 1 ? event.newSelection[0] : null);
+        }
+    }
+
+    const cards: BpmnToolCard[] = [
         {
             position: "top-right",
             content: <Card>
@@ -101,7 +99,37 @@ export default function LabelingEditor({ className, evaluationData }: LabelingEd
                     </div>
                 </CardContent>
             </Card>
-        } as BpmnToolCard
+        },
+        {
+            position: "top-right",
+            content: selectedElement && isLabelMode && <Card>
+                <CardHeader>
+                    <h2 className="text-lg font-semibold">{selectedElement.businessObject.name}</h2>
+                </CardHeader>
+                <CardContent>
+                    <div className="flex items-center space-x-2">
+                        <Switch
+                            id="label-mode"
+                            defaultChecked={highlightedActivityIds.includes(selectedElement.id)}
+                            onCheckedChange={(checked) => handleElementLabelingChange(selectedElement.id, checked)}
+                        />
+                        <Label htmlFor="label-mode">Is GDPR critical</Label>
+                    </div>
+                    <div className="mt-4 flex flex-col space-y-2">
+                        <Label htmlFor="reason">Reason for labeling</Label>
+                        <Textarea
+                            id="reason"
+                            className="p-2 border rounded"
+                            placeholder="Enter reason for labeling this activity..."
+                            rows={5}
+                            onChange={(event) => {
+                              // TODO
+                            }}
+                        />
+                    </div>
+                </CardContent>
+            </Card>
+        }
     ]
 
     return (
@@ -112,9 +140,9 @@ export default function LabelingEditor({ className, evaluationData }: LabelingEd
                 cards={cards}
                 highlightedActivityIds={highlightedActivityIds}
                 onDiagramChanged={handleDiagramChanged}
-                onElementClicked={handleElementClicked}
                 editorClassName={isLabelMode ? "border border-destructive" : ""}
                 disableEditing={isLabelMode}
+                onEvent={handleEditorEvent}
             />
         </div>
     );
