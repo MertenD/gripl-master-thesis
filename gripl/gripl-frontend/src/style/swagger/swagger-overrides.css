@@ -28,3 +28,17 @@
 .opblock-summary-method {
     color: hsl(var(--card)) !important;
 }
+
+.body-param__text {
+    background: hsl(var(--input)) !important;
+}
+
+.swagger-ui .try-out__btn {
+    display: none !important;
+}
+.swagger-ui .opblock-get .try-out__btn {
+    display: inline-block !important;
+}
+.swagger-ui #operations-analysis-controller-analyzeBpmnForGdpr .try-out__btn {
+    display: inline-block !important;
+}
