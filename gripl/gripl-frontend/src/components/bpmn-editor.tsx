@@ -10,6 +10,7 @@ import emptyDiagram from "@/data/empty-diagram.bpmn";
 import DisableModelingModule from 'bpmn-js-token-simulation/lib/features/disable-modeling';
 // @ts-ignore
 import { TOGGLE_MODE_EVENT } from 'bpmn-js-token-simulation/lib/util/EventHelper';
+import {BpmnEditorEvent} from "@/models/BpmnEditorEvent";
 
 interface BpmnEditorProps {
   title?: string
@@ -21,10 +22,12 @@ interface BpmnEditorProps {
   onElementClicked?: (element: any) => void
   editorClassName?: string
   disableEditing?: boolean
+  onEvent?: (type: BpmnEditorEvent, event: any) => void
+  onModelerChanged?: (modeler: any) => void
 }
 
 export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = [], onNew, onDiagramChanged, cards = [],
-                                     onElementClicked, editorClassName, disableEditing }: BpmnEditorProps) {
+                                     onElementClicked, editorClassName, disableEditing, onEvent, onModelerChanged }: BpmnEditorProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const modelerRef = useRef<any>(null)
   const [isLoaded, setIsLoaded] = useState(false)
@@ -32,6 +35,12 @@ export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = []
   const [canRedo, setCanRedo] = useState(false)
   const styleElementRef = useRef<HTMLStyleElement | null>(null)
   const disableEditingRef = useRef(disableEditing)
+
+  useEffect(() => {
+    if (onModelerChanged && modelerRef.current) {
+      onModelerChanged(modelerRef.current)
+    }
+  }, [modelerRef.current])
 
   useEffect(() => {
     if (!containerRef.current || !bpmnXml) return
@@ -108,6 +117,14 @@ export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = []
       modelerRef.current = modeler
 
       const eventBus = modeler.get("eventBus")
+
+      Object.values(BpmnEditorEvent).forEach(function(event) {
+        eventBus.on(event, function(e: any) {
+          if (onEvent) {
+            onEvent(event as BpmnEditorEvent, e)
+          }
+        });
+      });
 
       eventBus.on("element.click", (e: any) => {
         const element = e.element
