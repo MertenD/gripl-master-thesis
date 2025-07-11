@@ -2,7 +2,6 @@ package de.mertendieckmann.griplbackend.controller
 
 import de.mertendieckmann.griplbackend.application.BpmnAnalyzer
 import de.mertendieckmann.griplbackend.evaluation.runner.EvaluationRunner
-import de.mertendieckmann.griplbackend.model.dto.AnalysisRequest
 import de.mertendieckmann.griplbackend.model.dto.AnalysisResponse
 import de.mertendieckmann.griplbackend.model.dto.EvaluationReport
 import de.mertendieckmann.griplbackend.model.dto.EvaluationReportStepInfo
@@ -10,10 +9,13 @@ import dev.langchain4j.model.chat.ChatModel
 import io.swagger.v3.oas.annotations.Operation
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import org.springframework.core.io.buffer.DataBufferUtils
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
+import org.springframework.http.codec.multipart.FilePart
 import org.springframework.web.bind.annotation.*
+import reactor.core.publisher.Mono
 
 @RestController
 @RequestMapping("/gdpr")
@@ -33,18 +35,32 @@ class AnalysisController(
 
     @Operation(
         summary = "Analyzes BPMN-XML for GDPR relevance",
-        description = "Analyzes the provided BPMN-XML String and identifies GDPR-relevant elements using AI analysis. It returns a list of relevant elements found in the BPMN model including the reasoning for each element."
+        description = "Upload a BPMN XML document (file part **bpmnFile**). The service analyzes it with an LLM, and returns a list"
+            + " of GDPR-relevant elements found in the BPMN model, including the reasoning for each element."
     )
-    @PostMapping("/analysis")
-    fun analyzeBpmnForGdpr(@RequestBody request: AnalysisRequest): ResponseEntity<AnalysisResponse> {
+    @PostMapping(
+        "/analysis",
+        consumes = [MediaType.MULTIPART_FORM_DATA_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    fun analyzeBpmnForGdpr(
+        @RequestPart("bpmnFile") file: FilePart
+    ): Mono<ResponseEntity<AnalysisResponse>> {
 
-        // TODO Validate request
+        val bpmnXmlMono: Mono<String> = DataBufferUtils
+            .join(file.content())
+            .map { dataBuffer ->
+                dataBuffer.asInputStream().bufferedReader().use { it.readText() }
+            }
 
-        val analyzer = BpmnAnalyzer(llm = llm)
-        val analysisResult = analyzer.analyzeBpmnForGdpr(request.bpmnXml)
+        return bpmnXmlMono.flatMap { bpmnXml ->
+            val analyzer = BpmnAnalyzer(llm = llm)
 
-        val response = AnalysisResponse(relevantElements = analysisResult.elements)
-        return ResponseEntity(response, HttpStatus.OK)
+            val analysisResult = analyzer.analyzeBpmnForGdpr(bpmnXml)
+
+            val response = AnalysisResponse(relevantElements = analysisResult.elements)
+            Mono.just(ResponseEntity(response, HttpStatus.OK))
+        }
     }
 
     @Operation(

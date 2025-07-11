@@ -20,16 +20,16 @@ export default function AnalysisToolCard({ bpmnXml, highlightedActivityIds, setH
         setHighlightedActivityIds && setHighlightedActivityIds([]);
         setIsAnalyzing(true);
 
-        const requestBody: AnalysisRequest = {
-            bpmnXml: bpmnXml
-        }
+        const xmlBlob = new Blob([bpmnXml], { type: "application/xml" });
+        const formData = new FormData();
+        formData.append("bpmnFile", xmlBlob, "diagram.bpmn");
 
         fetch(`/api/gdpr/analysis`, {
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
+                Accept: "application/json"
             },
-            body: JSON.stringify(requestBody),
+            body: formData,
         }).then(response => {
             if (!response.ok) {
                 throw new Error("Fehler bei der Analyse des Diagramms");
