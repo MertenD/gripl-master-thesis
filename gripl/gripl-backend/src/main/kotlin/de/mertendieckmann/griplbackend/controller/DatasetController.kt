@@ -102,23 +102,41 @@ class DatasetController(
         summary = "Update Testcase by Id",
         description = "Updates an existing dataset entry with the provided data."
     )
-    @PostMapping("/{id}")
-    fun updateBpmnDataset(@RequestBody evaluationData: EvaluationData): ResponseEntity<String> {
-        val existingEntry = evaluationDataRepository.getEvaluationDataById(evaluationData.id)
-            ?: return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No dataset entry found for Id: ${evaluationData.id}")
+    @PostMapping(
+        "/{id}",
+        consumes = [MediaType.MULTIPART_FORM_DATA_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    fun updateBpmnDataset(
+        @PathVariable("id") id: Long,
+        @RequestPart("name") name: String? = null,
+        @RequestPart("bpmnFile") bpmnFile: FilePart,
+        @RequestPart("expectedValues") expectedValues: List<ExpectedValue>
+    ): Mono<ResponseEntity<String>> {
+        val existingEntry = evaluationDataRepository.getEvaluationDataById(id)
+            ?: return Mono.just(ResponseEntity.status(HttpStatus.NOT_FOUND).body("No dataset entry found for Id: $id"))
 
-        log.info { "Updating existing dataset entry with Id: ${evaluationData.id}" }
+        log.info { "Updating existing dataset entry with Id: $id" }
 
-        val affectedRows = evaluationDataRepository.updateEvaluationData(EvaluationData(
-            id = existingEntry.id,
-            name = evaluationData.name,
-            bpmnXml = evaluationData.bpmnXml,
-            expectedValues = evaluationData.expectedValues
-        ))
-        return if (affectedRows > 0) {
-            ResponseEntity.ok("Dataset entry updated successfully")
-        } else {
-            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update dataset entry")
+        val bpmnXmlMomo: Mono<String> = DataBufferUtils
+            .join(bpmnFile.content())
+            .map { dataBuffer ->
+                dataBuffer.asInputStream().bufferedReader().use { it.readText() }
+            }
+
+        return bpmnXmlMomo.flatMap { bpmnXml ->
+            val affectedRows = evaluationDataRepository.updateEvaluationData(EvaluationData(
+                id = existingEntry.id,
+                name = name,
+                bpmnXml = bpmnXml,
+                expectedValues = expectedValues
+            ))
+
+            if (affectedRows > 0) {
+                Mono.just(ResponseEntity.ok("Dataset entry updated successfully"))
+            } else {
+                Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update dataset entry"))
+            }
         }
     }
 

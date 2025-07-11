@@ -25,19 +25,23 @@ export default function LabelingEditor({ className, evaluationData }: LabelingEd
     const [selectedElement, setSelectedElement] = useState<any | null>(null);
 
     function onSave() {
-        const requestBody = {
-            id: evaluationData?.id || undefined,
-            bpmnXml: diagram,
-            name: evaluationData?.name || "",
-            expectedValues: criticalActivities.filter(critical => diagram.includes(critical.value))
-        }
+
+        const xmlBlob = new Blob([diagram], { type: "application/xml" });
+        const formData = new FormData();
+        formData.append("bpmnFile", xmlBlob, "diagram.bpmn");
+        formData.append("name", evaluationData.name);
+        const expectedValuesBlob = new Blob(
+            [JSON.stringify(criticalActivities)],
+            { type: 'application/json' }
+        );
+        formData.append('expectedValues', expectedValuesBlob, 'expectedValues.json');
 
         fetch(`/api/dataset/${evaluationData.id}`, {
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
+                Accept: "application/json",
             },
-            body: JSON.stringify(requestBody),
+            body: formData,
         }).then(response => {
             if (!response.ok) {
                 console.error("Error while saving test case:", response.statusText);
