@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
+import org.springframework.web.server.MissingRequestValueException
 
 @RestControllerAdvice
 class GlobalExceptionHandler {
@@ -36,6 +37,13 @@ class GlobalExceptionHandler {
         ResponseEntity
             .status(HttpStatus.INTERNAL_SERVER_ERROR)
             .body(ApiError(code = "INTERNAL_ERROR", message = "There was an internal error processing your request. Please try again."))
+            .also { ex.printStackTrace() }
+
+    @ExceptionHandler(MissingRequestValueException::class)
+    fun handleMissingRequestValueException(ex: MissingRequestValueException): ResponseEntity<ApiError> =
+        ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .body(ApiError(code = "MISSING_REQUEST_VALUE", message = ex.message))
             .also { ex.printStackTrace() }
 
     data class ApiError(val code: String, val message: String?)

@@ -14,7 +14,6 @@ import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
 import {useRouter} from "next/navigation";
 import {Plus} from "lucide-react";
-import {EvaluationData} from "@/models/dto/EvaluationData";
 import emptyDiagram from "@/data/empty-diagram.bpmn";
 
 export default function CreateTestCaseButton() {
@@ -29,18 +28,19 @@ export default function CreateTestCaseButton() {
             return;
         }
 
-        const requestBody = {
-            bpmnXml: emptyDiagram as string,
-            name: testCaseName,
-            expectedValues: [],
-        } as Omit<EvaluationData, "id">;
+        const xmlBlob = new Blob([emptyDiagram as string], { type: "application/xml" });
+        const formData = new FormData();
+        formData.append("bpmnFile", xmlBlob, "diagram.bpmn");
+        formData.append("name", testCaseName);
+        const expectedValuesBlob = new Blob(
+            [JSON.stringify([])],
+            { type: 'application/json' }
+        );
+        formData.append('expectedValues', expectedValuesBlob, 'expectedValues.json');
 
         fetch("/api/dataset", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(requestBody),
+            body: formData,
         }).then(response => {
             if (!response.ok) {
                 throw new Error("Failed to create test case");
