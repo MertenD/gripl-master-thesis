@@ -14,23 +14,14 @@ class BpmnExtractor {
 
     // TODO Maybe in the future i need to parse pools and lanes as well for information about who is executing which task
 
-    /**
-     * Extracts BPMN elements from the provided BPMN XML string.
-     *
-     * @param bpmnXml The BPMN XML as a string.
-     * @return A set of [BpmnElement] representing the extracted BPMN elements.
-     * @throws IllegalArgumentException if the BPMN XML is invalid.
-     */
     fun extractBpmnElements(bpmnXml: String): Set<BpmnElement> {
 
-        val bpmnModel = try {
-            val bpmnModel = Bpmn.readModelFromStream(bpmnXml.byteInputStream())
-            Bpmn.validateModel(bpmnModel)
-            bpmnModel
-        } catch (ex: Exception) {
-            log.warn { "BPMN validation failed: ${ex.message}" }
-            throw IllegalArgumentException("Invalid BPMN XML provided: ${ex.message}", ex)
-        }
+        val bpmnModel = Bpmn.readModelFromStream(bpmnXml.byteInputStream())
+        Bpmn.validateModel(bpmnModel)
+
+        val unsupportedElements = mutableSetOf<String>()
+
+        log.info { "Extracting BPMN elements from XML" }
 
         val elements = bpmnModel.getModelElementsByType(BaseElement::class.java).mapNotNull { element ->
             when (element) {
@@ -129,11 +120,13 @@ class BpmnExtractor {
                 }
 
                 else -> {
-                    log.warn { "Unsupported BPMN element type: ${element.elementType.typeName}" }
+                    unsupportedElements.add(element.elementType.typeName)
                     null
                 }
             }
         }
+
+        log.warn { "Unsupported BPMN elements found: ${unsupportedElements.joinToString(", ")}" }
 
         return elements.toSet()
     }
