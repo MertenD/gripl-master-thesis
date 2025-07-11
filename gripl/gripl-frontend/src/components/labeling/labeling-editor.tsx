@@ -11,6 +11,7 @@ import {Switch} from "@/components/ui/switch";
 import {Label} from "@/components/ui/label";
 import {BpmnEditorEvent} from "@/models/BpmnEditorEvent";
 import LabelingEditorLabelCard from "@/components/labeling/labeling-editor-label-card";
+import {Spinner} from "@/components/ui/spinner";
 
 interface LabelingEditorProps {
     className?: string;
@@ -23,8 +24,11 @@ export default function LabelingEditor({ className, evaluationData }: LabelingEd
     const [criticalActivities, setCriticalActivities] = useState<ExpectedValues[]>(evaluationData.expectedValues);
     const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
     const [selectedElement, setSelectedElement] = useState<any | null>(null);
+    const [isSaveLoading, setIsSaveLoading] = useState(false);
 
     function onSave() {
+
+        setIsSaveLoading(true);
 
         const xmlBlob = new Blob([diagram], { type: "application/xml" });
         const formData = new FormData();
@@ -48,11 +52,13 @@ export default function LabelingEditor({ className, evaluationData }: LabelingEd
                 throw new Error("Fehler beim Speichern des Testfalls");
             }
             setHasUnsavedChanges(false)
+            setIsSaveLoading(false);
             alert("Test case saved sccessfully!");
         }).catch(error => {
             console.error("Error while saving test case:", error);
+            setIsSaveLoading(false);
             alert("Error while saving test case: " + error.message);
-        });
+        })
     }
 
     function handleDiagramChanged(xml: string) {
@@ -92,10 +98,16 @@ export default function LabelingEditor({ className, evaluationData }: LabelingEd
                     <Button
                         onClick={onSave}
                         variant="default"
-                        disabled={!hasUnsavedChanges}
+                        disabled={!hasUnsavedChanges || isSaveLoading}
+                        className={"min-w-[153px]"}
                     >
-                        <Save className="mr-2 h-4 w-4"/>
-                        Save Test Case
+                        { isSaveLoading ? <>
+                            <Spinner className="h-4 w-4 text-foreground" />
+                            Saving...
+                        </> : <>
+                            <Save className="mr-2 h-4 w-4"/>
+                            Save Test Case
+                        </>}
                     </Button>
                     <div className="flex items-center space-x-2">
                         <Switch id="label-mode" onCheckedChange={setIsLabelMode}/>
