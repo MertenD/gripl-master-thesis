@@ -9,7 +9,7 @@ export default function TestCaseErrorCard({ error }: TestCaseErrorCardProps) {
 
     return <Card>
         <CardHeader>
-            <CardTitle className="text-xl font-bold text-destructive">Error in Test Case {error.testCaseId} - {error.testCaseName}</CardTitle>
+            <CardTitle className="text-xl font-bold text-destructive">⚠️ Error in Test Case {error.testCaseId} - {error.testCaseName}</CardTitle>
         </CardHeader>
         <CardContent>
             {error.errorMessage}
