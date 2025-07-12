@@ -1,11 +1,9 @@
 package de.mertendieckmann.griplbackend.controller
 
 import de.mertendieckmann.griplbackend.application.PreviewGenerator
-import de.mertendieckmann.griplbackend.model.dto.EvaluationData
-import de.mertendieckmann.griplbackend.model.dto.EvaluationDataMeta
-import de.mertendieckmann.griplbackend.model.dto.EvaluationDataWithOptionalId
-import de.mertendieckmann.griplbackend.model.dto.ExpectedValue
+import de.mertendieckmann.griplbackend.model.dto.*
 import de.mertendieckmann.griplbackend.repository.EvaluationDataRepository
+import de.mertendieckmann.griplbackend.repository.PreviewCacheRepository
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.swagger.v3.oas.annotations.Operation
 import org.springframework.core.io.buffer.DataBufferUtils
@@ -13,6 +11,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.codec.multipart.FilePart
+import org.springframework.http.server.reactive.ServerHttpRequest
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
 import reactor.core.publisher.Mono
@@ -31,7 +30,8 @@ import reactor.core.publisher.Mono
 )
 @RequestMapping("/dataset")
 class DatasetController(
-    private val evaluationDataRepository: EvaluationDataRepository
+    private val evaluationDataRepository: EvaluationDataRepository,
+    private val previewCacheRepository: PreviewCacheRepository
 ) {
     private val log = KotlinLogging.logger { }
 
@@ -170,8 +170,24 @@ class DatasetController(
         @RequestParam correctIds: List<String> = emptyList(),
         @RequestParam falsePositiveIds: List<String> = emptyList(),
         @RequestParam falseNegativeIds: List<String> = emptyList(),
-        @RequestParam theme: String = "light"
+        @RequestParam theme: String = "light",
+        request: ServerHttpRequest
     ): ResponseEntity<String> {
+
+        val requestPath = request.uri.path
+        val requestQueryWithoutSalt = request.uri.query
+            ?.replace(Regex("&salt=[^&]*"), "")
+            ?.let { "?$it" }.orEmpty()
+        val relativeRequestUrl = "$requestPath$requestQueryWithoutSalt"
+        val cachedPreview = previewCacheRepository.getCachedPreview(id, relativeRequestUrl)
+
+        if (cachedPreview != null) {
+            log.info { "Returning cached SVG preview for Id: $id" }
+            return ResponseEntity.ok()
+                .header("Content-Type", "image/svg+xml")
+                .body(cachedPreview.svg)
+        }
+
         val previewGenerator = PreviewGenerator()
 
         val datasetEntry = evaluationDataRepository.getEvaluationDataById(id)
@@ -187,6 +203,12 @@ class DatasetController(
             log.error(ex) { "Fehler beim Generieren des SVG für Id: $id" }
             return ResponseEntity.status(500).body("Serverfehler: ${ex.message}")
         }
+
+        previewCacheRepository.insertPreviewCache(PreviewCacheInsert(
+            evaluationDataId = id,
+            urlCacheKey = relativeRequestUrl,
+            svg = svg
+        ))
 
         return ResponseEntity.ok()
             .header("Content-Type", "image/svg+xml")

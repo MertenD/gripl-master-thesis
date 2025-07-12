@@ -53,7 +53,7 @@ class EvaluationDataRepository(
     fun updateEvaluationData(data: EvaluationData): Int {
         val sql = """
             UPDATE evaluation_data
-            SET name = ?, bpmn_xml = ?, expected_values = ?::jsonb
+            SET name = ?, bpmn_xml = ?, expected_values = ?::jsonb, updated_at = CURRENT_TIMESTAMP
             WHERE id = ?
         """.trimIndent()
 
