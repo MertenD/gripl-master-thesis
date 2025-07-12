@@ -11,7 +11,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
 @JsonSubTypes(
     JsonSubTypes.Type(TestCaseReport::class, name = "testCase"),
     JsonSubTypes.Type(EvaluationReportSummary::class, name = "summary"),
-    JsonSubTypes.Type(EvaluationReportStepInfo::class, name = "stepInfo")
+    JsonSubTypes.Type(EvaluationReportStepInfo::class, name = "stepInfo"),
+    JsonSubTypes.Type(EvaluationReportError::class, name = "error")
 )
 sealed class EvaluationReport{
     val markdown: String by lazy { toMarkdown() }
@@ -53,7 +54,8 @@ data class TestCaseReport(
 data class EvaluationReportSummary(
     val total: Int,
     val passed: Int,
-    val failed: Int
+    val failed: Int,
+    val error: Int
 ): EvaluationReport() {
 
     override fun toMarkdown(): String {
@@ -62,6 +64,7 @@ data class EvaluationReportSummary(
             |Total: $total
             |Passed: $passed
             |Failed: $failed
+            |${if (error > 0) "Error: $error" else ""} 
         """.trimMargin()
     }
 }
@@ -76,6 +79,20 @@ data class EvaluationReportStepInfo(
             |## Step Info
             |Current Test Case: $currentTestCaseName
             |Test Case $currentTestCaseNumber of $totalTestCases
+        """.trimMargin()
+    }
+}
+
+data class EvaluationReportError(
+    val testCaseId: Long,
+    val testCaseName: String? = null,
+    val errorMessage: String
+): EvaluationReport() {
+
+    override fun toMarkdown(): String {
+        return """
+            |## Error in Test Case ${if (testCaseName != null) "$testCaseName" else ""} ($testCaseId)
+            |**Error Message:** $errorMessage
         """.trimMargin()
     }
 }

@@ -1,6 +1,6 @@
 "use client"
 
-import {ReactNode, useEffect, useState} from "react";
+import {JSX, ReactNode, useEffect, useState} from "react";
 import Image from "next/image";
 import {useTheme} from "next-themes";
 
@@ -12,9 +12,12 @@ interface UseLoadPreviewImageProps {
     imageClassName?: string
 }
 
-export default function useLoadPreviewImage({testCaseId, correctActivityIds, falsePositiveIds, falseNegativeIds, imageClassName }: UseLoadPreviewImageProps) {
+export default function useLoadPreviewImage({testCaseId, correctActivityIds, falsePositiveIds, falseNegativeIds, imageClassName }: UseLoadPreviewImageProps): {
+    previewImage: JSX.Element | undefined
+    isLoading: boolean
+} {
     const { resolvedTheme } = useTheme()
-    const [previewImage, setPreviewImage] = useState<ReactNode | null>(null)
+    const [previewImage, setPreviewImage] = useState<JSX.Element | undefined>(undefined)
     const [isLoading, setIsLoading] = useState<boolean>(true)
 
     useEffect(() => {
@@ -45,7 +48,7 @@ export default function useLoadPreviewImage({testCaseId, correctActivityIds, fal
                 setPreviewImage(image)
             } catch (error) {
                 console.error(error)
-                setPreviewImage(null)
+                setPreviewImage(undefined)
             } finally {
                 setIsLoading(false)
             }

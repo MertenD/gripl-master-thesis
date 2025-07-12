@@ -3,7 +3,7 @@
 import {Button} from "@/components/ui/button";
 import {useState} from "react";
 import {
-    EvaluationReport,
+    EvaluationReport, EvaluationReportError,
     EvaluationReportStepInfo,
     EvaluationReportSummary,
     TestCaseReport
@@ -11,17 +11,20 @@ import {
 import TestCaseReportCard from "@/components/evaluation/test-case-report-card";
 import EvaluationReportSummaryCard from "@/components/evaluation/evaluation-report-summary-card";
 import {Spinner} from "@/components/ui/spinner";
+import TestCaseErrorCard from "@/components/evaluation/test-case-error-card";
 
 export default function EvaluationPage() {
     const [testCases, setTestCases] = useState<TestCaseReport[]>([])
     const [summary, setSummary] = useState<EvaluationReportSummary | null>(null)
     const [currentStepInfo, setCurrentStepInfo] = useState<EvaluationReportStepInfo | null>(null)
+    const [errors, setErrors] = useState<EvaluationReportError[]>([])
     const [isLoading, setIsLoading] = useState(false)
 
     const handleEvaluationStart = async () => {
         setTestCases([])
         setSummary(null)
         setCurrentStepInfo(null)
+        setErrors([])
         setIsLoading(true)
 
         const res = await fetch(
@@ -56,6 +59,8 @@ export default function EvaluationPage() {
                         setSummary(obj as EvaluationReportSummary)
                     } else if (obj.type === "stepInfo") {
                         setCurrentStepInfo(obj as EvaluationReportStepInfo)
+                    } else if (obj.type === "error") {
+                        setErrors(prev => [...prev, obj as EvaluationReportError])
                     } else {
                         console.warn("Unknown report type:", obj)
                     }
@@ -97,12 +102,12 @@ export default function EvaluationPage() {
         <div className="flex flex-row justify-between items-center mb-4">
             <Button variant="default" disabled={isLoading} onClick={handleEvaluationStart}>
                 {!isLoading && "Start Evaluation"}
-                {isLoading && <div className="flex flex-row space-x-4">
+                <>{isLoading && <div className="flex flex-row space-x-4">
                     <Spinner className="h-4 w-4 text-foreground" />
                     {currentStepInfo && <p>
                         Evaluating {currentStepInfo?.currentTestCaseName}... ({currentStepInfo.currentTestCaseNumber} / {currentStepInfo.totalTestCases})
                     </p>}
-                </div>}
+                </div>}</>
             </Button>
             <Button variant="secondary" disabled={isLoading || !summary || !testCases} onClick={handleDownloadMarkdownReport}>
                 Download Markdown Report
@@ -114,5 +119,8 @@ export default function EvaluationPage() {
         <div className="flex flex-col space-y-4 pb-6">
             {testCases.map((report) => <TestCaseReportCard report={report} key={report.testCaseId}/>)}
         </div>
+        { errors.length > 0 && <div className="flex flex-col space-y-4 pb-4">
+            {errors.map((error) => <TestCaseErrorCard error={error} key={error.testCaseId} />)}
+        </div> }
     </div>
 }

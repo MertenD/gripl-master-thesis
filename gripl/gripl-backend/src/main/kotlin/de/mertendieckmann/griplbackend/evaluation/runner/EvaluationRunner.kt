@@ -16,6 +16,7 @@ class EvaluationRunner(
     suspend fun run(emitReport: suspend (EvaluationReport) -> Unit) {
         var total = 0
         var passed = 0
+        var error = 0
 
         dataset.sortedBy { it.id }.forEach { entry ->
             total++
@@ -26,7 +27,17 @@ class EvaluationRunner(
                 totalTestCases = dataset.size,
             ))
 
-            val evaluationResult = evaluator.evaluate(entry.bpmnXml)
+            val evaluationResult = try {
+                evaluator.evaluate(entry.bpmnXml)
+            } catch (e: Exception) {
+                error++
+                emitReport(EvaluationReportError(
+                    testCaseId = entry.id,
+                    testCaseName = entry.name ?: "Test Case ${entry.id}",
+                    errorMessage = e.message ?: "Unknown error occurred"
+                ))
+                return@forEach
+            }
 
             val isSuccessful = evaluationResult.map { it.value }.toSet() == entry.expectedValues.map { it.value }.toSet()
             if (isSuccessful) {
@@ -83,7 +94,8 @@ class EvaluationRunner(
         val summary = EvaluationReportSummary(
             total = total,
             passed = passed,
-            failed = total - passed
+            failed = total - passed - error,
+            error = error
         )
         emitReport(summary)
     }

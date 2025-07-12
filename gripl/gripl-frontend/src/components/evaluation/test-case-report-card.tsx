@@ -21,8 +21,9 @@ export default function TestCaseReportCard({ report }: TestCaseReportCardProps) 
             <CardTitle className="text-xl font-bold">Test Case {report.testCaseId} - {report.testCaseName}</CardTitle>
         </CardHeader>
         <CardContent>
-            { isLoading && !previewImage && <Skeleton className="h-28 w-full" /> }
-            { previewImage }
+            <>
+                { isLoading ? <Skeleton className="h-28 w-full" /> : previewImage }
+            </>
             <ul className="mt-4">
                 <li className="mb-1"><span className="font-bold">Expected:</span> {report.expectedNamesWithIds.join(", ")}</li>
                 <li className="mb-1"><span className="font-bold">Actual:</span> {report.actualNamesWithIds.join(", ")}</li>

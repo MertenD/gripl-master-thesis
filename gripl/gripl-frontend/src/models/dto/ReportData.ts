@@ -18,6 +18,7 @@ export interface EvaluationReportSummary {
     total: number;
     passed: number;
     failed: number;
+    error: number;
     markdown: string;
 }
 
@@ -29,4 +30,12 @@ export interface EvaluationReportStepInfo {
     markdown: string;
 }
 
-export type EvaluationReport = TestCaseReport | EvaluationReportSummary | EvaluationReportStepInfo;
+export interface EvaluationReportError {
+    type: "error";
+    testCaseId: number;
+    testCaseName?: string;
+    errorMessage: string;
+    markdown: string;
+}
+
+export type EvaluationReport = TestCaseReport | EvaluationReportSummary | EvaluationReportStepInfo | EvaluationReportError;

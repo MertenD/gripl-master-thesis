@@ -9,9 +9,9 @@ import org.springframework.stereotype.Service
 class DefaultEvaluator(
     private val llm: ChatModel
 ): Evaluator {
-    override fun evaluate(input: String): List<ExpectedValue> {
+    override fun evaluate(bpmnXml: String): List<ExpectedValue> {
         val analyzer = BpmnAnalyzer(llm = llm)
-        val analysisResult = analyzer.analyzeBpmnForGdpr(input)
+        val analysisResult = analyzer.analyzeBpmnForGdpr(bpmnXml)
         return analysisResult.elements.map { ExpectedValue(value = it.id, reason = it.reason) }
     }
 }
