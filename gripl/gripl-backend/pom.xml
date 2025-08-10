@@ -138,6 +138,16 @@
 			<artifactId>playwright</artifactId>
 			<version>1.45.0</version>
 		</dependency>
+		<dependency>
+			<groupId>info.picocli</groupId>
+			<artifactId>picocli-spring-boot-starter</artifactId>
+			<version>4.7.6</version>
+		</dependency>
+		<dependency>
+			<groupId>info.picocli</groupId>
+			<artifactId>picocli-shell-jline3</artifactId>
+			<version>4.7.6</version>
+		</dependency>
 	</dependencies>
 
 	<build>

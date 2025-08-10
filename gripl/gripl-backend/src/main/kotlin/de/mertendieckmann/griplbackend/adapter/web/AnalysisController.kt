@@ -1,6 +1,7 @@
-package de.mertendieckmann.griplbackend.controller
+package de.mertendieckmann.griplbackend.adapter.web
 
 import de.mertendieckmann.griplbackend.application.BpmnAnalyzer
+import de.mertendieckmann.griplbackend.application.factory.AnalyzerFactory
 import de.mertendieckmann.griplbackend.evaluation.runner.EvaluationRunner
 import de.mertendieckmann.griplbackend.model.dto.AnalysisResponse
 import de.mertendieckmann.griplbackend.model.dto.EvaluationReport
@@ -29,7 +30,7 @@ import reactor.core.publisher.Mono
     ]
 )
 class AnalysisController(
-    private val llm: ChatModel,
+    private val analyzerFactory: AnalyzerFactory,
     private val evaluationRunner: EvaluationRunner
 ) {
 
@@ -54,7 +55,7 @@ class AnalysisController(
             }
 
         return bpmnXmlMono.flatMap { bpmnXml ->
-            val analyzer = BpmnAnalyzer(llm = llm)
+            val analyzer = analyzerFactory.create()
 
             val analysisResult = analyzer.analyzeBpmnForGdpr(bpmnXml)
 

@@ -2,28 +2,29 @@ package de.mertendieckmann.griplbackend.config
 
 import dev.langchain4j.model.chat.ChatModel
 import dev.langchain4j.model.openai.OpenAiChatModel
-import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
 class LlmConfig {
 
-    @Value("\${openai.api-key}")
-    lateinit var apiKey: String
-
-    @Value("\${openai.model-name:gpt-3.5-turbo}")
-    lateinit var modelName: String
-
-    @Value("\${openai.api.url:https://api.openai.com/v1}")
-    lateinit var apiUrl: String
-
     @Bean
-    fun openAiChatModel(): ChatModel {
+    fun openAiChatModel(props: LlmProps): ChatModel {
         return OpenAiChatModel.builder()
-            .apiKey(apiKey)
-            .modelName(modelName)
-            .baseUrl(apiUrl)
+            .modelName(props.modelName)
+            .baseUrl(props.baseUrl)
+            .apiKey(props.apiKey ?: System.getenv("OPENAI_API_KEY") ?: "no-key")
             .build()
+    }
+
+    companion object {
+
+        @ConfigurationProperties(prefix = "llm")
+        data class LlmProps(
+            var modelName: String = "gpt-3.5-turbo",
+            var baseUrl: String = "https://api.openai.com/v1",
+            var apiKey: String? = null
+        )
     }
 }

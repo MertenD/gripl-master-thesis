@@ -1,4 +1,4 @@
-package de.mertendieckmann.griplbackend.controller.error
+package de.mertendieckmann.griplbackend.adapter.web.error
 
 import org.camunda.bpm.model.xml.ModelParseException
 import org.camunda.bpm.model.xml.ModelValidationException

@@ -1,4 +1,4 @@
-package de.mertendieckmann.griplbackend.controller
+package de.mertendieckmann.griplbackend.adapter.web
 
 import de.mertendieckmann.griplbackend.application.PreviewGenerator
 import de.mertendieckmann.griplbackend.model.dto.*

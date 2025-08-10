@@ -1,4 +1,4 @@
-package de.mertendieckmann.griplbackend.controller
+package de.mertendieckmann.griplbackend.adapter.web
 
 import io.swagger.v3.oas.annotations.Operation
 import org.springframework.core.io.ByteArrayResource
