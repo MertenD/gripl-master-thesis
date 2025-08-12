@@ -33,6 +33,32 @@ There are several ways to run the backend locally:
    ```bash
    mvn spring-boot:run -Dspring-boot.run.arguments="--app.shell.enabled=true"
    ```
+   
+### Optional – Customising the LLM endpoint
+
+The backend can talk to any OpenAI‑compatible LLM.
+
+If you want to point the analysis command at a private or self‑hosted model, simply add two extra CLI flags:
+
+| Flag	           | Meaning                                                      | Example value                  |
+|-----------------|--------------------------------------------------------------|--------------------------------|
+| `--llm.base-url` | The base URL of the LLM API (must include /v1 in most cases) | `http://127.0.0.1:1234/v1`     |
+| `--llm.model-name` | The name/id of the model to use | `deepseek-r1-distill-llama-8b` |
+| `--llm.api-key` | The API key for the LLM (if required) | `sk-...`                       |
+| `--llm.timeout-seconds` | The timeout for LLM requests in seconds (default: 30) | `240` (4 Minutes)              |
+
+Usage example
+
+```bash
+# Run a single analysis and write JSON to stdout,
+# while pointing the LLM at a private endpoint.
+mvn spring-boot:run \
+-Dspring-boot.run.arguments="analysis ./test-diagram.bpmn -o json \
+--llm.base-url=http://127.0.0.1:1234/v1 \
+--llm.model-name=deepseek-r1-distill-llama-8b"
+```
+
+The two flags are optional – if omitted, the backend falls back to the default openai model.
 
 ## Running with Docker
 
@@ -56,10 +82,10 @@ The backend provides several CLI commands for BPMN analysis and dataset evaluati
 
 * `analysis <bpmn-file>` — Analyzes the specified BPMN file.
 
-   * Optional: `--output <format>` (Available: `json`, `pretty` *(default)*)
+   * Optional: `--outputFormat` (Available: `json`, `pretty` *(default)*)
 * `evaluation` — Evaluates BPMN processes stored in the database.
 
-   * Optional: `--output <format>` (Available: `json`, `pretty` *(default)*)
+   * Optional: `--outputFormat` (Available: `json`, `pretty` *(default)*)
 * `-h` — Displays help for commands and options.
 
 > **Tip:** Use `-h` with any command (e.g., `analysis -h`) for detailed command-specific help.

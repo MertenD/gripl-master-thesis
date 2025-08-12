@@ -18,9 +18,13 @@ class CliBootStrapper(
     override fun run(args: ApplicationArguments) {
         if (args.nonOptionArgs.isEmpty()) return
 
+        val picocliArgs = args.sourceArgs.filterNot {
+            it.startsWith("--llm.")
+        }
+
         val exit = CommandLine(root, PicocliSpringFactory(ctx))
             .setCaseInsensitiveEnumValuesAllowed(true)
-            .execute(*args.sourceArgs)
+            .execute(*picocliArgs.toTypedArray())
 
         ctx.close()
         exitProcess(exit)
