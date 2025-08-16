@@ -19,6 +19,14 @@ export interface EvaluationReportSummary {
     passed: number;
     failed: number;
     error: number;
+    precision: number;
+    recall: number;
+    f1Score: number;
+    accuracy: number;
+    totalTruePositives: number;
+    totalFalsePositives: number;
+    totalFalseNegatives: number;
+    totalTrueNegatives: number;
     markdown: string;
 }
 

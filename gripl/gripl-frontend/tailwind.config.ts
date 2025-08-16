@@ -48,7 +48,19 @@ export default {
   				'2': 'hsl(var(--chart-2))',
   				'3': 'hsl(var(--chart-3))',
   				'4': 'hsl(var(--chart-4))',
-  				'5': 'hsl(var(--chart-5))'
+  				'5': 'hsl(var(--chart-5))',
+  				success: 'hsl(var(--chart-success))',
+  				'success-foreground': 'hsl(var(--chart-success-foreground))',
+  				error: 'hsl(var(--chart-error))',
+  				'error-foreground': 'hsl(var(--chart-error-foreground))',
+  				warning: 'hsl(var(--chart-warning))',
+  				'warning-foreground': 'hsl(var(--chart-warning-foreground))',
+  				info: 'hsl(var(--chart-info))',
+  				'info-foreground': 'hsl(var(--chart-info-foreground))',
+  				'metric-1': 'hsl(var(--chart-metric-1))',
+  				'metric-2': 'hsl(var(--chart-metric-2))',
+  				'metric-3': 'hsl(var(--chart-metric-3))',
+  				'metric-4': 'hsl(var(--chart-metric-4))'
   			},
   			sidebar: {
   				DEFAULT: 'hsl(var(--sidebar-background))',

@@ -55,7 +55,15 @@ data class EvaluationReportSummary(
     val total: Int,
     val passed: Int,
     val failed: Int,
-    val error: Int
+    val error: Int,
+    val precision: Double,
+    val recall: Double,
+    val f1Score: Double,
+    val accuracy: Double,
+    val totalTruePositives: Int,
+    val totalFalsePositives: Int,
+    val totalFalseNegatives: Int,
+    val totalTrueNegatives: Int
 ): EvaluationReport() {
 
     override fun toMarkdown(): String {
@@ -64,7 +72,19 @@ data class EvaluationReportSummary(
             |Total: $total
             |Passed: $passed
             |Failed: $failed
-            |${if (error > 0) "Error: $error" else ""} 
+            |${if (error > 0) "Error: $error" else ""}
+            |
+            |### Metrics
+            |Accuracy: ${"%.3f".format(accuracy)}
+            |Precision: ${"%.3f".format(precision)}
+            |Recall: ${"%.3f".format(recall)}
+            |F1-Score: ${"%.3f".format(f1Score)}
+            |
+            |### Confusion Matrix
+            |True Positives: $totalTruePositives
+            |False Positives: $totalFalsePositives
+            |False Negatives: $totalFalseNegatives
+            |True Negatives: $totalTrueNegatives
         """.trimMargin()
     }
 }

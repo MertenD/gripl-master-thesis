@@ -17,6 +17,10 @@ class EvaluationRunner(
         var total = 0
         var passed = 0
         var error = 0
+        var totalTruePositives = 0
+        var totalFalsePositives = 0
+        var totalFalseNegatives = 0
+        var totalTrueNegatives = 0
 
         dataset.sortedBy { it.id }.forEach { entry ->
             total++
@@ -56,6 +60,19 @@ class EvaluationRunner(
                 .filter { it.value !in evaluationResult.map { res -> res.value } }
                 .map { it.value }
 
+            val truePositives = correctActivityIds.size
+            val falsePositives = falsePositiveIds.size
+            val falseNegatives = falseNegativeIds.size
+
+            val bpmnModel = Bpmn.readModelFromStream(entry.bpmnXml.byteInputStream())
+            val allActivityIds = bpmnModel.getModelElementsByType(Activity::class.java).map { it.id }
+            val trueNegatives = allActivityIds.size - truePositives - falsePositives - falseNegatives
+
+            totalTruePositives += truePositives
+            totalFalsePositives += falsePositives
+            totalFalseNegatives += falseNegatives
+            totalTrueNegatives += trueNegatives
+
             val imageSrc = StringBuilder()
                 .append("https://gripl.mertendieckmann.de/api/dataset/${entry.id}/preview")
                 .append("?correctIds=${correctActivityIds.joinToString(",")}")
@@ -64,8 +81,6 @@ class EvaluationRunner(
                 // The salt is there to prevent caching of the image in for example GitHub and is just an arbitrary number
                 .append("&salt=${floor(Math.random() * 99999)}")
                 .toString()
-
-            val bpmnModel = Bpmn.readModelFromStream(entry.bpmnXml.byteInputStream())
 
             val expectedNamesWithIds = entry.expectedValues.map {
                 bpmnModel.getModelElementById<Activity>(it.value).name + " (${it.value})"
@@ -91,11 +106,36 @@ class EvaluationRunner(
             emitReport(result)
         }
 
+        val precision = if (totalTruePositives + totalFalsePositives > 0) {
+            totalTruePositives.toDouble() / (totalTruePositives + totalFalsePositives)
+        } else 0.0
+
+        val recall = if (totalTruePositives + totalFalseNegatives > 0) {
+            totalTruePositives.toDouble() / (totalTruePositives + totalFalseNegatives)
+        } else 0.0
+
+        val f1Score = if (precision + recall > 0) {
+            2 * (precision * recall) / (precision + recall)
+        } else 0.0
+
+        val accuracy = if (totalTruePositives + totalFalsePositives + totalFalseNegatives + totalTrueNegatives > 0) {
+            (totalTruePositives + totalTrueNegatives).toDouble() /
+                    (totalTruePositives + totalFalsePositives + totalFalseNegatives + totalTrueNegatives)
+        } else 0.0
+
         val summary = EvaluationReportSummary(
             total = total,
             passed = passed,
             failed = total - passed - error,
-            error = error
+            error = error,
+            precision = precision,
+            recall = recall,
+            f1Score = f1Score,
+            accuracy = accuracy,
+            totalTruePositives = totalTruePositives,
+            totalFalsePositives = totalFalsePositives,
+            totalFalseNegatives = totalFalseNegatives,
+            totalTrueNegatives = totalTrueNegatives
         )
         emitReport(summary)
     }

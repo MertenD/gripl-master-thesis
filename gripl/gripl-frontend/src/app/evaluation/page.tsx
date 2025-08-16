@@ -10,6 +10,7 @@ import {
 } from "@/models/dto/ReportData";
 import TestCaseReportCard from "@/components/evaluation/test-case-report-card";
 import EvaluationReportSummaryCard from "@/components/evaluation/evaluation-report-summary-card";
+import MetricsCharts from "@/components/evaluation/metrics-charts";
 import {Spinner} from "@/components/ui/spinner";
 import TestCaseErrorCard from "@/components/evaluation/test-case-error-card";
 
@@ -113,9 +114,14 @@ export default function EvaluationPage() {
                 Download Markdown Report
             </Button>
         </div>
-        <div className="mb-4">
-            {summary && <EvaluationReportSummaryCard reportSummary={summary}/>}
-        </div>
+
+        {summary && (
+            <div className="space-y-6 mb-6">
+                <EvaluationReportSummaryCard reportSummary={summary}/>
+                <MetricsCharts reportSummary={summary}/>
+            </div>
+        )}
+
         <div className="flex flex-col space-y-4 pb-6">
             {testCases.map((report) => <TestCaseReportCard report={report} key={report.testCaseId}/>)}
         </div>

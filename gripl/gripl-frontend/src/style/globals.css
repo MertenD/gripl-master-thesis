@@ -26,6 +26,20 @@
   --ring: 142 80% 28%;
   --radius: 0.5rem;
 
+  /* Chart and evaluation colors */
+  --chart-success: 142 76% 36%;
+  --chart-success-foreground: 0 0% 100%;
+  --chart-error: 0 84% 60%;
+  --chart-error-foreground: 0 0% 100%;
+  --chart-warning: 38 92% 50%;
+  --chart-warning-foreground: 0 0% 100%;
+  --chart-info: 217 91% 60%;
+  --chart-info-foreground: 0 0% 100%;
+  --chart-metric-1: 262 83% 58%;
+  --chart-metric-2: 25 95% 53%;
+  --chart-metric-3: 142 76% 36%;
+  --chart-metric-4: 217 91% 60%;
+
   /* Sidebar colors with improved contrast */
   --sidebar-background: 210 20% 90%;
   --sidebar-foreground: 210 60% 15%;
@@ -59,6 +73,20 @@ html.dark {
   --warning: 38 90% 55%;
   --warning-foreground: 38 80% 10%;
   --ring: 142 65% 40%;
+
+  /* Chart and evaluation colors for dark mode */
+  --chart-success: 142 71% 45%;
+  --chart-success-foreground: 0 0% 100%;
+  --chart-error: 0 72% 51%;
+  --chart-error-foreground: 0 0% 100%;
+  --chart-warning: 38 92% 50%;
+  --chart-warning-foreground: 0 0% 100%;
+  --chart-info: 217 91% 60%;
+  --chart-info-foreground: 0 0% 100%;
+  --chart-metric-1: 262 80% 67%;
+  --chart-metric-2: 25 95% 53%;
+  --chart-metric-3: 142 71% 45%;
+  --chart-metric-4: 217 91% 60%;
 
   /* Sidebar colors aligned with GitHub style */
   --sidebar-background: 215 28% 10%;
