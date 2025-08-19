@@ -1,7 +1,8 @@
 package de.mertendieckmann.griplbackend.evaluation.runner
 
-import de.mertendieckmann.griplbackend.evaluation.service.Evaluator
+import de.mertendieckmann.griplbackend.evaluation.service.HttpEvaluator
 import de.mertendieckmann.griplbackend.model.dto.*
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.camunda.bpm.model.bpmn.Bpmn
 import org.camunda.bpm.model.bpmn.instance.Activity
 import org.springframework.beans.factory.annotation.Qualifier
@@ -11,9 +12,13 @@ import kotlin.math.floor
 @Component
 class EvaluationRunner(
     @Qualifier("databaseDataset") private val dataset: List<EvaluationData>,
-    private val evaluator: Evaluator
+    private val evaluator: HttpEvaluator
 ) {
-    suspend fun run(emitReport: suspend (EvaluationReport) -> Unit) {
+    private val log = KotlinLogging.logger { }
+
+    suspend fun run(evaluationEndpoint: String, emitReport: suspend (EvaluationReport) -> Unit) {
+        log.info { "Starting evaluation with endpoint: $evaluationEndpoint" }
+
         var total = 0
         var passed = 0
         var error = 0
@@ -32,13 +37,13 @@ class EvaluationRunner(
             ))
 
             val evaluationResult = try {
-                evaluator.evaluate(entry.bpmnXml)
+                evaluator.evaluate(entry.bpmnXml, evaluationEndpoint)
             } catch (e: Exception) {
                 error++
                 emitReport(EvaluationReportError(
                     testCaseId = entry.id,
                     testCaseName = entry.name ?: "Test Case ${entry.id}",
-                    errorMessage = e.message ?: "Unknown error occurred"
+                    errorMessage = e.message ?: "Unbekannter Fehler aufgetreten"
                 ))
                 return@forEach
             }
