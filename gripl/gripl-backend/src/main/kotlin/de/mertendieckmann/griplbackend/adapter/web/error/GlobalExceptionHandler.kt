@@ -25,6 +25,13 @@ class GlobalExceptionHandler {
             .body(ApiError(code = "BPMN_VALIDATION_ERROR", message = "BPMN XML is not valid"))
             .also { ex.printStackTrace() }
 
+    @ExceptionHandler(org.springframework.web.reactive.resource.NoResourceFoundException::class)
+    fun handleNoResourceFoundException(ex: org.springframework.web.reactive.resource.NoResourceFoundException): ResponseEntity<ApiError> =
+        ResponseEntity
+            .status(HttpStatus.NOT_FOUND)
+            .body(ApiError(code = "RESOURCE_NOT_FOUND", message = "The requested resource was not found"))
+            .also { ex.printStackTrace() }
+
     @ExceptionHandler(dev.langchain4j.exception.InvalidRequestException::class)
     fun handleInterruptedException(ex: dev.langchain4j.exception.InvalidRequestException): ResponseEntity<ApiError> =
         ResponseEntity
