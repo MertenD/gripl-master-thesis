@@ -32,7 +32,6 @@ export default function EvaluationConfigCard({ children, onEndpointChange, class
         } else {
             setIsCustom(false)
             setSelectedValue(value)
-            setCustomValue("")
         }
     }
 
