@@ -1,147 +1,109 @@
 package de.mertendieckmann.griplbackend.evaluation
 
-import de.mertendieckmann.griplbackend.evaluation.service.HttpEvaluator
+import de.mertendieckmann.griplbackend.evaluation.metrics.MetricsAccumulator
+import de.mertendieckmann.griplbackend.evaluation.service.Evaluator
 import de.mertendieckmann.griplbackend.model.dto.*
+import de.mertendieckmann.griplbackend.model.evaluation.EvaluationMetrics
+import de.mertendieckmann.griplbackend.model.evaluation.EvaluationOutcome
 import io.github.oshai.kotlinlogging.KotlinLogging
-import org.camunda.bpm.model.bpmn.Bpmn
-import org.camunda.bpm.model.bpmn.instance.Activity
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.*
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Component
-import kotlin.math.floor
+import java.util.concurrent.atomic.AtomicInteger
 
 @Component
 class EvaluationRunner(
     @Qualifier("databaseDataset") private val dataset: List<EvaluationData>,
-    private val evaluator: HttpEvaluator
+    private val evaluator: Evaluator
 ) {
-    private val log = KotlinLogging.logger { }
 
-    suspend fun run(evaluationRequest: EvaluationRequest, emitReport: suspend (EvaluationReport) -> Unit) {
-        log.info { "Starting evaluation with endpoint: ${evaluationRequest.evaluationEndpoint}" }
+    private val log = KotlinLogging.logger {}
 
-        var total = 0
-        var passed = 0
-        var error = 0
-        var totalTruePositives = 0
-        var totalFalsePositives = 0
-        var totalFalseNegatives = 0
-        var totalTrueNegatives = 0
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun run(request: EvaluationRequest): Flow<EvaluationReport> {
+        val metricsAccumulator = MetricsAccumulator()
+        val startedCounter = AtomicInteger(0)
+        val entriesFlow = dataset.sortedBy { it.id }.asFlow()
 
-        dataset.sortedBy { it.id }.forEach { entry ->
-            total++
+        log.info { "Starting evaluation with endpoint=${request.evaluationEndpoint}; maxConcurrent=${request.maxConcurrent}" }
 
-            emitReport(EvaluationReportStepInfo(
-                currentTestCaseName = entry.name ?: "Test Case ${entry.id}",
-                currentTestCaseNumber = total,
-                totalTestCases = dataset.size,
-            ))
+        return entriesFlow
+            .flatMapMerge(concurrency = request.maxConcurrent.coerceAtLeast(1)) { entry ->
+                flow {
+                    val currentNumber = startedCounter.incrementAndGet()
+                    emit(buildStepInfo(entry, currentNumber, dataset.size))
 
-            val evaluationResult = try {
-                evaluator.evaluate(entry.bpmnXml, evaluationRequest)
-            } catch (e: Exception) {
-                error++
-                emitReport(EvaluationReportError(
-                    testCaseId = entry.id,
-                    testCaseName = entry.name ?: "Test Case ${entry.id}",
-                    errorMessage = e.message ?: "Unbekannter Fehler aufgetreten"
-                ))
-                return@forEach
+                    when (val outcome = evaluateSingleEntry(entry, request)) {
+                        is EvaluationOutcome.Error -> {
+                            metricsAccumulator.addError()
+                            emit(outcome.errorReport)
+                        }
+                        is EvaluationOutcome.Success -> {
+                            metricsAccumulator.add(outcome.metrics)
+                            emit(outcome.testCaseReport)
+                        }
+                    }
+                }
             }
-
-            val isSuccessful = evaluationResult.map { it.value }.toSet() == entry.expectedValues.map { it.value }.toSet()
-            if (isSuccessful) {
-                passed++
+            .onCompletion {
+                emit(metricsAccumulator.toSummary())
             }
+    }
 
-            val correctActivityIds = entry.expectedValues.map { it.value }.filter {
-                evaluationResult.map { res -> res.value }.contains(it)
-            }
+    private suspend fun evaluateSingleEntry(
+        entry: EvaluationData,
+        request: EvaluationRequest
+    ): EvaluationOutcome = try {
+        val expectedActivityIds = entry.expectedValues.map { it.value }
+        val actualExpectedValues = evaluator.evaluate(entry.bpmnXml, request)
+        val actualActivityIds = actualExpectedValues.map { it.value }
 
-            val falsePositiveIds = evaluationResult
-                .filter { it.value !in entry.expectedValues.map { ev -> ev.value } }
-                .map { it.value }
+        val bpmnModel = parseBpmn(entry.bpmnXml)
 
-            val falseNegativeIds = entry.expectedValues
-                .filter { it.value !in evaluationResult.map { res -> res.value } }
-                .map { it.value }
-
-            val truePositives = correctActivityIds.size
-            val falsePositives = falsePositiveIds.size
-            val falseNegatives = falseNegativeIds.size
-
-            val bpmnModel = Bpmn.readModelFromStream(entry.bpmnXml.byteInputStream())
-            val allActivityIds = bpmnModel.getModelElementsByType(Activity::class.java).map { it.id }
-            val trueNegatives = allActivityIds.size - truePositives - falsePositives - falseNegatives
-
-            totalTruePositives += truePositives
-            totalFalsePositives += falsePositives
-            totalFalseNegatives += falseNegatives
-            totalTrueNegatives += trueNegatives
-
-            val imageSrc = StringBuilder()
-                .append("https://gripl.mertendieckmann.de/api/dataset/${entry.id}/preview")
-                .append("?correctIds=${correctActivityIds.joinToString(",")}")
-                .append("&falsePositiveIds=${falsePositiveIds.joinToString(",")}")
-                .append("&falseNegativeIds=${falseNegativeIds.joinToString(",")}")
-                // The salt is there to prevent caching of the image in for example GitHub and is just an arbitrary number
-                .append("&salt=${floor(Math.random() * 99999)}")
-                .toString()
-
-            val expectedNamesWithIds = entry.expectedValues.map {
-                bpmnModel.getModelElementById<Activity>(it.value).name + " (${it.value})"
-            }
-
-            val actualNamesWithIds = evaluationResult.map {
-                bpmnModel.getModelElementById<Activity>(it.value).name + " (${it.value})"
-            }
-
-            val result = TestCaseReport(
-                testCaseId = entry.id,
-                testCaseName = entry.name,
-                imageSrc = imageSrc,
-                correctActivityIds = correctActivityIds,
-                falsePositiveIds = falsePositiveIds,
-                falseNegativeIds = falseNegativeIds,
-                expectedNamesWithIds = expectedNamesWithIds,
-                actualNamesWithIds = actualNamesWithIds,
-                isSuccessful = isSuccessful,
-                result = evaluationResult
-            )
-
-            emitReport(result)
-        }
-
-        val precision = if (totalTruePositives + totalFalsePositives > 0) {
-            totalTruePositives.toDouble() / (totalTruePositives + totalFalsePositives)
-        } else 0.0
-
-        val recall = if (totalTruePositives + totalFalseNegatives > 0) {
-            totalTruePositives.toDouble() / (totalTruePositives + totalFalseNegatives)
-        } else 0.0
-
-        val f1Score = if (precision + recall > 0) {
-            2 * (precision * recall) / (precision + recall)
-        } else 0.0
-
-        val accuracy = if (totalTruePositives + totalFalsePositives + totalFalseNegatives + totalTrueNegatives > 0) {
-            (totalTruePositives + totalTrueNegatives).toDouble() /
-                    (totalTruePositives + totalFalsePositives + totalFalseNegatives + totalTrueNegatives)
-        } else 0.0
-
-        val summary = EvaluationReportSummary(
-            total = total,
-            passed = passed,
-            failed = total - passed - error,
-            error = error,
-            precision = precision,
-            recall = recall,
-            f1Score = f1Score,
-            accuracy = accuracy,
-            totalTruePositives = totalTruePositives,
-            totalFalsePositives = totalFalsePositives,
-            totalFalseNegatives = totalFalseNegatives,
-            totalTrueNegatives = totalTrueNegatives
+        val classification = computeClassificationSets(expectedActivityIds, actualActivityIds)
+        val trueNegativesCount = computeTrueNegativesCount(
+            bpmnModel = bpmnModel,
+            truePositivesCount = classification.truePositiveIds.size,
+            falsePositivesCount = classification.falsePositiveIds.size,
+            falseNegativesCount = classification.falseNegativeIds.size
         )
-        emitReport(summary)
+
+        val metrics = EvaluationMetrics(
+            truePositives = classification.truePositiveIds.size,
+            falsePositives = classification.falsePositiveIds.size,
+            falseNegatives = classification.falseNegativeIds.size,
+            trueNegatives = trueNegativesCount,
+            isSuccessful = actualActivityIds.toSet() == expectedActivityIds.toSet()
+        )
+
+        val testCaseReport = TestCaseReport(
+            testCaseId = entry.id,
+            testCaseName = entry.name,
+            imageSrc = buildPreviewUrl(
+                testCaseId = entry.id,
+                correctActivityIds = classification.truePositiveIds,
+                falsePositiveIds = classification.falsePositiveIds,
+                falseNegativeIds = classification.falseNegativeIds
+            ),
+            correctActivityIds = classification.truePositiveIds,
+            falsePositiveIds = classification.falsePositiveIds,
+            falseNegativeIds = classification.falseNegativeIds,
+            expectedNamesWithIds = getNamesWithIds(bpmnModel, expectedActivityIds),
+            actualNamesWithIds = getNamesWithIds(bpmnModel, actualActivityIds),
+            isSuccessful = metrics.isSuccessful,
+            result = actualExpectedValues
+        )
+
+        EvaluationOutcome.Success(testCaseReport, metrics)
+
+    } catch (e: Exception) {
+        EvaluationOutcome.Error(
+            EvaluationReportError(
+                testCaseId = entry.id,
+                testCaseName = entry.name ?: "Test Case ${entry.id}",
+                errorMessage = e.message ?: "Unbekannter Fehler aufgetreten"
+            )
+        )
     }
 }

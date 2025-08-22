@@ -25,6 +25,7 @@ export default function EvaluationConfigCard({ children, onEvaluationConfigChang
     const [modelName, setModelName] = useState<string | null>(null);
     const [apiKey, setApiKey] = useState<string | null>(null);
     const [llmResponseTimeoutSeconds, setLlmResponseTimeoutSeconds] = useState<number | null>(null);
+    const [maxConcurrent, setMaxConcurrent] = useState<number | null>(null);
 
     useEffect(() => {
         fetchAnalysisEndpoints().then((endpoints => {
@@ -60,9 +61,10 @@ export default function EvaluationConfigCard({ children, onEvaluationConfigChang
                 modelName: modelName,
                 apiKey: apiKey,
                 timeoutSeconds: llmResponseTimeoutSeconds
-            }
+            },
+            maxConcurrent: maxConcurrent
         })
-    }, [isCustom, customEvaluationEndpoint, selectedEvaluationEndpoint, baseUrl, modelName, apiKey, llmResponseTimeoutSeconds]);
+    }, [isCustom, customEvaluationEndpoint, selectedEvaluationEndpoint, baseUrl, modelName, apiKey, llmResponseTimeoutSeconds, maxConcurrent]);
 
     return <Card className={`w-full ${className}`}>
         <CardHeader>
@@ -130,11 +132,24 @@ export default function EvaluationConfigCard({ children, onEvaluationConfigChang
                     <Input
                         id="timeout-seconds"
                         type="number"
-                        placeholder="60"
+                        placeholder="240"
                         value={llmResponseTimeoutSeconds !== null ? llmResponseTimeoutSeconds : ""}
                         onChange={(e) => {
                             const value = e.target.value.trim();
                             setLlmResponseTimeoutSeconds(value === "" ? null : parseInt(value, 10));
+                        }}
+                    />
+                </div>
+                <div>
+                    <Label htmlFor="max-concurrent">Max Concurrent LLM Requests</Label>
+                    <Input
+                        id="max-concurrent"
+                        type="number"
+                        placeholder="4"
+                        value={maxConcurrent !== null ? maxConcurrent : ""}
+                        onChange={(e) => {
+                            const value = e.target.value.trim();
+                            setMaxConcurrent(value === "" ? null : parseInt(value, 10));
                         }}
                     />
                 </div>

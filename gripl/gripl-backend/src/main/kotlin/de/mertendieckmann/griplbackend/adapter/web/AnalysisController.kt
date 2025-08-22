@@ -6,7 +6,9 @@ import de.mertendieckmann.griplbackend.evaluation.EvaluationRunner
 import de.mertendieckmann.griplbackend.model.dto.*
 import io.swagger.v3.oas.annotations.Operation
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.core.io.buffer.DataBufferUtils
 import org.springframework.http.HttpStatus
@@ -84,9 +86,9 @@ class AnalysisController(
         @RequestBody evaluationRequest: EvaluationRequest
     ): String {
         val reports = mutableListOf<EvaluationReport>()
-        evaluationRunner.run(evaluationRequest) {
-            if (it !is EvaluationReportStepInfo) reports.add(it)
-        }
+        evaluationRunner.run(evaluationRequest)
+            .filter { it !is EvaluationReportStepInfo }
+            .collect { reports.add(it)}
         return reports.joinToString("\n\n") { it.markdown }
     }
 
@@ -97,9 +99,7 @@ class AnalysisController(
     @PostMapping("/evaluation/stream", produces = [MediaType.APPLICATION_NDJSON_VALUE])
     suspend fun evaluateStream(
         @RequestBody evaluationRequest: EvaluationRequest
-    ): Flow<EvaluationReport> = flow {
-        evaluationRunner.run(evaluationRequest) {
-            emit(it)
-        }
+    ): Flow<EvaluationReport> {
+        return evaluationRunner.run(evaluationRequest)
     }
 }

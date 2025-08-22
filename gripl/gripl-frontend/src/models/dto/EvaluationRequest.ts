@@ -1,6 +1,7 @@
 export interface EvaluationRequest {
     evaluationEndpoint: string;
     llmProps: LlmProps | null;
+    maxConcurrent: number | null;
 }
 
 export interface LlmProps {

@@ -31,6 +31,8 @@ export default function EvaluationPage() {
         setErrors([])
         setIsLoading(true)
 
+        console.log("Evaluation request:", evaluationRequest)
+
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/gdpr/evaluation/stream`, {
             method: "POST",
             headers: {
