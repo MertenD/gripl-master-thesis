@@ -26,9 +26,11 @@ class HttpEvaluator(
         bodyBuilder.part("bpmnFile", ByteArrayResource(bpmnXml.toByteArray()))
             .header("Content-Disposition", "form-data; name=\"bpmnFile\"; filename=\"process.bpmn\"")
             .contentType(MediaType.APPLICATION_XML)
-        bodyBuilder.part("llmProps", jacksonObjectMapper().writeValueAsString(evaluationRequest.llmProps))
-            .header("Content-Disposition", "form-data; name=\"llmProps\"")
-            .contentType(MediaType.APPLICATION_JSON)
+        evaluationRequest.llmProps?.let { overrides ->
+            bodyBuilder.part("llmProps", jacksonObjectMapper().writeValueAsString(overrides))
+                .header("Content-Disposition", "form-data; name=\"llmProps\"")
+                .contentType(MediaType.APPLICATION_JSON)
+        }
 
         val absoluteEndpoint = if (evaluationRequest.evaluationEndpoint.startsWith("http://") || evaluationRequest.evaluationEndpoint.startsWith("https://")) {
             evaluationRequest.evaluationEndpoint

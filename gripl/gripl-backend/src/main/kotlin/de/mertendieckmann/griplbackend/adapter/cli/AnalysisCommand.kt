@@ -1,6 +1,5 @@
 package de.mertendieckmann.griplbackend.adapter.cli
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import de.mertendieckmann.griplbackend.application.factory.AnalyzerFactory
 import de.mertendieckmann.griplbackend.config.LlmConfig
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -10,6 +9,7 @@ import picocli.CommandLine.Option
 import picocli.CommandLine.Parameters
 import java.nio.file.Files
 import java.nio.file.Path
+import de.mertendieckmann.griplbackend.config.LlmConfig.Companion.LlmPropsOverride
 
 @Command(
     name = "analysis",
@@ -19,6 +19,7 @@ import java.nio.file.Path
 @Component
 class AnalysisCommand(
     private val analyzerFactory: AnalyzerFactory,
+    private val LlmConfig: LlmConfig
 ): Runnable {
 
     private val log = KotlinLogging.logger { }
@@ -36,14 +37,14 @@ class AnalysisCommand(
         log.info { "Running analysis on BPMN file: $bpmnFilePath with output format: $outputFormat" }
         val bpmnXml = Files.readString(bpmnFilePath)
 
-        val llmProps = LlmConfig.Companion.LlmProps(
+        val llm = LlmConfig.buildWithOverride(LlmPropsOverride(
             baseUrl = baseUrl,
             modelName = modelName,
             apiKey = apiKey,
-            timeoutSeconds = timeoutSeconds ?: LlmConfig.Companion.LlmProps().timeoutSeconds,
-        )
+            timeoutSeconds = timeoutSeconds
+        ))
 
-        val analyzer = analyzerFactory.create(llmProps)
+        val analyzer = analyzerFactory.create(llm)
         val result = analyzer.analyzeBpmnForGdpr(bpmnXml)
         CliOutput.print(result, outputFormat)
     }

@@ -4,14 +4,8 @@ import de.mertendieckmann.griplbackend.config.LlmConfig
 
 data class EvaluationRequest(
     val evaluationEndpoint: String = "/gdpr/analysis/basic",
-    var llmProps: LlmConfig.Companion.LlmProps = LlmConfig.Companion.LlmProps()
+    var llmProps: LlmConfig.Companion.LlmPropsOverride? = null
 ) {
-    init {
-        llmProps = llmProps.copy().apply {
-            if (baseUrl.isNullOrBlank()) baseUrl = LlmConfig.Companion.LlmProps().baseUrl
-            if (modelName.isNullOrBlank()) modelName = LlmConfig.Companion.LlmProps().modelName
-            if (apiKey.isNullOrBlank()) apiKey = LlmConfig.Companion.LlmProps().apiKey
-            if (timeoutSeconds == 0L) timeoutSeconds = LlmConfig.Companion.LlmProps().timeoutSeconds
-        }
-    }
+    override fun toString(): String =
+        "EvaluationRequest(evaluationEndpoint=$evaluationEndpoint, llmProps=${llmProps?.copy(apiKey = llmProps?.apiKey?.let { "\"****\"" })})"
 }

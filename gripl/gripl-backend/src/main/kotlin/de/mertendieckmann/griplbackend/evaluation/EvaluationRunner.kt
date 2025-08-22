@@ -1,6 +1,5 @@
-package de.mertendieckmann.griplbackend.evaluation.runner
+package de.mertendieckmann.griplbackend.evaluation
 
-import de.mertendieckmann.griplbackend.config.LlmConfig.Companion.LlmProps
 import de.mertendieckmann.griplbackend.evaluation.service.HttpEvaluator
 import de.mertendieckmann.griplbackend.model.dto.*
 import io.github.oshai.kotlinlogging.KotlinLogging

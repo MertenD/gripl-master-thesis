@@ -1,7 +1,7 @@
 package de.mertendieckmann.griplbackend.adapter.cli
 
 import de.mertendieckmann.griplbackend.config.LlmConfig
-import de.mertendieckmann.griplbackend.evaluation.runner.EvaluationRunner
+import de.mertendieckmann.griplbackend.evaluation.EvaluationRunner
 import de.mertendieckmann.griplbackend.model.dto.AnalysisEndpoint
 import de.mertendieckmann.griplbackend.model.dto.EvaluationRequest
 import kotlinx.coroutines.runBlocking
@@ -33,11 +33,11 @@ class EvaluationCommand(
     @Option(names = ["--timeoutSeconds"], description = ["Timeout in seconds for the LLM requests"], required = false) var timeoutSeconds: Long? = null
 
     override fun run() = runBlocking {
-        val llmProps = LlmConfig.Companion.LlmProps(
+        val llmProps = LlmConfig.Companion.LlmPropsOverride(
             baseUrl = baseUrl,
             modelName = modelName,
             apiKey = apiKey,
-            timeoutSeconds = timeoutSeconds ?: LlmConfig.Companion.LlmProps().timeoutSeconds,
+            timeoutSeconds = timeoutSeconds,
         )
         evaluationEndpoint = evaluationEndpoint.ifBlank {
             EvaluationRequest().evaluationEndpoint

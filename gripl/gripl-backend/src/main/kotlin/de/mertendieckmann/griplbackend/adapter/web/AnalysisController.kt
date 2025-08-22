@@ -2,8 +2,7 @@ package de.mertendieckmann.griplbackend.adapter.web
 
 import de.mertendieckmann.griplbackend.application.factory.AnalyzerFactory
 import de.mertendieckmann.griplbackend.config.LlmConfig
-import de.mertendieckmann.griplbackend.config.LlmConfig.Companion.LlmProps
-import de.mertendieckmann.griplbackend.evaluation.runner.EvaluationRunner
+import de.mertendieckmann.griplbackend.evaluation.EvaluationRunner
 import de.mertendieckmann.griplbackend.model.dto.*
 import io.swagger.v3.oas.annotations.Operation
 import kotlinx.coroutines.flow.Flow
@@ -31,6 +30,7 @@ import reactor.core.publisher.Mono
 class AnalysisController(
     private val analyzerFactory: AnalyzerFactory,
     private val evaluationRunner: EvaluationRunner,
+    private val llmConfig: LlmConfig,
     @Qualifier("analysisEndpoints") private val analysisEndpoints: List<AnalysisEndpoint>
 ) {
 
@@ -55,7 +55,7 @@ class AnalysisController(
     )
     fun analyzeBpmnForGdpr(
         @RequestPart("bpmnFile") file: FilePart,
-        @RequestPart("llmProps", required = false) llmProps: LlmProps? = null
+        @RequestPart("llmProps", required = false) llmPropsOverrides: LlmConfig.Companion.LlmPropsOverride? = null
     ): Mono<ResponseEntity<AnalysisResponse>> {
 
         val bpmnXmlMono: Mono<String> = DataBufferUtils
@@ -65,7 +65,8 @@ class AnalysisController(
             }
 
         return bpmnXmlMono.flatMap { bpmnXml ->
-            val analyzer = analyzerFactory.create(llmProps ?: LlmConfig.Companion.LlmProps())
+            val llm = llmConfig.buildWithOverride(llmPropsOverrides)
+            val analyzer = analyzerFactory.create(llm)
 
             val analysisResult = analyzer.analyzeBpmnForGdpr(bpmnXml)
 
@@ -97,7 +98,6 @@ class AnalysisController(
     suspend fun evaluateStream(
         @RequestBody evaluationRequest: EvaluationRequest
     ): Flow<EvaluationReport> = flow {
-        println("Starting evaluation with request: $evaluationRequest")
         evaluationRunner.run(evaluationRequest) {
             emit(it)
         }
