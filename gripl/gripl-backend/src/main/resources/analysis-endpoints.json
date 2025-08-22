@@ -1,6 +1,6 @@
 [
   {
-    "name": "Basic Prompt Engineering",
-    "endpoint": "/gdpr/analysis/basic"
+    "name": "Default Internal Analysis",
+    "endpoint": "/gdpr/analysis/v1"
   }
 ]

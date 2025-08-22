@@ -14,9 +14,10 @@ import MetricsCharts from "@/components/evaluation/metrics-charts";
 import {Spinner} from "@/components/ui/spinner";
 import TestCaseErrorCard from "@/components/evaluation/test-case-error-card";
 import EvaluationConfigCard from "@/components/evaluation/evaluation-config-card";
+import {EvaluationRequest} from "@/models/dto/EvaluationRequest";
 
 export default function EvaluationPage() {
-    const [selectedEndpoint, setSelectedEndpoint] = useState<string>("")
+    const [evaluationRequest, setEvaluationRequest] = useState<EvaluationRequest | null>(null)
     const [testCases, setTestCases] = useState<TestCaseReport[]>([])
     const [summary, setSummary] = useState<EvaluationReportSummary | null>(null)
     const [currentStepInfo, setCurrentStepInfo] = useState<EvaluationReportStepInfo | null>(null)
@@ -30,10 +31,13 @@ export default function EvaluationPage() {
         setErrors([])
         setIsLoading(true)
 
-        const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_BASE_URL}/gdpr/evaluation/stream?evaluationEndpoint=${encodeURIComponent(selectedEndpoint)}`,
-            {credentials: "include"}
-        )
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/gdpr/evaluation/stream`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(evaluationRequest)
+        });
         if (!res.ok || !res.body) {
             console.error("Request failed:", res.status, res.statusText)
             return
@@ -102,9 +106,9 @@ export default function EvaluationPage() {
     }
 
     return <div className="h-full w-full p-6">
-        <EvaluationConfigCard onEndpointChange={setSelectedEndpoint} className="mb-4">
+        <EvaluationConfigCard onEvaluationConfigChanged={setEvaluationRequest} className="mb-4">
             <div className="flex flex-row justify-end items-center mb-4 space-x-4">
-                <Button variant="default" disabled={isLoading} onClick={handleEvaluationStart}>
+                <Button variant="default" disabled={isLoading || !evaluationRequest} onClick={handleEvaluationStart}>
                     {!isLoading && "Start Evaluation"}
                     <>{isLoading && <div className="flex flex-row space-x-4">
                         <Spinner className="h-4 w-4 text-foreground"/>

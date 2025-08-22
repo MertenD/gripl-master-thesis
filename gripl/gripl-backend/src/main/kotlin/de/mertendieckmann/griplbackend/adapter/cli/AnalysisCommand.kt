@@ -2,6 +2,7 @@ package de.mertendieckmann.griplbackend.adapter.cli
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import de.mertendieckmann.griplbackend.application.factory.AnalyzerFactory
+import de.mertendieckmann.griplbackend.config.LlmConfig
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Component
 import picocli.CommandLine.Command
@@ -26,11 +27,23 @@ class AnalysisCommand(
     @Option(names = ["-o", "--outputFormat"], defaultValue = "pretty", description = [
         "Output format for the analysis result. Supported formats: 'pretty' (default), 'json'."
     ]) lateinit var outputFormat: String
+    @Option(names = ["--baseUrl"], description = ["Base URL for the LLM API"], required = false) var baseUrl: String? = null
+    @Option(names = ["--modelName"], description = ["Model name for the LLM"], required = false) var modelName: String? = null
+    @Option(names = ["--apiKey"], description = ["API key for the LLM"], required = false) var apiKey: String? = null
+    @Option(names = ["--timeoutSeconds"], description = ["Timeout in seconds for the LLM requests"], required = false) var timeoutSeconds: Long? = null
 
     override fun run() {
         log.info { "Running analysis on BPMN file: $bpmnFilePath with output format: $outputFormat" }
         val bpmnXml = Files.readString(bpmnFilePath)
-        val analyzer = analyzerFactory.create()
+
+        val llmProps = LlmConfig.Companion.LlmProps(
+            baseUrl = baseUrl,
+            modelName = modelName,
+            apiKey = apiKey,
+            timeoutSeconds = timeoutSeconds ?: LlmConfig.Companion.LlmProps().timeoutSeconds,
+        )
+
+        val analyzer = analyzerFactory.create(llmProps)
         val result = analyzer.analyzeBpmnForGdpr(bpmnXml)
         CliOutput.print(result, outputFormat)
     }

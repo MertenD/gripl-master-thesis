@@ -1,11 +1,10 @@
 package de.mertendieckmann.griplbackend.adapter.web
 
 import de.mertendieckmann.griplbackend.application.factory.AnalyzerFactory
+import de.mertendieckmann.griplbackend.config.LlmConfig
+import de.mertendieckmann.griplbackend.config.LlmConfig.Companion.LlmProps
 import de.mertendieckmann.griplbackend.evaluation.runner.EvaluationRunner
-import de.mertendieckmann.griplbackend.model.dto.AnalysisEndpoint
-import de.mertendieckmann.griplbackend.model.dto.AnalysisResponse
-import de.mertendieckmann.griplbackend.model.dto.EvaluationReport
-import de.mertendieckmann.griplbackend.model.dto.EvaluationReportStepInfo
+import de.mertendieckmann.griplbackend.model.dto.*
 import io.swagger.v3.oas.annotations.Operation
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -50,12 +49,13 @@ class AnalysisController(
             + " of GDPR-relevant elements found in the BPMN model, including the reasoning for each element."
     )
     @PostMapping(
-        "/analysis/basic",
+        "/analysis/v1",
         consumes = [MediaType.MULTIPART_FORM_DATA_VALUE],
         produces = [MediaType.APPLICATION_JSON_VALUE]
     )
     fun analyzeBpmnForGdpr(
-        @RequestPart("bpmnFile") file: FilePart
+        @RequestPart("bpmnFile") file: FilePart,
+        @RequestPart("llmProps", required = false) llmProps: LlmProps? = null
     ): Mono<ResponseEntity<AnalysisResponse>> {
 
         val bpmnXmlMono: Mono<String> = DataBufferUtils
@@ -65,7 +65,7 @@ class AnalysisController(
             }
 
         return bpmnXmlMono.flatMap { bpmnXml ->
-            val analyzer = analyzerFactory.create()
+            val analyzer = analyzerFactory.create(llmProps ?: LlmConfig.Companion.LlmProps())
 
             val analysisResult = analyzer.analyzeBpmnForGdpr(bpmnXml)
 
@@ -78,12 +78,12 @@ class AnalysisController(
         summary = "Evaluates the classification algorithm against the dataset",
         description = "Runs the evaluation of the classification algorithm against all process models inside the dataset and returns a markdown report with the results."
     )
-    @GetMapping("/evaluation/markdown", produces = [MediaType.TEXT_MARKDOWN_VALUE])
+    @PostMapping("/evaluation/markdown", produces = [MediaType.TEXT_MARKDOWN_VALUE])
     suspend fun evaluate(
-        @RequestParam("evaluationEndpoint", required = false) evaluationEndpoint: String = analysisEndpoints.first().endpoint
+        @RequestBody evaluationRequest: EvaluationRequest
     ): String {
         val reports = mutableListOf<EvaluationReport>()
-        evaluationRunner.run(evaluationEndpoint) {
+        evaluationRunner.run(evaluationRequest) {
             if (it !is EvaluationReportStepInfo) reports.add(it)
         }
         return reports.joinToString("\n\n") { it.markdown }
@@ -93,11 +93,12 @@ class AnalysisController(
         summary = "Evaluates the classification algorithm against the dataset",
         description = "Runs the evaluation of the classification algorithm against all process models inside the dataset and returns a JSON report with the results in a stream."
     )
-    @GetMapping("/evaluation/stream", produces = [MediaType.APPLICATION_NDJSON_VALUE])
+    @PostMapping("/evaluation/stream", produces = [MediaType.APPLICATION_NDJSON_VALUE])
     suspend fun evaluateStream(
-        @RequestParam("evaluationEndpoint", required = false) evaluationEndpoint: String = analysisEndpoints.first().endpoint
+        @RequestBody evaluationRequest: EvaluationRequest
     ): Flow<EvaluationReport> = flow {
-        evaluationRunner.run(evaluationEndpoint) {
+        println("Starting evaluation with request: $evaluationRequest")
+        evaluationRunner.run(evaluationRequest) {
             emit(it)
         }
     }

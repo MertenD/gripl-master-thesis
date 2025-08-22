@@ -1,8 +1,9 @@
 package de.mertendieckmann.griplbackend.evaluation.service
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import de.mertendieckmann.griplbackend.model.dto.AnalysisResponse
+import de.mertendieckmann.griplbackend.model.dto.EvaluationRequest
 import de.mertendieckmann.griplbackend.model.dto.ExpectedValue
-import dev.langchain4j.model.chat.ChatModel
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.http.MediaType
@@ -20,16 +21,19 @@ class HttpEvaluator(
 
     private val webClient = WebClient.builder().build()
 
-    override suspend fun evaluate(bpmnXml: String, endpoint: String): List<ExpectedValue> {
+    override suspend fun evaluate(bpmnXml: String, evaluationRequest: EvaluationRequest): List<ExpectedValue> {
         val bodyBuilder = MultipartBodyBuilder()
         bodyBuilder.part("bpmnFile", ByteArrayResource(bpmnXml.toByteArray()))
             .header("Content-Disposition", "form-data; name=\"bpmnFile\"; filename=\"process.bpmn\"")
             .contentType(MediaType.APPLICATION_XML)
+        bodyBuilder.part("llmProps", jacksonObjectMapper().writeValueAsString(evaluationRequest.llmProps))
+            .header("Content-Disposition", "form-data; name=\"llmProps\"")
+            .contentType(MediaType.APPLICATION_JSON)
 
-        val absoluteEndpoint = if (endpoint.startsWith("http://") || endpoint.startsWith("https://")) {
-            endpoint
+        val absoluteEndpoint = if (evaluationRequest.evaluationEndpoint.startsWith("http://") || evaluationRequest.evaluationEndpoint.startsWith("https://")) {
+            evaluationRequest.evaluationEndpoint
         } else {
-            "http://localhost:$serverPort$endpoint"
+            "http://localhost:$serverPort${evaluationRequest.evaluationEndpoint}"
         }
 
         try {

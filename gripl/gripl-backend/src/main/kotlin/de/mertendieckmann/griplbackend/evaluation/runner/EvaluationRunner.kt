@@ -1,5 +1,6 @@
 package de.mertendieckmann.griplbackend.evaluation.runner
 
+import de.mertendieckmann.griplbackend.config.LlmConfig.Companion.LlmProps
 import de.mertendieckmann.griplbackend.evaluation.service.HttpEvaluator
 import de.mertendieckmann.griplbackend.model.dto.*
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -16,8 +17,8 @@ class EvaluationRunner(
 ) {
     private val log = KotlinLogging.logger { }
 
-    suspend fun run(evaluationEndpoint: String, emitReport: suspend (EvaluationReport) -> Unit) {
-        log.info { "Starting evaluation with endpoint: $evaluationEndpoint" }
+    suspend fun run(evaluationRequest: EvaluationRequest, emitReport: suspend (EvaluationReport) -> Unit) {
+        log.info { "Starting evaluation with endpoint: ${evaluationRequest.evaluationEndpoint}" }
 
         var total = 0
         var passed = 0
@@ -37,7 +38,7 @@ class EvaluationRunner(
             ))
 
             val evaluationResult = try {
-                evaluator.evaluate(entry.bpmnXml, evaluationEndpoint)
+                evaluator.evaluate(entry.bpmnXml, evaluationRequest)
             } catch (e: Exception) {
                 error++
                 emitReport(EvaluationReportError(
