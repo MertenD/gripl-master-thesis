@@ -24,7 +24,7 @@ export default function AnalysisToolCard({ bpmnXml, highlightedActivityIds, setH
         const formData = new FormData();
         formData.append("bpmnFile", xmlBlob, "diagram.bpmn");
 
-        fetch(`/api/gdpr/analysis`, {
+        fetch(`/api/gdpr/analysis/v1`, {
             method: "POST",
             headers: {
                 Accept: "application/json"
