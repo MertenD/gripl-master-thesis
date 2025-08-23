@@ -1,4 +1,4 @@
-type AnalysisEndpoint = {
-    name: string
-    endpoint: string
+interface AnalysisEndpoint {
+    name: string;
+    endpoint: string;
 }

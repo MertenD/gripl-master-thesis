@@ -1,18 +1,26 @@
 package de.mertendieckmann.griplbackend.adapter.cli
 
-import de.mertendieckmann.griplbackend.config.LlmConfig
-import de.mertendieckmann.griplbackend.evaluation.EvaluationRunner
-import de.mertendieckmann.griplbackend.model.dto.AnalysisEndpoint
-import de.mertendieckmann.griplbackend.model.dto.EvaluationRequest
+
+import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
+import com.fasterxml.jackson.module.kotlin.readValue
+import com.fasterxml.jackson.module.kotlin.registerKotlinModule
+import de.mertendieckmann.griplbackend.evaluation.MultiEvaluationRunner
+import de.mertendieckmann.griplbackend.model.dto.EvaluationReportStepInfo
+import de.mertendieckmann.griplbackend.model.dto.MultiEvaluationRequest
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.runBlocking
-import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.core.env.Environment
 import org.springframework.stereotype.Component
-import picocli.CommandLine.Option
 import picocli.CommandLine.Command
-import picocli.CommandLine.Parameters
+import picocli.CommandLine.Option
+import java.nio.charset.StandardCharsets
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.StandardOpenOption
 
 @Command(
     name = "evaluation",
@@ -21,51 +29,83 @@ import picocli.CommandLine.Parameters
 )
 @Component
 class EvaluationCommand(
-    private val evaluationRunner: EvaluationRunner,
-    @Qualifier("analysisEndpoints") private val analysisEndpoints: List<AnalysisEndpoint>
+    private val multiEvaluationRunner: MultiEvaluationRunner,
+    private val env: Environment
 ): Runnable {
 
-    enum class OutputFormat { pretty, json }
-
-    @Parameters(
-        paramLabel = "EVALUATION_ENDPOINT",
-        arity = "0..1",
-        description = ["Endpoint for the evaluation service"]
-    )
-    var evaluationEndpoint: String? = null
+    private val log = KotlinLogging.logger {}
 
     @Option(
-        names = ["-o", "--outputFormat"],
-        defaultValue = "pretty",
-        description = ["Output format: \${COMPLETION-CANDIDATES}"]
+        names = ["-c", "--config"],
+        required = true,
+        description = ["Path to a YAML file describing a MultiEvaluationRequest"]
     )
-    var outputFormat: OutputFormat = OutputFormat.pretty
+    lateinit var configPath: String
 
-    @Option(names = ["--baseUrl"], description = ["Base URL for the LLM API"])
-    var baseUrl: String? = null
-
-    @Option(names = ["--modelName"], description = ["Model name for the LLM"])
-    var modelName: String? = null
-
-    @Option(names = ["--apiKey"], description = ["API key for the LLM"])
-    var apiKey: String? = null
-
-    @Option(names = ["--timeoutSeconds"], description = ["Timeout in seconds for the LLM requests"])
-    var timeoutSeconds: Long? = null
+    @Option(
+        names = ["-o", "--out"],
+        required = false,
+        description = ["Path to the output Markdown file (default: ./evaluation_report_multi.md)"]
+    )
+    var outPath: String = "evaluation_report_multi.md"
 
     override fun run() = runBlocking {
-        val defaultRequest = EvaluationRequest()
-        val endpoint = evaluationEndpoint?.takeUnless { it.isBlank() } ?: defaultRequest.evaluationEndpoint
+        val request = loadYaml(configPath)
 
-        val llmProps = LlmConfig.Companion.LlmPropsOverride(
-            baseUrl = baseUrl,
-            modelName = modelName,
-            apiKey = apiKey,
-            timeoutSeconds = timeoutSeconds,
-        )
+        val outputPath = Path.of(outPath)
+        outputPath.parent?.let { Files.createDirectories(it) }
 
-        evaluationRunner.run(EvaluationRequest(endpoint, llmProps)).onEach {
-            println(CliOutput.print(it, outputFormat.name))
-        }.collect()
+        Files.newBufferedWriter(
+            outputPath,
+            StandardCharsets.UTF_8,
+            StandardOpenOption.CREATE,
+            StandardOpenOption.TRUNCATE_EXISTING,
+            StandardOpenOption.WRITE
+        ).use { writer ->
+
+            var currentLabel: String? = null
+
+            multiEvaluationRunner
+                .runAll(request)
+                .onEach { envelope ->
+                    val label = envelope.modelLabel
+                    val report = envelope.report
+
+                    if (currentLabel != label) {
+                        if (currentLabel != null) writer.appendLine()
+                        writer.appendLine("# Model: $label")
+                        writer.appendLine()
+                        currentLabel = label
+                    }
+
+                    if (report is EvaluationReportStepInfo) return@onEach
+
+                    val md = report.toMarkdown()
+                    if (md.isNotBlank()) {
+                        writer.appendLine(md)
+                        writer.appendLine()
+                    }
+                }
+                .collect()
+        }
+
+        log.info { "Evaluation report written to: $outPath" }
+    }
+
+    private fun loadYaml(pathStr: String): MultiEvaluationRequest {
+        val path = Path.of(pathStr)
+        require(Files.exists(path)) { "Config file not found: $pathStr" }
+        val raw = Files.readString(path, StandardCharsets.UTF_8)
+        val resolved = substituteEnv(raw)
+
+        val mapper = ObjectMapper(YAMLFactory())
+            .registerKotlinModule()
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+
+        return mapper.readValue<MultiEvaluationRequest>(resolved)
+    }
+
+    private fun substituteEnv(text: String): String {
+        return env.resolveRequiredPlaceholders(text)
     }
 }

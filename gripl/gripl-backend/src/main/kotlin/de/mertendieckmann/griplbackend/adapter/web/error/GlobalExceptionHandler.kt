@@ -32,6 +32,13 @@ class GlobalExceptionHandler {
             .body(ApiError(code = "RESOURCE_NOT_FOUND", message = "The requested resource was not found"))
             .also { ex.printStackTrace() }
 
+    @ExceptionHandler(com.fasterxml.jackson.core.JsonParseException::class)
+    fun handleJsonParseException(ex: com.fasterxml.jackson.core.JsonParseException): ResponseEntity<ApiError> =
+        ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .body(ApiError(code = "JSON_PARSE_ERROR", message = ex.message))
+            .also { ex.printStackTrace() }
+
     @ExceptionHandler(dev.langchain4j.exception.InvalidRequestException::class)
     fun handleInterruptedException(ex: dev.langchain4j.exception.InvalidRequestException): ResponseEntity<ApiError> =
         ResponseEntity
@@ -51,6 +58,13 @@ class GlobalExceptionHandler {
         ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
             .body(ApiError(code = "MISSING_REQUEST_VALUE", message = ex.message))
+            .also { ex.printStackTrace() }
+
+    @ExceptionHandler(dev.langchain4j.exception.AuthenticationException::class)
+    fun handleAuthenticationException(ex: dev.langchain4j.exception.AuthenticationException): ResponseEntity<ApiError> =
+        ResponseEntity
+            .status(HttpStatus.UNAUTHORIZED)
+            .body(ApiError(code = "AUTHENTICATION_ERROR", message = ex.message))
             .also { ex.printStackTrace() }
 
     data class ApiError(val code: String, val message: String?)

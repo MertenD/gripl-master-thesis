@@ -4,7 +4,7 @@ import {Card, CardContent, CardHeader} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
 import {FileText, RefreshCw} from "lucide-react";
 import {useState} from "react";
-import {AnalysisRequest, AnalysisResponse} from "@/models/dto/AnalysisDto";
+import {AnalysisResponse} from "@/models/dto/AnalysisDto";
 
 interface AnalysisToolCardProps {
     bpmnXml: string;
@@ -30,7 +30,7 @@ export default function AnalysisToolCard({ bpmnXml, highlightedActivityIds, setH
                 Accept: "application/json"
             },
             body: formData,
-        }).then(response => {
+        } as RequestInit).then(response => {
             if (!response.ok) {
                 throw new Error("Fehler bei der Analyse des Diagramms");
             }

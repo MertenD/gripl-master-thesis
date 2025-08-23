@@ -53,11 +53,11 @@ class EvaluationRunner(
 
     private suspend fun evaluateSingleEntry(
         entry: EvaluationData,
-        request: EvaluationRequest
+        evaluationRequest: EvaluationRequest
     ): EvaluationOutcome = try {
         val expectedActivityIds = entry.expectedValues.map { it.value }
-        val actualExpectedValues = evaluator.evaluate(entry.bpmnXml, request)
-        val actualActivityIds = actualExpectedValues.map { it.value }
+        val actualResult = evaluator.evaluate(entry.bpmnXml, evaluationRequest)
+        val actualActivityIds = actualResult.map { it.value }
 
         val bpmnModel = parseBpmn(entry.bpmnXml)
 
@@ -92,7 +92,7 @@ class EvaluationRunner(
             expectedNamesWithIds = getNamesWithIds(bpmnModel, expectedActivityIds),
             actualNamesWithIds = getNamesWithIds(bpmnModel, actualActivityIds),
             isSuccessful = metrics.isSuccessful,
-            result = actualExpectedValues
+            result = actualResult
         )
 
         EvaluationOutcome.Success(testCaseReport, metrics)

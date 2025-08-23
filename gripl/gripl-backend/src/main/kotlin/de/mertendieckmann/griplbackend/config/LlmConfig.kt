@@ -29,6 +29,7 @@ class LlmConfig(private val defaultProps: LlmProps) {
             .httpClientBuilder(httpClientBuilder)
             .timeout(Duration.ofSeconds(props.timeoutSeconds))
             .logRequests(true)
+            .logResponses(true)
             .build()
     }
 

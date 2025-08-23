@@ -3,6 +3,7 @@ package de.mertendieckmann.griplbackend.evaluation.service
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import de.mertendieckmann.griplbackend.model.dto.AnalysisResponse
 import de.mertendieckmann.griplbackend.model.dto.EvaluationRequest
+import de.mertendieckmann.griplbackend.model.dto.ModelRunConfig
 import de.mertendieckmann.griplbackend.model.dto.ExpectedValue
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.ByteArrayResource

@@ -1,15 +1,17 @@
 package de.mertendieckmann.griplbackend.adapter.web
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import de.mertendieckmann.griplbackend.application.factory.AnalyzerFactory
 import de.mertendieckmann.griplbackend.config.LlmConfig
 import de.mertendieckmann.griplbackend.evaluation.EvaluationRunner
+import de.mertendieckmann.griplbackend.evaluation.MultiEvaluationRunner
 import de.mertendieckmann.griplbackend.model.dto.*
 import io.swagger.v3.oas.annotations.Operation
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.core.env.Environment
 import org.springframework.core.io.buffer.DataBufferUtils
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -31,9 +33,10 @@ import reactor.core.publisher.Mono
 )
 class AnalysisController(
     private val analyzerFactory: AnalyzerFactory,
-    private val evaluationRunner: EvaluationRunner,
+    private val multiEvaluationRunner: MultiEvaluationRunner,
     private val llmConfig: LlmConfig,
-    @Qualifier("analysisEndpoints") private val analysisEndpoints: List<AnalysisEndpoint>
+    @Qualifier("analysisEndpoints") private val analysisEndpoints: List<AnalysisEndpoint>,
+    private val env: Environment
 ) {
 
     @Operation(
@@ -83,13 +86,29 @@ class AnalysisController(
     )
     @PostMapping("/evaluation/markdown", produces = [MediaType.TEXT_MARKDOWN_VALUE])
     suspend fun evaluate(
-        @RequestBody evaluationRequest: EvaluationRequest
+        @RequestBody request: MultiEvaluationRequest
     ): String {
-        val reports = mutableListOf<EvaluationReport>()
-        evaluationRunner.run(evaluationRequest)
-            .filter { it !is EvaluationReportStepInfo }
-            .collect { reports.add(it)}
-        return reports.joinToString("\n\n") { it.markdown }
+        val sb = StringBuilder()
+        var currentLabel: String? = null
+
+        multiEvaluationRunner.runAll(request).collect { envelope ->
+            val (label, report) = envelope
+
+            if (currentLabel != label) {
+                if (currentLabel != null) sb.appendLine()
+                sb.appendLine("# Modell: $label").appendLine()
+                currentLabel = label
+            }
+
+            if (report !is EvaluationReportStepInfo) {
+                val md = report.toMarkdown()
+                if (md.isNotBlank()) {
+                    sb.appendLine(md).appendLine()
+                }
+            }
+        }
+
+        return sb.toString().trimEnd()
     }
 
     @Operation(
@@ -98,8 +117,11 @@ class AnalysisController(
     )
     @PostMapping("/evaluation/stream", produces = [MediaType.APPLICATION_NDJSON_VALUE])
     suspend fun evaluateStream(
-        @RequestBody evaluationRequest: EvaluationRequest
-    ): Flow<EvaluationReport> {
-        return evaluationRunner.run(evaluationRequest)
+        @RequestBody request: MultiEvaluationRequest
+    ): Flow<ModelReportEnvelope> {
+        val resolvedRequest: MultiEvaluationRequest = jacksonObjectMapper().readValue<MultiEvaluationRequest>(
+                env.resolvePlaceholders(jacksonObjectMapper().writeValueAsString(request)
+            ))
+        return multiEvaluationRunner.runAll(resolvedRequest)
     }
 }
