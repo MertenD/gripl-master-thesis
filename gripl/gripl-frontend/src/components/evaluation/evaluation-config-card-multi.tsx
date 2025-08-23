@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { PasswordInput } from "@/components/ui/input-password";
 import fetchAnalysisEndpoints from "@/actions/analysis-endpoints";
 import {ModelRunConfig, MultiEvaluationRequest} from "@/models/dto/MultiEvaluationRequest";
-import yaml from "js-yaml";
+import { load as yamlLoad, dump as yamlDump } from "js-yaml";
 
 type EndpointChoice = "default" | "preset" | "custom";
 
@@ -128,7 +128,7 @@ export default function EvaluationConfigCardMulti({
         if (!file) return;
         try {
             const text = await file.text();
-            const parsed = yaml.load(text) as any;
+            const parsed = yamlLoad(text) as any;
             applyYamlConfig(parsed);
         } catch (err) {
             console.error("YAML parse error:", err);
@@ -207,7 +207,7 @@ export default function EvaluationConfigCardMulti({
     function onClickExportYaml() {
         const req = buildCurrentRequestForExport();
         const clean = pruneNulls(req);
-        const text = yaml.dump(clean, { noRefs: true, lineWidth: 120, indent: 2 });
+        const text = yamlDump(clean, { noRefs: true, lineWidth: 120, indent: 2 });
 
         const blob = new Blob([text], { type: "text/yaml" });
         const url = URL.createObjectURL(blob);
