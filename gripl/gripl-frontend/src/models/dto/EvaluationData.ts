@@ -2,7 +2,8 @@ export interface EvaluationData {
     id: number,
     name: string,
     bpmnXml: string,
-    expectedValues: ExpectedValues[]
+    expectedValues: ExpectedValues[],
+    datasetId: number
 }
 
 export interface ExpectedValues {
@@ -12,5 +13,6 @@ export interface ExpectedValues {
 
 export interface EvaluationDataMeta {
     id: number,
-    name?: string
+    name?: string,
+    datasetId?: number
 }

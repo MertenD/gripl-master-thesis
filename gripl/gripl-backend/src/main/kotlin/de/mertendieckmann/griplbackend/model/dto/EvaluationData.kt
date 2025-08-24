@@ -7,18 +7,20 @@ data class EvaluationData(
     val id: Long,
     val name: String?,
     val bpmnXml: String,
-    val expectedValues: List<ExpectedValue>
+    val expectedValues: List<ExpectedValue>,
+    val datasetId: Long? = null
 ) {
     companion object {
         private val mapper = jacksonObjectMapper()
 
-        fun fromRow(id: Long, name: String?, bpmnXml: String, expectedJson: String): EvaluationData {
+        fun fromRow(id: Long, name: String?, bpmnXml: String, expectedJson: String, datasetId: Long?): EvaluationData {
             val list: List<ExpectedValue> = mapper.readValue(expectedJson)
             return EvaluationData(
                 id = id,
                 name = name,
                 bpmnXml = bpmnXml,
-                expectedValues = list
+                expectedValues = list,
+                datasetId = datasetId
             )
         }
     }
@@ -31,12 +33,14 @@ data class ExpectedValue(
 
 data class EvaluationDataMeta(
     val id: Long,
-    val name: String?
+    val name: String?,
+    val datasetId: Long?
 )
 
 data class EvaluationDataWithOptionalId(
     val id: Long? = null,
     val name: String? = null,
     val bpmnXml: String,
-    val expectedValues: List<ExpectedValue>
+    val expectedValues: List<ExpectedValue>,
+    val datasetId: Long? = null
 )

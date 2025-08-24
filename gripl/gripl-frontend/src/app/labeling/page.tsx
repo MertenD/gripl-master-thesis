@@ -19,5 +19,7 @@ export default async function LabelingPage() {
             return []
         })
 
-    return <DatasetList evaluationMetadata={evaluationMetadata}/>
+    const datasetIds = Array.from(new Set(evaluationMetadata.map(meta => meta.datasetId).filter(id => id !== undefined))) as number[];
+
+    return <DatasetList datasetIds={datasetIds} evaluationMetadata={evaluationMetadata}/>
 }

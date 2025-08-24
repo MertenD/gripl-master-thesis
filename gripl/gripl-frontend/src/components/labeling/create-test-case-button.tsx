@@ -16,7 +16,11 @@ import {useRouter} from "next/navigation";
 import {Plus} from "lucide-react";
 import emptyDiagram from "@/data/empty-diagram.bpmn";
 
-export default function CreateTestCaseButton() {
+interface CreateTestCaseButtonProps {
+    datasetId: number;
+}
+
+export default function CreateTestCaseButton({ datasetId }: CreateTestCaseButtonProps) {
 
     const router = useRouter()
     const [showCreateTestCaseDialog, setShowCreateTestCaseDialog] = React.useState(false)
@@ -37,11 +41,12 @@ export default function CreateTestCaseButton() {
             { type: 'application/json' }
         );
         formData.append('expectedValues', expectedValuesBlob, 'expectedValues.json');
+        formData.append("datasetId", datasetId.toString());
 
         fetch("/api/dataset", {
             method: "POST",
             body: formData,
-        }).then(response => {
+        } as RequestInit).then(response => {
             if (!response.ok) {
                 throw new Error("Failed to create test case");
             }
@@ -58,13 +63,13 @@ export default function CreateTestCaseButton() {
     }
 
     return <Dialog open={showCreateTestCaseDialog} onOpenChange={setShowCreateTestCaseDialog}>
-        <Button className="m-4" onClick={() => setShowCreateTestCaseDialog(true)}>
+        <Button className="h-full" onClick={() => setShowCreateTestCaseDialog(true)}>
             <Plus />
             <span className="pl-2 text-center">Create Test Case</span>
         </Button>
         <DialogContent>
             <DialogHeader>
-                <DialogTitle>Create Test Case</DialogTitle>
+                <DialogTitle>Create Test Case for dataset {datasetId}</DialogTitle>
                 <DialogDescription>Create a new test case for the evaluation pipeline.</DialogDescription>
             </DialogHeader>
             <div>

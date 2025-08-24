@@ -19,7 +19,8 @@ class EvaluationDataRepository(
             id = rs.getLong("id"),
             name = rs.getString("name"),
             bpmnXml = rs.getString("bpmn_xml"),
-            expectedJson = rs.getString("expected_values")
+            expectedJson = rs.getString("expected_values"),
+            datasetId = rs.getLong("dataset_id"),
         )
     }
 
@@ -33,8 +34,8 @@ class EvaluationDataRepository(
 
     fun insertEvaluationData(data: EvaluationDataWithOptionalId): Int? {
         val sql = """
-            INSERT INTO evaluation_data (name, bpmn_xml, expected_values)
-            VALUES (?, ?, ?::jsonb)
+            INSERT INTO evaluation_data (name, bpmn_xml, expected_values, dataset_id)
+            VALUES (?, ?, ?::jsonb, ?)
             RETURNING id
         """.trimIndent()
 
@@ -46,7 +47,8 @@ class EvaluationDataRepository(
             Int::class.java,
             data.name,
             data.bpmnXml,
-            value
+            value,
+            data.datasetId
         )!!
     }
 

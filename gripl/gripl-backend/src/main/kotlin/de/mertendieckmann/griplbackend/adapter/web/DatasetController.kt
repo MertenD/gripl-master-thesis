@@ -45,7 +45,7 @@ class DatasetController(
         if (datasets.isEmpty()) {
             throw ResponseStatusException(HttpStatus.NOT_FOUND, "No datasets found")
         }
-        return datasets.map { EvaluationDataMeta(it.id, it.name) }
+        return datasets.map { EvaluationDataMeta(it.id, it.name, it.datasetId) }
     }
 
     @Operation(
@@ -60,7 +60,8 @@ class DatasetController(
     fun insertBpmnDataset(
         @RequestPart("name") name: String? = null,
         @RequestPart("bpmnFile") bpmnFile: FilePart,
-        @RequestPart("expectedValues") expectedValues: List<ExpectedValue>
+        @RequestPart("expectedValues") expectedValues: List<ExpectedValue>,
+        @RequestPart("datasetId") datasetId: String? = null
     ): Mono<ResponseEntity<Int>> {
 
         val bpmnXmlMono: Mono<String> = DataBufferUtils
@@ -73,7 +74,8 @@ class DatasetController(
             val evaluationData = EvaluationDataWithOptionalId(
                 name = name,
                 bpmnXml = bpmnXml,
-                expectedValues = expectedValues
+                expectedValues = expectedValues,
+                datasetId = datasetId?.toLong()
             )
 
             val idOfCreatedEntry = evaluationDataRepository.insertEvaluationData(evaluationData)
