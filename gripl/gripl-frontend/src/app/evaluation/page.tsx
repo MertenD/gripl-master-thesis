@@ -1,8 +1,7 @@
-// src/app/(your)/evaluation/page.tsx
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import {Button} from "@/components/ui/button";
+import React, {useMemo, useState} from "react";
 import {
     EvaluationReport,
     EvaluationReportError,
@@ -13,10 +12,12 @@ import {
 import TestCaseReportCard from "@/components/evaluation/test-case-report-card";
 import EvaluationReportSummaryCard from "@/components/evaluation/evaluation-report-summary-card";
 import MetricsCharts from "@/components/evaluation/metrics-charts";
-import { Spinner } from "@/components/ui/spinner";
-import { MultiEvaluationRequest } from "@/models/dto/MultiEvaluationRequest";
-import EvaluationConfigCardMulti from "@/components/evaluation/evaluation-config-card-multi";
+import {Spinner} from "@/components/ui/spinner";
+import {MultiEvaluationRequest} from "@/models/dto/MultiEvaluationRequest";
 import TestCaseErrorCard from "@/components/evaluation/test-case-error-card";
+import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
+import {Card} from "@/components/ui/card";
+import EvaluationConfigCardMulti from "@/components/evaluation/evaluation-config-card-multi";
 
 type ModelReportEnvelope = {
     modelLabel: string;
@@ -27,7 +28,7 @@ export default function EvaluationPage() {
     const [evaluationRequest, setEvaluationRequest] = useState<MultiEvaluationRequest | null>(null);
 
     const [testCases, setTestCases] = useState<(TestCaseReport & { modelLabel: string })[]>([]);
-    const [summary, setSummary] = useState<(EvaluationReportSummary & { modelLabel: string }) | null>(null);
+    const [summary, setSummary] = useState<Map<string, EvaluationReportSummary>>(new Map());
     const [currentStepInfo, setCurrentStepInfo] = useState<(EvaluationReportStepInfo & { modelLabel: string }) | null>(null);
     const [errors, setErrors] = useState<(EvaluationReportError & { modelLabel: string })[]>([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -36,7 +37,8 @@ export default function EvaluationPage() {
         if (!evaluationRequest) return;
 
         setTestCases([]);
-        setSummary(null);
+        // Fix: statt null -> leere Map, damit Typ & .size funktionieren
+        setSummary(new Map());
         setCurrentStepInfo(null);
         setErrors([]);
         setIsLoading(true);
@@ -72,10 +74,16 @@ export default function EvaluationPage() {
                     const env = JSON.parse(line) as ModelReportEnvelope;
                     const { modelLabel, report } = env;
 
+                    console.log(`Received report for model: ${modelLabel}`, report);
+
                     if (report.type === "testCase") {
                         setTestCases((prev) => [...prev, { ...(report as TestCaseReport), modelLabel }]);
                     } else if (report.type === "summary") {
-                        setSummary({ ...(report as EvaluationReportSummary), modelLabel });
+                        setSummary((prev) => {
+                            const next = new Map(prev);
+                            next.set(modelLabel, report as EvaluationReportSummary);
+                            return next;
+                        });
                     } else if (report.type === "stepInfo") {
                         setCurrentStepInfo({ ...(report as EvaluationReportStepInfo), modelLabel });
                     } else if (report.type === "error") {
@@ -95,7 +103,8 @@ export default function EvaluationPage() {
     };
 
     const handleDownloadMarkdownReport = () => {
-        if (!testCases.length && !summary) {
+        const hasSummaries = summary && summary.size > 0;
+        if (!testCases.length && !hasSummaries) {
             alert("No results yet.");
             return;
         }
@@ -109,9 +118,9 @@ export default function EvaluationPage() {
             sections.push(...cases.map((c) => c.markdown));
         });
 
-        if (summary) {
-            sections.push(`# Summary (${summary.modelLabel})`);
-            sections.push(summary.markdown);
+        for (const [modelLabel, modelSummary] of summary.entries()) {
+            sections.push(`# Summary (${modelLabel})`);
+            sections.push(modelSummary.markdown);
         }
 
         const blob = new Blob([sections.join("\n\n")], { type: "text/markdown" });
@@ -125,22 +134,31 @@ export default function EvaluationPage() {
         URL.revokeObjectURL(url);
     };
 
+    const summariesByModel = useMemo(
+        () => Array.from(summary.entries()).map(([label, s]) => ({ label, summary: s })),
+        [summary]
+    );
+
     return (
         <div className="h-full w-full p-6">
-            <EvaluationConfigCardMulti onMultiConfigChanged={setEvaluationRequest} className="mb-4">
+            <EvaluationConfigCardMulti onMultiConfigChanged={setEvaluationRequest} className="mb-6">
                 <div className="flex flex-row justify-end items-center mb-4 space-x-4">
-                    <Button variant="default" disabled={isLoading || !evaluationRequest} onClick={handleEvaluationStart}>
+                    <Button variant="default" disabled={isLoading || !evaluationRequest}
+                            onClick={handleEvaluationStart}>
                         <>
-                        {!isLoading && "Start Evaluation"}
-                        {isLoading && <div className="flex flex-row space-x-4">
-                            <Spinner className="h-4 w-4 text-foreground" />
-                            {currentStepInfo && (
-                                <p>
-                                    [{currentStepInfo.modelLabel}] Evaluating {currentStepInfo.currentTestCaseName}… (
-                                    {currentStepInfo.currentTestCaseNumber} / {currentStepInfo.totalTestCases})
-                                </p>
+                            {!isLoading && "Start Evaluation"}
+                            {isLoading && (
+                                <div className="flex flex-row space-x-4">
+                                    <Spinner className="h-4 w-4 text-foreground"/>
+                                    {currentStepInfo && (
+                                        <p>
+                                            [{currentStepInfo.modelLabel}]
+                                            Evaluating {currentStepInfo.currentTestCaseName}… (
+                                            {currentStepInfo.currentTestCaseNumber} / {currentStepInfo.totalTestCases})
+                                        </p>
+                                    )}
+                                </div>
                             )}
-                        </div>}
                         </>
                     </Button>
                     <Button variant="secondary" disabled={isLoading} onClick={handleDownloadMarkdownReport}>
@@ -149,32 +167,74 @@ export default function EvaluationPage() {
                 </div>
             </EvaluationConfigCardMulti>
 
-            {summary && (
-                <div className="space-y-6 mb-6">
-                    <EvaluationReportSummaryCard reportSummary={summary} />
-                    <MetricsCharts reportSummary={summary} />
+            <h2 className="text-2xl font-semibold mb-2">Complete Result Overview</h2>
+            {summariesByModel.length > 0 ? <>
+                <div className="space-y-6 mb-8">
+                    <EvaluationReportSummaryCard reportSummaries={summariesByModel}/>
+                    <MetricsCharts reportSummaries={summariesByModel}/>
                 </div>
-            )}
+            </> : <Card className="p-4 mb-4">
+                <p className="text-muted-foreground">No results yet. Start an evaluation to see results here.</p>
+            </Card>}
 
-            <div className="flex flex-col space-y-4 pb-6">
-                {testCases.map((report) => (
-                    <div key={`${report.modelLabel}-${report.testCaseId}`}>
-                        <div className="text-xs text-muted-foreground mb-1">Model: {report.modelLabel}</div>
-                        <TestCaseReportCard report={report} />
-                    </div>
-                ))}
-            </div>
+            <h2 className="text-2xl font-semibold mb-2">Results by Model</h2>
+            <Tabs className="w-full">
+                <TabsList className="w-full h-12 sticky top-0 z-10">
+                    {evaluationRequest?.models
+                        .map?.((model) => model.label)
+                        .map((label) => (
+                            <TabsTrigger value={label} key={`${label}-trigger`}>
+                                {label}
+                            </TabsTrigger>
+                        ))}
+                </TabsList>
 
-            {errors.length > 0 && (
-                <div className="flex flex-col space-y-4 pb-4">
-                    {errors.map((e, idx) => (
-                        <div key={`${e.modelLabel}-${e.testCaseId}-${idx}`}>
-                            <div className="text-xs text-muted-foreground mb-1">Model: {e.modelLabel}</div>
-                            <TestCaseErrorCard error={e} />
-                        </div>
-                    ))}
-                </div>
-            )}
+                {evaluationRequest?.models
+                    .map?.((model) => model.label)
+                    .map((label) => {
+                        const modelSummary = summary?.get(label);
+
+                        return (
+                            <TabsContent value={label} key={`${label}-content`}>
+                                { !modelSummary && !testCases.some((tc) => tc.modelLabel === label) && !errors.some((e) => e.modelLabel === label) && (
+                                    <Card className="p-4 text-muted-foreground">
+                                        No results yet for model <strong>{label}</strong>. Start an evaluation to see results here.
+                                    </Card>
+                                )}
+
+                                {modelSummary && (
+                                    <div className="space-y-6 mb-6">
+                                        {/* Einzel-Modus bleibt erhalten */}
+                                        <EvaluationReportSummaryCard reportSummary={modelSummary}/>
+                                        <MetricsCharts reportSummary={modelSummary}/>
+                                    </div>
+                                )}
+
+                                <div className="flex flex-col space-y-4 pb-6">
+                                    {testCases
+                                        .filter((testCase) => testCase.modelLabel === label)
+                                        .map((report) => (
+                                            <div key={`${report.modelLabel}-${report.testCaseId}`}>
+                                                <TestCaseReportCard report={report}/>
+                                            </div>
+                                        ))}
+                                </div>
+
+                                {errors.filter((error) => error.modelLabel === label).length > 0 && (
+                                    <div className="flex flex-col space-y-4 pb-4">
+                                        {errors
+                                            .filter((error) => error.modelLabel === label)
+                                            .map((e, idx) => (
+                                                <div key={`${e.modelLabel}-${e.testCaseId}-${idx}`}>
+                                                    <TestCaseErrorCard error={e}/>
+                                                </div>
+                                            ))}
+                                    </div>
+                                )}
+                            </TabsContent>
+                        );
+                    })}
+            </Tabs>
         </div>
     );
 }

@@ -67,5 +67,12 @@ class GlobalExceptionHandler {
             .body(ApiError(code = "AUTHENTICATION_ERROR", message = ex.message))
             .also { ex.printStackTrace() }
 
+    @ExceptionHandler(dev.langchain4j.exception.RateLimitException::class)
+    fun handleRateLimitException(ex: dev.langchain4j.exception.RateLimitException): ResponseEntity<ApiError> =
+        ResponseEntity
+            .status(HttpStatus.TOO_MANY_REQUESTS)
+            .body(ApiError(code = "RATE_LIMIT_EXCEEDED", message = ex.message))
+            .also { ex.printStackTrace() }
+
     data class ApiError(val code: String, val message: String?)
 }

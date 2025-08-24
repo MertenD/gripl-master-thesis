@@ -134,7 +134,7 @@ export default function EvaluationConfigCardMulti({
             console.error("YAML parse error:", err);
             alert("Failed to parse YAML. Please check the file.");
         } finally {
-            e.target.value = ""; // allow re-upload same file
+            e.target.value = "";
         }
     }
 
