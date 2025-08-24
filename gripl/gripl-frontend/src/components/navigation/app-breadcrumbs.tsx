@@ -53,14 +53,14 @@ export default function AppBreadCrumbs() {
 
     return <Breadcrumb>
         <BreadcrumbList>
-            {crumbs.map((crumb, index) => (
-                <>
-                    <BreadcrumbItem key={index}>
-                        <Link href={crumb.href}>{crumb.label}</Link>
-                    </BreadcrumbItem>
-                    { index < crumbs.length - 1 && <BreadcrumbSeparator /> }
-                </>
-            ))}
+            <>
+            {crumbs.map((crumb, index) => <>
+                <BreadcrumbItem key={index}>
+                    <Link href={crumb.href}>{crumb.label}</Link>
+                </BreadcrumbItem>
+                { index < crumbs.length - 1 && <BreadcrumbSeparator /> }
+            </> )}
+            </>
         </BreadcrumbList>
     </Breadcrumb>
 }
