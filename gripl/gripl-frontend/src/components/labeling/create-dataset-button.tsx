@@ -41,7 +41,7 @@ export default function CreateDatasetButton() {
     return <Dialog open={showCreateDatasetDialog} onOpenChange={setShowCreateDatasetDialog}>
         <Button className="h-full" onClick={() => setShowCreateDatasetDialog(true)}>
             <Plus />
-            <span className="pl-2 text-center">Create Test Case</span>
+            <span className="pl-2 text-center">Create Dataset</span>
         </Button>
         <DialogContent>
             <DialogHeader>
