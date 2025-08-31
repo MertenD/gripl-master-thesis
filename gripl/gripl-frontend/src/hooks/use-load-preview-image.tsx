@@ -24,7 +24,7 @@ export default function useLoadPreviewImage({testCaseId, correctActivityIds, fal
         const fetchSvgPreview = async () => {
             setIsLoading(true);
             try {
-                const relativeImageUrl = `/api/dataset/${testCaseId}/preview?theme=${resolvedTheme}` +
+                const relativeImageUrl = `/api/dataset/testcase/${testCaseId}/preview?theme=${resolvedTheme}` +
                     (correctActivityIds ? `&correctIds=${correctActivityIds.join(",")}` : "") +
                     (falsePositiveIds ? `&falsePositiveIds=${falsePositiveIds.join(",")}` : "") +
                     (falseNegativeIds ? `&falseNegativeIds=${falseNegativeIds.join(",")}` : "") +

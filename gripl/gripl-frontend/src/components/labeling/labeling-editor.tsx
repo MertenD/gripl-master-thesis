@@ -40,7 +40,7 @@ export default function LabelingEditor({ className, evaluationData }: LabelingEd
         );
         formData.append('expectedValues', expectedValuesBlob, 'expectedValues.json');
 
-        fetch(`/api/dataset/${evaluationData.id}`, {
+        fetch(`/api/dataset/testcase/${evaluationData.id}`, {
             method: "POST",
             headers: {
                 Accept: "application/json",

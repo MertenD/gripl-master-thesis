@@ -24,7 +24,7 @@ export default function DeleteTestCaseButton({ testCaseId, testCaseName }: Delet
     const handleDeleteConfirm = async () => {
         if (testCaseId) {
             try {
-                const response = await fetch(`/api/dataset/${testCaseId}`, {
+                const response = await fetch(`/api/dataset/testcase/${testCaseId}`, {
                     method: "DELETE",
                 });
 

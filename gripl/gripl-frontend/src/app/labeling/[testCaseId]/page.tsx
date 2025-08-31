@@ -5,7 +5,7 @@ import React from "react";
 export default async function LabelingPageWithEditor({ params }: { params: Promise<{ testCaseId: string }> }) {
 
     const {testCaseId} = await params;
-    const evaluationData: EvaluationData | null = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/dataset/${testCaseId}`, {
+    const evaluationData: EvaluationData | null = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/dataset/testcase/${testCaseId}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",

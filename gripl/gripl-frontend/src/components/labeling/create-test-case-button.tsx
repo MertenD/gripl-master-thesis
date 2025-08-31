@@ -15,12 +15,13 @@ import {Input} from "@/components/ui/input";
 import {useRouter} from "next/navigation";
 import {Plus} from "lucide-react";
 import emptyDiagram from "@/data/empty-diagram.bpmn";
+import {Dataset} from "@/models/dto/Dataset";
 
 interface CreateTestCaseButtonProps {
-    datasetId: number;
+    dataset: Dataset;
 }
 
-export default function CreateTestCaseButton({ datasetId }: CreateTestCaseButtonProps) {
+export default function CreateTestCaseButton({ dataset }: CreateTestCaseButtonProps) {
 
     const router = useRouter()
     const [showCreateTestCaseDialog, setShowCreateTestCaseDialog] = React.useState(false)
@@ -41,9 +42,9 @@ export default function CreateTestCaseButton({ datasetId }: CreateTestCaseButton
             { type: 'application/json' }
         );
         formData.append('expectedValues', expectedValuesBlob, 'expectedValues.json');
-        formData.append("datasetId", datasetId.toString());
+        formData.append("datasetId", dataset.id.toString());
 
-        fetch("/api/dataset", {
+        fetch("/api/dataset/testcase", {
             method: "POST",
             body: formData,
         } as RequestInit).then(response => {
@@ -69,7 +70,7 @@ export default function CreateTestCaseButton({ datasetId }: CreateTestCaseButton
         </Button>
         <DialogContent>
             <DialogHeader>
-                <DialogTitle>Create Test Case for dataset {datasetId}</DialogTitle>
+                <DialogTitle>Create Test Case for dataset {dataset.name}</DialogTitle>
                 <DialogDescription>Create a new test case for the evaluation pipeline.</DialogDescription>
             </DialogHeader>
             <div>
