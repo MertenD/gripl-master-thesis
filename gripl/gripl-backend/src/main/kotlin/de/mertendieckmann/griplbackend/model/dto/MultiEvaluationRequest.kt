@@ -5,7 +5,8 @@ import de.mertendieckmann.griplbackend.config.LlmConfig
 data class MultiEvaluationRequest(
     val defaultEvaluationEndpoint: String,
     val maxConcurrent: Int = 4,
-    val models: List<ModelRunConfig>
+    val models: List<ModelRunConfig>,
+    val datasets: List<Int>,
 )
 
 data class ModelRunConfig(

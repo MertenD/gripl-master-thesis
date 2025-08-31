@@ -23,7 +23,8 @@ class MultiEvaluationRunner(
             val singleRequest = EvaluationRequest(
                 evaluationEndpoint = effectiveEndpoint,
                 llmProps = model.llmProps,
-                maxConcurrent = request.maxConcurrent
+                maxConcurrent = request.maxConcurrent,
+                datasets = request.datasets
             )
 
             singleRunner.run(singleRequest)

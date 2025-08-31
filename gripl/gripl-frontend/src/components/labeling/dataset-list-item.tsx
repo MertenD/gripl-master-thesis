@@ -24,7 +24,7 @@ export default function DatasetListItem({ dataset, evaluationMetadata, className
             <CollapsibleTrigger className="w-full">
                 <Card className="w-full">
                     <CardHeader className="flex-row justify-between items-center">
-                        <CardTitle>{dataset.name}</CardTitle>
+                        <CardTitle>{dataset.name} ({dataset.id})</CardTitle>
                         { dataset.description && <CardDescription>{dataset.description}</CardDescription> }
                         <>{ isOpen ? <ChevronDown /> : <ChevronUp /> }</>
                     </CardHeader>

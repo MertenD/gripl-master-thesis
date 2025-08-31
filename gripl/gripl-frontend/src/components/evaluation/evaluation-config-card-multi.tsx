@@ -10,6 +10,8 @@ import { PasswordInput } from "@/components/ui/input-password";
 import fetchAnalysisEndpoints from "@/actions/analysis-endpoints";
 import {ModelRunConfig, MultiEvaluationRequest} from "@/models/dto/MultiEvaluationRequest";
 import { load as yamlLoad, dump as yamlDump } from "js-yaml";
+import {MultiSelect} from "@/components/ui/multi-select";
+import {Dataset} from "@/models/dto/Dataset";
 
 type EndpointChoice = "default" | "preset" | "custom";
 
@@ -28,12 +30,14 @@ interface ModelRowState {
 interface EvaluationConfigCardMultiProps {
     className?: string;
     children?: JSX.Element;
+    datasets: Dataset[];
     onMultiConfigChanged: (config: MultiEvaluationRequest) => void;
 }
 
 export default function EvaluationConfigCardMulti({
   className,
   children,
+  datasets,
   onMultiConfigChanged
 }: EvaluationConfigCardMultiProps) {
     const [availableEvaluationEndpoints, setAvailableEvaluationEndpoints] = useState<AnalysisEndpoint[]>([]);
@@ -44,6 +48,7 @@ export default function EvaluationConfigCardMulti({
 
     const [maxConcurrent, setMaxConcurrent] = useState<number>(4);
     const [models, setModels] = useState<ModelRowState[]>(() => [newModelRow(1)]);
+    const [selectedDatasets, setSelectedDatasets] = useState<number[]>([]);
 
     const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -83,12 +88,13 @@ export default function EvaluationConfigCardMulti({
 
         const multi: MultiEvaluationRequest = {
             models: dtoModels,
+            datasets: selectedDatasets,
             defaultEvaluationEndpoint: effectiveDefaultEndpoint,
             maxConcurrent: maxConcurrent
         };
 
         onMultiConfigChanged(multi);
-    }, [models, effectiveDefaultEndpoint, maxConcurrent, onMultiConfigChanged]);
+    }, [models, selectedDatasets, effectiveDefaultEndpoint, maxConcurrent, onMultiConfigChanged]);
 
     function addModel() {
         setModels((prev) => [...prev, newModelRow(prev.length + 1)]);
@@ -142,8 +148,10 @@ export default function EvaluationConfigCardMulti({
         const defaultEvaluationEndpoint: string | undefined = cfg?.defaultEvaluationEndpoint;
         const maxConcurrent: number | undefined = cfg?.maxConcurrent ?? cfg?.maxConcurrency;
         const modelItems: any[] = Array.isArray(cfg?.models) ? cfg.models : [];
+        const datasets: number[] = Array.isArray(cfg?.datasets) ? cfg.datasets.map((d: any) => parseInt(d)) : [];
 
-        // Default Endpoint
+        setSelectedDatasets(datasets);
+
         if (defaultEvaluationEndpoint) {
             const presetHit = findPreset(defaultEvaluationEndpoint, availableEvaluationEndpoints);
             if (presetHit) {
@@ -246,7 +254,8 @@ export default function EvaluationConfigCardMulti({
         return {
             defaultEvaluationEndpoint: effectiveDefaultEndpoint,
             maxConcurrent: maxConcurrent || 1,
-            models: dtoModels
+            models: dtoModels,
+            datasets: selectedDatasets
         };
     }
 
@@ -281,7 +290,7 @@ export default function EvaluationConfigCardMulti({
                             onValueChange={(v: EndpointChoice) => setDefaultEndpointChoice(v)}
                         >
                             <SelectTrigger>
-                                <SelectValue placeholder="Default endpoint source" />
+                                <SelectValue placeholder="Default endpoint source"/>
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="preset">Use preset</SelectItem>
@@ -295,7 +304,7 @@ export default function EvaluationConfigCardMulti({
                                 onValueChange={setDefaultPresetEndpoint}
                             >
                                 <SelectTrigger>
-                                    <SelectValue placeholder="Select preset endpoint" />
+                                    <SelectValue placeholder="Select preset endpoint"/>
                                 </SelectTrigger>
                                 <SelectContent>
                                     {availableEvaluationEndpoints.map((ep) => (
@@ -332,7 +341,7 @@ export default function EvaluationConfigCardMulti({
                     </div>
                 </section>
 
-                <hr className="border-border/50" />
+                <hr className="border-border/50"/>
 
                 <section className="space-y-4">
                     <div className="flex items-center justify-between">
@@ -364,7 +373,7 @@ export default function EvaluationConfigCardMulti({
                                                 onValueChange={(v: EndpointChoice) => updateModel(model.id, "endpointChoice", v)}
                                             >
                                                 <SelectTrigger>
-                                                    <SelectValue placeholder="Choose endpoint source" />
+                                                    <SelectValue placeholder="Choose endpoint source"/>
                                                 </SelectTrigger>
                                                 <SelectContent>
                                                     <SelectItem value="default">Use default</SelectItem>
@@ -376,8 +385,10 @@ export default function EvaluationConfigCardMulti({
                                     </div>
 
                                     <div className="flex items-center gap-2 ml-2 shrink-0">
-                                        <Button variant="secondary" type="button" onClick={() => duplicateModel(model.id)}>Duplicate</Button>
-                                        <Button variant="destructive" type="button" onClick={() => removeModel(model.id)} disabled={models.length <= 1}>
+                                        <Button variant="secondary" type="button"
+                                                onClick={() => duplicateModel(model.id)}>Duplicate</Button>
+                                        <Button variant="destructive" type="button"
+                                                onClick={() => removeModel(model.id)} disabled={models.length <= 1}>
                                             Remove
                                         </Button>
                                     </div>
@@ -393,7 +404,7 @@ export default function EvaluationConfigCardMulti({
                                                     onValueChange={(v) => updateModel(model.id, "selectedPresetEndpoint", v)}
                                                 >
                                                     <SelectTrigger>
-                                                        <SelectValue placeholder="Select preset endpoint" />
+                                                        <SelectValue placeholder="Select preset endpoint"/>
                                                     </SelectTrigger>
                                                     <SelectContent>
                                                         {availableEvaluationEndpoints.map((ep: AnalysisEndpoint) => (
@@ -465,6 +476,21 @@ export default function EvaluationConfigCardMulti({
                             </div>
                         ))}
                     </div>
+                </section>
+
+                <hr className="border-border/50"/>
+
+                <section className="space-y-4">
+                    <Label>Datasets</Label>
+                    <MultiSelect
+                        defaultValue={selectedDatasets.map((id) => id.toString())}
+                        options={datasets.map((dataset) => {
+                            return { label: dataset.name, value: dataset.id.toString() }
+                        })}
+                        onValueChange={(newDatasets) => {
+                            setSelectedDatasets(newDatasets.map((id) => parseInt(id)))
+                        }}
+                    />
                 </section>
 
                 {children}

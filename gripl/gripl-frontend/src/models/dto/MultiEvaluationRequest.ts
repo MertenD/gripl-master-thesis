@@ -1,6 +1,7 @@
 
 export interface MultiEvaluationRequest {
     models: ModelRunConfig[];
+    datasets: number[];
     defaultEvaluationEndpoint: string;
     maxConcurrent: number | null;
 }
