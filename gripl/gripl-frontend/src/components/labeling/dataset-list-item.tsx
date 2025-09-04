@@ -35,7 +35,7 @@ export default function DatasetListItem({ dataset, evaluationMetadata, className
         </div>
         <CollapsibleContent>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 overflow-y-auto gap-4 pb-4">
-                {evaluationMetadata.map((meta) =>
+                {evaluationMetadata.sort((a, b) => a.id - b.id).map(meta =>
                     <TestCaseCard metadata={meta} key={meta.id}/>
                 )}
             </div>

@@ -116,7 +116,11 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
                     (testCase) =>
                         testCase.modelLabel === info.modelLabel &&
                         testCase.testCaseId === info.currentTestCaseId
-                )
+                ) && !errors.some(
+                    (error) =>
+                        error.modelLabel === info.modelLabel &&
+                        error.testCaseId === info.currentTestCaseId
+                    )
             )
         );
     }, [testCases]);
@@ -179,7 +183,7 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
                                                 </span>
                                                 ))}
                                             </div>
-                                            <p>({testCases.length} / {currentStepInfos[0].totalTestCases * (evaluationRequest?.models.length || 1)})</p>
+                                            <p>({testCases.length + errors.length} / {currentStepInfos[0].totalTestCases * (evaluationRequest?.models.length || 1)})</p>
                                         </div>
                                     )}
                                 </div>
@@ -238,6 +242,7 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
                                 <div className="flex flex-col space-y-4 pb-6">
                                     {testCases
                                         .filter((testCase) => testCase.modelLabel === label)
+                                        .sort((a, b) => a.testCaseId - b.testCaseId)
                                         .map((report) => (
                                             <div key={`${report.modelLabel}-${report.testCaseId}`}>
                                                 <TestCaseReportCard report={report}/>
