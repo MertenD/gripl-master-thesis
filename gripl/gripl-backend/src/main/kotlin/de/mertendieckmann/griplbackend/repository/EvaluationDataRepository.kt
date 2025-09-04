@@ -29,6 +29,14 @@ class EvaluationDataRepository(
         return jdbc.query("SELECT * FROM evaluation_data", mapper)
     }
 
+    fun getEvaluationDataByDatasetIdsOrAll(dataset: List<Int>): List<EvaluationData> {
+        if (dataset.isEmpty()) {
+            return getAllEvaluationData()
+        }
+        val inSql = dataset.joinToString(",")
+        return jdbc.query("SELECT * FROM evaluation_data WHERE dataset_id IN ($inSql)", mapper)
+    }
+
     fun getEvaluationDataById(id: Long): EvaluationData? {
         return jdbc.query("SELECT * FROM evaluation_data WHERE id = ?", mapper, id).firstOrNull()
     }

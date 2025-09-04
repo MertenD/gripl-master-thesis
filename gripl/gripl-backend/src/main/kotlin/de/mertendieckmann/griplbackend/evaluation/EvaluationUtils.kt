@@ -63,6 +63,7 @@ fun buildPreviewUrl(
 fun buildStepInfo(entry: EvaluationData, number: Int, total: Int) =
     EvaluationReportStepInfo(
         currentTestCaseName = entry.name ?: "Test Case ${entry.id}",
+        currentTestCaseId = entry.id,
         currentTestCaseNumber = number,
         totalTestCases = total
     )

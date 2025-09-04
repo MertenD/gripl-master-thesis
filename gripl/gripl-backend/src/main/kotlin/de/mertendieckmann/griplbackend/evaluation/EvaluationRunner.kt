@@ -5,16 +5,16 @@ import de.mertendieckmann.griplbackend.evaluation.service.Evaluator
 import de.mertendieckmann.griplbackend.model.dto.*
 import de.mertendieckmann.griplbackend.model.evaluation.EvaluationMetrics
 import de.mertendieckmann.griplbackend.model.evaluation.EvaluationOutcome
+import de.mertendieckmann.griplbackend.repository.EvaluationDataRepository
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
-import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Component
 import java.util.concurrent.atomic.AtomicInteger
 
 @Component
 class EvaluationRunner(
-    @Qualifier("databaseDataset") private val dataset: List<EvaluationData>,
+    private val evaluationDataRepository: EvaluationDataRepository,
     private val evaluator: Evaluator
 ) {
 
@@ -24,8 +24,8 @@ class EvaluationRunner(
     fun run(request: EvaluationRequest): Flow<EvaluationReport> {
         val metricsAccumulator = MetricsAccumulator()
         val startedCounter = AtomicInteger(0)
-        val entriesFlow = dataset
-            .filter { it.datasetId != null && (request.datasets.isEmpty() || request.datasets.contains(it.datasetId.toInt())) }
+
+        val entriesFlow = evaluationDataRepository.getEvaluationDataByDatasetIdsOrAll(request.datasets)
             .sortedBy { it.id }.asFlow()
 
         log.info { "Starting evaluation with endpoint=${request.evaluationEndpoint}; maxConcurrent=${request.maxConcurrent}" }

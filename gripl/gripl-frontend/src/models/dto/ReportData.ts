@@ -33,6 +33,7 @@ export interface EvaluationReportSummary {
 export interface EvaluationReportStepInfo {
     type: "stepInfo";
     currentTestCaseName: string;
+    currentTestCaseId: number;
     currentTestCaseNumber: number;
     totalTestCases: number;
     markdown: string;

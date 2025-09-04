@@ -1,7 +1,7 @@
 "use client";
 
 import {Button} from "@/components/ui/button";
-import React, {useMemo, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import {
     EvaluationReport,
     EvaluationReportError,
@@ -34,7 +34,7 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
 
     const [testCases, setTestCases] = useState<(TestCaseReport & { modelLabel: string })[]>([]);
     const [summary, setSummary] = useState<Map<string, EvaluationReportSummary>>(new Map());
-    const [currentStepInfo, setCurrentStepInfo] = useState<(EvaluationReportStepInfo & { modelLabel: string }) | null>(null);
+    const [currentStepInfos, setCurrentStepInfos] = useState<(EvaluationReportStepInfo & { modelLabel: string })[]>([]);
     const [errors, setErrors] = useState<(EvaluationReportError & { modelLabel: string })[]>([]);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -44,7 +44,7 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
         setTestCases([]);
         // Fix: statt null -> leere Map, damit Typ & .size funktionieren
         setSummary(new Map());
-        setCurrentStepInfo(null);
+        setCurrentStepInfos([]);
         setErrors([]);
         setIsLoading(true);
 
@@ -92,7 +92,7 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
                             return next;
                         });
                     } else if (report.type === "stepInfo") {
-                        setCurrentStepInfo({ ...(report as EvaluationReportStepInfo), modelLabel });
+                        setCurrentStepInfos((prev) => [...prev, { ...(report as EvaluationReportStepInfo), modelLabel }]);
                     } else if (report.type === "error") {
                         setErrors((prev) => [...prev, { ...(report as EvaluationReportError), modelLabel }]);
                     } else {
@@ -108,6 +108,18 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
 
         setIsLoading(false);
     };
+
+    useEffect(() => {
+        setCurrentStepInfos((infos) =>
+            infos.filter((info) =>
+                !testCases.some(
+                    (testCase) =>
+                        testCase.modelLabel === info.modelLabel &&
+                        testCase.testCaseId === info.currentTestCaseId
+                )
+            )
+        );
+    }, [testCases]);
 
     const handleDownloadMarkdownReport = () => {
         const hasSummaries = summary && summary.size > 0;
@@ -151,18 +163,24 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
             <EvaluationConfigCardMulti onMultiConfigChanged={setEvaluationRequest} datasets={datasets} className="mb-6">
                 <div className="flex flex-row justify-end items-center mb-4 space-x-4">
                     <Button variant="default" disabled={isLoading || !evaluationRequest}
-                            onClick={handleEvaluationStart}>
+                            onClick={handleEvaluationStart} className="h-auto">
                         <>
                             {!isLoading && "Start Evaluation"}
                             {isLoading && (
                                 <div className="flex flex-row space-x-4">
                                     <Spinner className="h-4 w-4 text-foreground"/>
-                                    {currentStepInfo && (
-                                        <p>
-                                            [{currentStepInfo.modelLabel}]
-                                            Evaluating {currentStepInfo.currentTestCaseName}… (
-                                            {currentStepInfo.currentTestCaseNumber} / {currentStepInfo.totalTestCases})
-                                        </p>
+                                    {currentStepInfos.length > 0 && (
+                                        <div className="flex flex-row items-center space-x-4">
+                                            <div className="flex flex-col justify-start overflow-y-auto">
+                                                {currentStepInfos.map((info, idx) => (
+                                                    <span key={`${info.modelLabel}-stepinfo-${idx}`}
+                                                          className="whitespace-nowrap">
+                                                    [{info.modelLabel}] Evaluating {info.currentTestCaseName}...
+                                                </span>
+                                                ))}
+                                            </div>
+                                            <p>({testCases.length} / {currentStepInfos[0].totalTestCases * (evaluationRequest?.models.length || 1)})</p>
+                                        </div>
                                     )}
                                 </div>
                             )}

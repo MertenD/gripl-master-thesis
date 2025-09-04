@@ -91,6 +91,7 @@ data class EvaluationReportSummary(
 
 data class EvaluationReportStepInfo(
     val currentTestCaseName: String,
+    val currentTestCaseId: Long,
     val currentTestCaseNumber: Int,
     val totalTestCases: Int,
 ): EvaluationReport() {
