@@ -26,7 +26,9 @@ export default function TestCaseReportCardReasoning({ report }: TestCaseReportCa
                             report.actualNamesWithIds.find((nameWithId) => nameWithId.includes(result.value)) ||
                             result.value
 
-                        return <tr key={index} className="border-t">
+                        const isFalsePositive = report.falsePositiveIds?.includes(result.value) || false
+
+                        return <tr key={index} className={`border-t ${isFalsePositive && "bg-destructive/30"}`}>
                             <td className="font-medium text-sm mb-1 p-2">{matchedName}</td>
                             <td className="text-sm p-2">{result.reason || "No reasoning provided"}</td>
                         </tr>
