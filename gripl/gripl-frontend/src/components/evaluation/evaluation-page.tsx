@@ -33,6 +33,7 @@ interface EvaluationPageProps {
 export default function EvaluationPage({ datasets }: EvaluationPageProps) {
     const [evaluationRequest, setEvaluationRequest] = useState<MultiEvaluationRequest | null>(null);
 
+    const [models, setModels] = useState<string[]>([]);
     const [testCases, setTestCases] = useState<(TestCaseReport & { modelLabel: string })[]>([]);
     const [summary, setSummary] = useState<Map<string, EvaluationReportSummary>>(new Map());
     const [currentStepInfos, setCurrentStepInfos] = useState<(EvaluationReportStepInfo & { modelLabel: string })[]>([]);
@@ -43,7 +44,6 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
         if (!evaluationRequest) return;
 
         setTestCases([]);
-        // Fix: statt null -> leere Map, damit Typ & .size funktionieren
         setSummary(new Map());
         setCurrentStepInfos([]);
         setErrors([]);
@@ -111,6 +111,10 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
     };
 
     useEffect(() => {
+        setModels(evaluationRequest?.models.map((m) => m.label) || []);
+    }, [evaluationRequest]);
+
+    useEffect(() => {
         setCurrentStepInfos((infos) =>
             infos.filter((info) =>
                 !testCases.some(
@@ -158,6 +162,58 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
         URL.revokeObjectURL(url);
     };
 
+    const handleDownloadJsonReport = () => {
+        const hasSummaries = summary && summary.size > 0;
+        if (!testCases.length && !hasSummaries) {
+            alert("No results yet.");
+            return;
+        }
+        const report = {
+            testCases,
+            summaries: Array.from(summary.entries()).map(([label, s]) => ({ label, summary: s })),
+            errors
+        };
+
+        const blob = new Blob([JSON.stringify(report, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "evaluation_report_multi.json";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    const handleUploadJsonReport = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const text = e.target?.result;
+                if (typeof text !== "string") throw new Error("File content is not a string");
+
+                const parsed = JSON.parse(text);
+                if (!parsed.testCases || !parsed.summaries) throw new Error("Invalid report format");
+
+                setTestCases(parsed.testCases);
+                const summaryMap = new Map<string, EvaluationReportSummary>();
+                parsed.summaries.forEach((s: { label: string; summary: EvaluationReportSummary }) => {
+                    summaryMap.set(s.label, s.summary);
+                });
+                setSummary(summaryMap);
+                setErrors(parsed.errors || []);
+                setModels(Array.from(summaryMap.keys()));
+            } catch (err) {
+                console.error("Failed to load report:", err);
+                alert("Failed to load report: " + (err as Error).message);
+            }
+        };
+        reader.readAsText(file);
+    };
+
     const summariesByModel = useMemo(
         () => Array.from(summary.entries()).map(([label, s]) => ({ label, summary: s })),
         [summary]
@@ -166,11 +222,26 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
     return (
         <div className="w-full">
             <EvaluationConfig onMultiConfigChanged={setEvaluationRequest} datasets={datasets} className="mb-6">
-                <div className="flex flex-row justify-between items-center mb-4 space-x-4">
-                    <Button variant="secondary" disabled={isLoading || testCases.length === 0} onClick={handleDownloadMarkdownReport}>
-                        <FileText className="h-4 w-4" />
-                        Download Markdown Report
-                    </Button>
+                <div className="flex flex-row justify-between items-start flex-wrap mb-4 gap-4">
+                    <div className="flex flex-row gap-4 flex-wrap">
+                        <Button variant="secondary" disabled={isLoading || testCases.length === 0} onClick={handleDownloadMarkdownReport}>
+                            <FileText className="h-4 w-4" />
+                            Download Markdown Report
+                        </Button>
+                        <Button variant="secondary" disabled={isLoading || testCases.length === 0} onClick={handleDownloadJsonReport}>
+                            <FileText className="h-4 w-4" />
+                            Download JSON Report
+                        </Button>
+                        <input id="upload-json-report" type="file" accept=".json" className="hidden" onChange={handleUploadJsonReport} />
+                        <label htmlFor="upload-json-report">
+                            <Button variant="secondary" disabled={isLoading} asChild className="hover:cursor-pointer">
+                                <span className="flex flex-row items-center gap-2">
+                                    <FileText className="h-4 w-4" />
+                                    Upload JSON Report
+                                </span>
+                            </Button>
+                        </label>
+                    </div>
                     <Button variant="default" disabled={isLoading || !evaluationRequest}
                             onClick={handleEvaluationStart} className="h-auto">
                         <>
@@ -200,32 +271,27 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
             </EvaluationConfig>
 
             <section className="px-6">
+                <h2 className="text-2xl font-semibold mb-2">Complete Result Overview</h2>
+                {summariesByModel.length > 0 ? <>
+                    <div className="space-y-6 mb-8">
+                        <EvaluationReportSummaryCard reportSummaries={summariesByModel}/>
+                        <MetricsCharts reportSummaries={summariesByModel}/>
+                    </div>
+                </> : <Card className="p-4 mb-4">
+                    <p className="text-muted-foreground">No results yet. Start an evaluation to see results here.</p>
+                </Card>}
 
-            <h2 className="text-2xl font-semibold mb-2">Complete Result Overview</h2>
-            {summariesByModel.length > 0 ? <>
-                <div className="space-y-6 mb-8">
-                    <EvaluationReportSummaryCard reportSummaries={summariesByModel}/>
-                    <MetricsCharts reportSummaries={summariesByModel}/>
-                </div>
-            </> : <Card className="p-4 mb-4">
-                <p className="text-muted-foreground">No results yet. Start an evaluation to see results here.</p>
-            </Card>}
+                <h2 className="text-2xl font-semibold mb-2">Results by Model</h2>
+                <Tabs className="w-full">
+                    <TabsList className="w-full h-12 sticky top-0 z-10">
+                        {models.map((label) => (
+                                <TabsTrigger value={label} key={`${label}-trigger`}>
+                                    {label}
+                                </TabsTrigger>
+                            ))}
+                    </TabsList>
 
-            <h2 className="text-2xl font-semibold mb-2">Results by Model</h2>
-            <Tabs className="w-full">
-                <TabsList className="w-full h-12 sticky top-0 z-10">
-                    {evaluationRequest?.models
-                        .map?.((model) => model.label)
-                        .map((label) => (
-                            <TabsTrigger value={label} key={`${label}-trigger`}>
-                                {label}
-                            </TabsTrigger>
-                        ))}
-                </TabsList>
-
-                {evaluationRequest?.models
-                    .map?.((model) => model.label)
-                    .map((label) => {
+                    {models.map((label) => {
                         const modelSummary = summary?.get(label);
 
                         return (
@@ -238,7 +304,6 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
 
                                 {modelSummary && (
                                     <div className="space-y-6 mb-6">
-                                        {/* Einzel-Modus bleibt erhalten */}
                                         <EvaluationReportSummaryCard reportSummary={modelSummary}/>
                                         <MetricsCharts reportSummary={modelSummary}/>
                                     </div>
@@ -269,7 +334,7 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
                             </TabsContent>
                         );
                     })}
-            </Tabs>
+                </Tabs>
             </section>
         </div>
     );
