@@ -13,15 +13,15 @@ interface EvaluationConfigHeaderProps {
 
 export default function EvaluationConfigHeader({ fileInputRef, onFileChange, onClickImportYaml, onClickExportYaml }: EvaluationConfigHeaderProps) {
     return (
-        <div className="flex gap-3">
+        <div className="flex gap-3 flex-wrap">
             <input ref={fileInputRef} type="file" accept=".yml,.yaml" className="hidden" onChange={onFileChange} />
             <Button variant="outline" size="sm" className="gap-2 border-border text-card-foreground hover:bg-muted bg-transparent" onClick={onClickImportYaml}>
                 <Upload className="h-4 w-4" />
-                Import YAML
+                Import YAML Config
             </Button>
             <Button variant="outline" size="sm" className="gap-2 border-border text-card-foreground hover:bg-muted bg-transparent" onClick={onClickExportYaml}>
                 <Download className="h-4 w-4" />
-                Download YAML
+                Download YAML Config
             </Button>
         </div>
     );
