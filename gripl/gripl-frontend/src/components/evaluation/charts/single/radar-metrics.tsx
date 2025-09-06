@@ -25,7 +25,7 @@ export default function RadarMetrics({ summary }: { summary: EvaluationReportSum
                         <PolarAngleAxis dataKey="metric" />
                         <PolarRadiusAxis angle={90} domain={[0, 100]} tick={{ fontSize: 12 }} tickFormatter={(v)=>`${v}%`} />
                         <Radar name="Metrics" dataKey="value" stroke={colors.accuracy} fill={colors.accuracy} fillOpacity={0.3} strokeWidth={2} />
-                        <Tooltip content={<UniversalTooltip />} />
+                        <Tooltip content={<UniversalTooltip isPercentage={true}/>} />
                     </RadarChart>
                 </ResponsiveContainer>
             </CardContent>

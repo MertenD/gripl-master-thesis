@@ -24,7 +24,7 @@ export default function ConfusionBars({ summary }: { summary: EvaluationReportSu
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="name" tick={{ fontSize: 12 }} interval={0} angle={-45} textAnchor="end" height={80} />
                         <YAxis />
-                        <Tooltip content={<UniversalTooltip />} />
+                        <Tooltip content={<UniversalTooltip />} cursor={{ fill: "hsl(var(--card-foreground))", fillOpacity: 0.1 }}/>
                         <Bar dataKey="value" radius={[4,4,0,0]}>
                             {data.map((e,i)=><Cell key={i} fill={e.color} />)}
                         </Bar>

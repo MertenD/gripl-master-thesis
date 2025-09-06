@@ -24,7 +24,7 @@ export default function MetricsBars({ summary }: { summary: EvaluationReportSumm
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="name" />
                         <YAxis domain={[0, 1]} tickFormatter={(v)=>`${(v*100).toFixed(0)}%`} />
-                        <Tooltip content={<UniversalTooltip />} />
+                        <Tooltip content={<UniversalTooltip isPercentage={true} />} cursor={{ fill: "hsl(var(--card-foreground))", fillOpacity: 0.1 }}/>
                         <Bar dataKey="value" radius={[4,4,0,0]}>
                             {data.map((e,i)=><Cell key={i} fill={e.color} />)}
                         </Bar>

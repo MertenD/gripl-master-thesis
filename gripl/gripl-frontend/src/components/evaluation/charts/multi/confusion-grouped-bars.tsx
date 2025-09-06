@@ -3,6 +3,7 @@ import { ResponsiveContainer, BarChart, CartesianGrid, XAxis, YAxis, Tooltip, Le
 import { modelPalette } from "../common/palettes";
 import React from "react";
 import { EvaluationReportSummary } from "@/models/dto/ReportData";
+import UniversalTooltip from "@/components/evaluation/charts/common/universal-tooltip";
 
 export default function ConfusionGroupedBars({
     items,
@@ -25,7 +26,7 @@ export default function ConfusionGroupedBars({
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="name" tick={{ fontSize:12 }} interval={0} angle={-15} textAnchor="end" height={40} />
                         <YAxis />
-                        <Tooltip />
+                        <Tooltip content={<UniversalTooltip />} cursor={{ fill: "hsl(var(--card-foreground))", fillOpacity: 0.1 }}/>
                         <Legend />
                         {items.map(({ label }, idx) => (
                             <Bar key={label} dataKey={label} name={label} radius={[4,4,0,0]} fill={modelPalette[idx % modelPalette.length]} />

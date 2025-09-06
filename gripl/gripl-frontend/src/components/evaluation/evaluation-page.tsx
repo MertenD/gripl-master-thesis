@@ -9,16 +9,17 @@ import {
     EvaluationReportSummary,
     TestCaseReport
 } from "@/models/dto/ReportData";
-import TestCaseReportCard from "@/components/evaluation/test-case-report-card";
+import TestCaseReportCard from "@/components/evaluation/test-case-report/test-case-report-card";
 import EvaluationReportSummaryCard from "@/components/evaluation/evaluation-report-summary-card";
 import MetricsCharts from "@/components/evaluation/metrics-charts";
 import {Spinner} from "@/components/ui/spinner";
 import {MultiEvaluationRequest} from "@/models/dto/MultiEvaluationRequest";
-import TestCaseErrorCard from "@/components/evaluation/test-case-error-card";
+import TestCaseErrorCard from "@/components/evaluation/test-case-report/test-case-error-card";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {Card} from "@/components/ui/card";
 import EvaluationConfigCardMulti from "@/components/evaluation/evaluation-config-card-multi";
 import {Dataset} from "@/models/dto/Dataset";
+import {FileText, Play} from "lucide-react";
 
 type ModelReportEnvelope = {
     modelLabel: string;
@@ -163,12 +164,17 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
     );
 
     return (
-        <div className="h-full w-full p-6">
+        <div className="h-full w-full">
             <EvaluationConfigCardMulti onMultiConfigChanged={setEvaluationRequest} datasets={datasets} className="mb-6">
-                <div className="flex flex-row justify-end items-center mb-4 space-x-4">
+                <div className="flex flex-row justify-between items-center mb-4 space-x-4">
+                    <Button variant="secondary" disabled={isLoading || testCases.length === 0} onClick={handleDownloadMarkdownReport}>
+                        <FileText className="h-4 w-4" />
+                        Download Markdown Report
+                    </Button>
                     <Button variant="default" disabled={isLoading || !evaluationRequest}
                             onClick={handleEvaluationStart} className="h-auto">
                         <>
+                            {!isLoading && <Play className="h-4 w-4" /> }
                             {!isLoading && "Start Evaluation"}
                             {isLoading && (
                                 <div className="flex flex-row space-x-4">
@@ -190,11 +196,10 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
                             )}
                         </>
                     </Button>
-                    <Button variant="secondary" disabled={isLoading} onClick={handleDownloadMarkdownReport}>
-                        Download Markdown Report
-                    </Button>
                 </div>
             </EvaluationConfigCardMulti>
+
+            <section className="px-6">
 
             <h2 className="text-2xl font-semibold mb-2">Complete Result Overview</h2>
             {summariesByModel.length > 0 ? <>
@@ -265,6 +270,7 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
                         );
                     })}
             </Tabs>
+            </section>
         </div>
     );
 }

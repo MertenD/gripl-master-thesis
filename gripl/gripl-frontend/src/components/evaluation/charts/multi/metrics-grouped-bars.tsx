@@ -26,7 +26,7 @@ export default function MetricsGroupedBars({
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="metric" />
                         <YAxis domain={[0, 1]} tickFormatter={(v) => `${(v * 100).toFixed(0)}%`} />
-                        <Tooltip content={<UniversalTooltip />} />
+                        <Tooltip content={<UniversalTooltip isPercentage={true}/>} cursor={{ fill: "hsl(var(--card-foreground))", fillOpacity: 0.1 }}/>
                         <Legend />
                         {items.map(({ label }, idx) => (
                             <Bar key={label} dataKey={label} name={label} radius={[4,4,0,0]} fill={modelPalette[idx % modelPalette.length]} />

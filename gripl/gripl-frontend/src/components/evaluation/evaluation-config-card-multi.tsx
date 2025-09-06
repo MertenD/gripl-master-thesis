@@ -1,19 +1,49 @@
 "use client";
 
-import React, {JSX, useEffect, useMemo, useRef, useState} from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import React, { JSX, useEffect, useMemo, useRef, useState } from "react";
+import {
+    Card,
+    CardContent,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 import { PasswordInput } from "@/components/ui/input-password";
 import fetchAnalysisEndpoints from "@/actions/analysis-endpoints";
-import {ModelRunConfig, MultiEvaluationRequest} from "@/models/dto/MultiEvaluationRequest";
+import {
+    ModelRunConfig,
+    MultiEvaluationRequest,
+} from "@/models/dto/MultiEvaluationRequest";
 import { load as yamlLoad, dump as yamlDump } from "js-yaml";
-import {MultiSelect} from "@/components/ui/multi-select";
-import {Dataset} from "@/models/dto/Dataset";
+import { MultiSelect } from "@/components/ui/multi-select";
+import { Dataset } from "@/models/dto/Dataset";
+import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
+import {
+    Plus,
+    Copy,
+    Trash2,
+    Download,
+    Upload,
+    FileText,
+    Play,
+} from "lucide-react";
 
 type EndpointChoice = "default" | "preset" | "custom";
+
+interface AnalysisEndpoint {
+    endpoint: string;
+    name: string;
+}
 
 interface ModelRowState {
     id: string;
@@ -38,7 +68,7 @@ export default function EvaluationConfigCardMulti({
   className,
   children,
   datasets,
-  onMultiConfigChanged
+  onMultiConfigChanged,
 }: EvaluationConfigCardMultiProps) {
     const [availableEvaluationEndpoints, setAvailableEvaluationEndpoints] = useState<AnalysisEndpoint[]>([]);
 
@@ -47,7 +77,9 @@ export default function EvaluationConfigCardMulti({
     const [defaultCustomEndpoint, setDefaultCustomEndpoint] = useState<string>("");
 
     const [maxConcurrent, setMaxConcurrent] = useState<number>(4);
-    const [models, setModels] = useState<ModelRowState[]>(() => [newModelRow(1)]);
+    const [models, setModels] = useState<ModelRowState[]>(() => [
+        newModelRow(1),
+    ]);
     const [selectedDatasets, setSelectedDatasets] = useState<number[]>([]);
 
     const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -59,10 +91,11 @@ export default function EvaluationConfigCardMulti({
                 setDefaultPresetEndpoint(eps[0].endpoint);
             }
         });
-    }, []);
+    }, [defaultPresetEndpoint]);
 
     const effectiveDefaultEndpoint = useMemo(() => {
-        if (defaultEndpointChoice === "custom") return defaultCustomEndpoint.trim();
+        if (defaultEndpointChoice === "custom")
+            return defaultCustomEndpoint.trim();
         if (defaultEndpointChoice === "preset") return defaultPresetEndpoint;
         return "";
     }, [defaultEndpointChoice, defaultPresetEndpoint, defaultCustomEndpoint]);
@@ -70,9 +103,11 @@ export default function EvaluationConfigCardMulti({
     useEffect(() => {
         const dtoModels: ModelRunConfig[] = models.map((model) => {
             const evaluationEndpoint =
-                model.endpointChoice === "default"? null : model.endpointChoice === "preset"
-                    ? (model.selectedPresetEndpoint || null)
-                    : (model.customEndpoint?.trim() || null);
+                model.endpointChoice === "default"
+                    ? null
+                    : model.endpointChoice === "preset"
+                        ? model.selectedPresetEndpoint || null
+                        : model.customEndpoint?.trim() || null;
 
             return {
                 label: model.label.trim() || "Model",
@@ -81,8 +116,8 @@ export default function EvaluationConfigCardMulti({
                     baseUrl: normalize(model.baseUrl),
                     modelName: normalize(model.modelName),
                     apiKey: normalize(model.apiKey),
-                    timeoutSeconds: model.timeoutSeconds ?? null
-                }
+                    timeoutSeconds: model.timeoutSeconds ?? null,
+                },
             };
         });
 
@@ -90,11 +125,11 @@ export default function EvaluationConfigCardMulti({
             models: dtoModels,
             datasets: selectedDatasets,
             defaultEvaluationEndpoint: effectiveDefaultEndpoint,
-            maxConcurrent: maxConcurrent
+            maxConcurrent: maxConcurrent,
         };
 
         onMultiConfigChanged(multi);
-    }, [models, selectedDatasets, effectiveDefaultEndpoint, maxConcurrent, onMultiConfigChanged]);
+    }, [models, selectedDatasets, effectiveDefaultEndpoint, maxConcurrent, onMultiConfigChanged,]);
 
     function addModel() {
         setModels((prev) => [...prev, newModelRow(prev.length + 1)]);
@@ -112,7 +147,7 @@ export default function EvaluationConfigCardMulti({
             const copy: ModelRowState = {
                 ...src,
                 id: cryptoRandomId(),
-                label: nextLabel(src.label, prev.map((x) => x.label))
+                label: nextLabel(src.label, prev.map((x) => x.label)),
             };
             const out = [...prev];
             out.splice(idx + 1, 0, copy);
@@ -120,13 +155,18 @@ export default function EvaluationConfigCardMulti({
         });
     }
 
-    function updateModel<T extends keyof ModelRowState>(id: string, key: T, value: ModelRowState[T]) {
-        setModels((prev) => prev.map((m) => (m.id === id ? { ...m, [key]: value } : m)));
+    function updateModel<T extends keyof ModelRowState>(
+        id: string,
+        key: T,
+        value: ModelRowState[T]
+    ) {
+        setModels((prev) =>
+            prev.map((m) => (m.id === id ? { ...m, [key]: value } : m))
+        );
     }
 
     function onClickImportYaml() {
-        // @ts-ignore
-        fileInputRef.current?.click()
+        fileInputRef.current?.click();
     }
 
     async function onFileChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -145,15 +185,22 @@ export default function EvaluationConfigCardMulti({
     }
 
     function applyYamlConfig(cfg: any) {
-        const defaultEvaluationEndpoint: string | undefined = cfg?.defaultEvaluationEndpoint;
-        const maxConcurrent: number | undefined = cfg?.maxConcurrent ?? cfg?.maxConcurrency;
+        const defaultEvaluationEndpoint: string | undefined =
+            cfg?.defaultEvaluationEndpoint;
+        const maxConcurrent: number | undefined =
+            cfg?.maxConcurrent ?? cfg?.maxConcurrency;
         const modelItems: any[] = Array.isArray(cfg?.models) ? cfg.models : [];
-        const datasets: number[] = Array.isArray(cfg?.datasets) ? cfg.datasets.map((d: any) => parseInt(d)) : [];
+        const datasets: number[] = Array.isArray(cfg?.datasets)
+            ? cfg.datasets.map((d: any) => parseInt(d))
+            : [];
 
         setSelectedDatasets(datasets);
 
         if (defaultEvaluationEndpoint) {
-            const presetHit = findPreset(defaultEvaluationEndpoint, availableEvaluationEndpoints);
+            const presetHit = findPreset(
+                defaultEvaluationEndpoint,
+                availableEvaluationEndpoints
+            );
             if (presetHit) {
                 setDefaultEndpointChoice("preset");
                 setDefaultPresetEndpoint(presetHit.endpoint);
@@ -163,50 +210,60 @@ export default function EvaluationConfigCardMulti({
             }
         }
 
-        if (typeof maxConcurrent === "number" && Number.isFinite(maxConcurrent) && maxConcurrent > 0) {
+        if (
+            typeof maxConcurrent === "number" &&
+            Number.isFinite(maxConcurrent) &&
+            maxConcurrent > 0
+        ) {
             setMaxConcurrent(maxConcurrent);
         }
 
         if (modelItems.length > 0) {
-            const next: ModelRowState[] = modelItems.map((model: any, idx: number) => {
-                const label = String(model?.label ?? `Model ${idx + 1}`);
+            const next: ModelRowState[] = modelItems.map(
+                (model: any, idx: number) => {
+                    const label = String(model?.label ?? `Model ${idx + 1}`);
 
-                const endpoint = model?.evaluationEndpoint;
-                let endpointChoice: EndpointChoice = "default";
-                let selectedPresetEndpoint = "";
-                let customEndpoint = "";
+                    const endpoint = model?.evaluationEndpoint;
+                    let endpointChoice: EndpointChoice = "default";
+                    let selectedPresetEndpoint = "";
+                    let customEndpoint = "";
 
-                if (endpoint && endpoint.trim() !== "") {
-                    const preset = findPreset(endpoint, availableEvaluationEndpoints);
-                    if (preset) {
-                        endpointChoice = "preset";
-                        selectedPresetEndpoint = preset.endpoint;
-                    } else {
-                        endpointChoice = "custom";
-                        customEndpoint = endpoint;
+                    if (endpoint && endpoint.trim() !== "") {
+                        const preset = findPreset(endpoint, availableEvaluationEndpoints);
+                        if (preset) {
+                            endpointChoice = "preset";
+                            selectedPresetEndpoint = preset.endpoint;
+                        } else {
+                            endpointChoice = "custom";
+                            customEndpoint = endpoint;
+                        }
                     }
+
+                    const llmProps = model?.llmProps ?? {};
+                    const baseUrl = llmProps?.baseUrl ?? null;
+                    const modelName =
+                        (llmProps?.modelName ?? llmProps?.model) ?? null;
+
+                    const apiKey = llmProps?.apiKey ?? null;
+
+                    const timeoutSeconds =
+                        typeof llmProps?.timeoutSeconds === "number"
+                            ? llmProps.timeoutSeconds
+                            : null;
+
+                    return {
+                        id: cryptoRandomId(),
+                        label,
+                        endpointChoice,
+                        selectedPresetEndpoint,
+                        customEndpoint,
+                        baseUrl,
+                        modelName,
+                        apiKey,
+                        timeoutSeconds,
+                    };
                 }
-
-                const llmProps = model?.llmProps ?? {};
-                const baseUrl = llmProps?.baseUrl ?? null;
-                const modelName = (llmProps?.modelName ?? llmProps?.model) ?? null;
-
-                const apiKey = llmProps?.apiKey ?? null;
-
-                const timeoutSeconds = typeof llmProps?.timeoutSeconds === "number" ? llmProps.timeoutSeconds : null;
-
-                return {
-                    id: cryptoRandomId(),
-                    label,
-                    endpointChoice,
-                    selectedPresetEndpoint,
-                    customEndpoint,
-                    baseUrl,
-                    modelName,
-                    apiKey,
-                    timeoutSeconds
-                };
-            });
+            );
 
             setModels(next.length > 0 ? next : [newModelRow(1)]);
         }
@@ -215,7 +272,11 @@ export default function EvaluationConfigCardMulti({
     function onClickExportYaml() {
         const req = buildCurrentRequestForExport();
         const clean = pruneNulls(req);
-        const text = yamlDump(clean, { noRefs: true, lineWidth: 120, indent: 2 });
+        const text = yamlDump(clean, {
+            noRefs: true,
+            lineWidth: 120,
+            indent: 2,
+        });
 
         const blob = new Blob([text], { type: "text/yaml" });
         const url = URL.createObjectURL(blob);
@@ -241,13 +302,19 @@ export default function EvaluationConfigCardMulti({
                 baseUrl: normalize(m.baseUrl),
                 modelName: normalize(m.modelName),
                 apiKey: normalize(m.apiKey),
-                timeoutSeconds: m.timeoutSeconds ?? null
-            }
+                timeoutSeconds: m.timeoutSeconds ?? null,
+            };
 
             return {
                 label: m.label.trim() || "Model",
                 evaluationEndpoint,
-                llmProps: !llmProps.baseUrl && !llmProps.modelName && !llmProps.apiKey && !llmProps.timeoutSeconds ? null : llmProps
+                llmProps:
+                    !llmProps.baseUrl &&
+                    !llmProps.modelName &&
+                    !llmProps.apiKey &&
+                    !llmProps.timeoutSeconds
+                        ? null
+                        : llmProps,
             };
         });
 
@@ -255,247 +322,416 @@ export default function EvaluationConfigCardMulti({
             defaultEvaluationEndpoint: effectiveDefaultEndpoint,
             maxConcurrent: maxConcurrent || 1,
             models: dtoModels,
-            datasets: selectedDatasets
+            datasets: selectedDatasets,
         };
     }
 
-
     return (
-        <Card className={`w-full ${className ?? ""}`}>
-            <CardHeader className="flex flex-row justify-between">
-                <CardTitle>Evaluation Config (Multiple Models)</CardTitle>
-                <div className="flex gap-2">
-                    <input
-                        ref={fileInputRef}
-                        type="file"
-                        accept=".yml,.yaml"
-                        className="hidden"
-                        onChange={onFileChange}
-                    />
-                    <Button type="button" variant="secondary" onClick={onClickImportYaml}>
-                        Import YAML
-                    </Button>
-                    <Button type="button" variant="secondary" onClick={onClickExportYaml}>
-                        Download YAML
-                    </Button>
-                </div>
-            </CardHeader>
-
-            <CardContent className="space-y-6">
-                <section className="space-y-3">
-                    <Label>Default Evaluation Endpoint</Label>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                        <Select
-                            value={defaultEndpointChoice}
-                            onValueChange={(v: EndpointChoice) => setDefaultEndpointChoice(v)}
-                        >
-                            <SelectTrigger>
-                                <SelectValue placeholder="Default endpoint source"/>
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="preset">Use preset</SelectItem>
-                                <SelectItem value="custom">Custom URL…</SelectItem>
-                            </SelectContent>
-                        </Select>
-
-                        {defaultEndpointChoice === "preset" && (
-                            <Select
-                                value={defaultPresetEndpoint}
-                                onValueChange={setDefaultPresetEndpoint}
-                            >
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Select preset endpoint"/>
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {availableEvaluationEndpoints.map((ep) => (
-                                        <SelectItem key={ep.endpoint} value={ep.endpoint}>
-                                            {ep.name}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                        )}
-
-                        {defaultEndpointChoice === "custom" && (
-                            <Input
-                                type="text"
-                                placeholder="https://example.com/analysis/v1"
-                                value={defaultCustomEndpoint}
-                                onChange={(e) => setDefaultCustomEndpoint(e.target.value)}
-                            />
-                        )}
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                        <div>
-                            <Label htmlFor="max-concurrent">Max Concurrent LLM Requests</Label>
-                            <Input
-                                id="max-concurrent"
-                                type="number"
-                                min={1}
-                                placeholder="4"
-                                value={Number.isFinite(maxConcurrent) ? maxConcurrent : ""}
-                                onChange={(e) => setMaxConcurrent(safeInt(e.target.value, 4))}
-                            />
-                        </div>
-                    </div>
-                </section>
-
-                <hr className="border-border/50"/>
-
-                <section className="space-y-4">
+        <div
+            className={`min-h-screen bg-background dark ${
+                className ?? ""
+            }`}
+        >
+            <div className="border-b border-border bg-card">
+                <div className="container mx-auto px-6 py-4">
                     <div className="flex items-center justify-between">
-                        <Label>Models</Label>
-                        <div className="space-x-2">
-                            <Button type="button" onClick={addModel}>Add model</Button>
+                        <div>
+                            <h1 className="text-2xl font-bold text-card-foreground">
+                                Evaluation Config
+                            </h1>
+                            <p className="text-sm text-muted-foreground mt-1">
+                                Multiple Models
+                            </p>
+                        </div>
+                        <div className="flex gap-3">
+                            <input
+                                ref={fileInputRef}
+                                type="file"
+                                accept=".yml,.yaml"
+                                className="hidden"
+                                onChange={onFileChange}
+                            />
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                className="gap-2 border-border text-card-foreground hover:bg-muted bg-transparent"
+                                onClick={onClickImportYaml}
+                            >
+                                <Upload className="h-4 w-4" />
+                                Import YAML
+                            </Button>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                className="gap-2 border-border text-card-foreground hover:bg-muted bg-transparent"
+                                onClick={onClickExportYaml}
+                            >
+                                <Download className="h-4 w-4" />
+                                Download YAML
+                            </Button>
                         </div>
                     </div>
+                </div>
+            </div>
 
-                    <div className="space-y-4">
-                        {models.map((model, idx) => (
-                            <div key={model.id} className="rounded-2xl border p-4 space-y-4">
+            <div className="container mx-auto px-6 py-8 space-y-8">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="text-lg">Default Settings</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-6">
+                            <div className="space-y-2">
+                                <Label>Default Evaluation Endpoint</Label>
+                                <Select
+                                    value={defaultEndpointChoice}
+                                    onValueChange={(v: EndpointChoice) =>
+                                        setDefaultEndpointChoice(v)
+                                    }
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="preset">
+                                            Use preset
+                                        </SelectItem>
+                                        <SelectItem value="custom">
+                                            Custom endpoint
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+
+                            {defaultEndpointChoice === "preset" && (
+                                <div className="space-y-2">
+                                    <Label>Preset Endpoint</Label>
+                                    <Select
+                                        value={defaultPresetEndpoint}
+                                        onValueChange={setDefaultPresetEndpoint}
+                                    >
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select preset endpoint" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {availableEvaluationEndpoints.map((ep) => (
+                                                <SelectItem
+                                                    key={ep.endpoint}
+                                                    value={ep.endpoint}
+                                                >
+                                                    {ep.name}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                            )}
+
+                            {defaultEndpointChoice === "custom" && (
+                                <div className="space-y-2">
+                                    <Label>Custom Endpoint</Label>
+                                    <Input
+                                        type="text"
+                                        placeholder="https://example.com/analysis/v1"
+                                        value={defaultCustomEndpoint}
+                                        onChange={(e) =>
+                                            setDefaultCustomEndpoint(e.target.value)
+                                        }
+                                    />
+                                </div>
+                            )}
+
+                            <div className="space-y-2">
+                                <Label>Max Concurrent LLM Requests</Label>
+                                <Input
+                                    id="max-requests"
+                                    type="number"
+                                    min={1}
+                                    placeholder="4"
+                                    value={
+                                        Number.isFinite(maxConcurrent)
+                                            ? maxConcurrent
+                                            : ""
+                                    }
+                                    onChange={(e) =>
+                                        setMaxConcurrent(
+                                            safeInt(e.target.value, 4)
+                                        )
+                                    }
+                                    className="w-full"
+                                />
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="text-lg">
+                                Datasets
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="space-y-2">
+                                <Label>Select Datasets</Label>
+                                <MultiSelect
+                                    defaultValue={selectedDatasets.map((id) =>
+                                        id.toString()
+                                    )}
+                                    options={datasets.map((dataset) => {
+                                        return {
+                                            label: dataset.name,
+                                            value: dataset.id.toString(),
+                                        };
+                                    })}
+                                    onValueChange={(newDatasets) => {
+                                        setSelectedDatasets(
+                                            newDatasets.map((id) => parseInt(id))
+                                        );
+                                    }}
+                                />
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+
+                <Card>
+                    <CardHeader>
+                        <div className="flex items-center justify-between">
+                            <CardTitle className="text-lg">
+                                Models Configuration
+                            </CardTitle>
+                            <Button
+                                onClick={addModel}
+                                size="sm"
+                                className="gap-2"
+                            >
+                                <Plus className="h-4 w-4" />
+                                Add Model
+                            </Button>
+                        </div>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                        {models.map((model, index) => (
+                            <div key={model.id} className="space-y-4">
+                                {index > 0 && <Separator />}
+
                                 <div className="flex items-center justify-between">
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 w-full">
-                                        <div>
-                                            <Label htmlFor={`label-${model.id}`}>Label</Label>
-                                            <Input
-                                                id={`label-${model.id}`}
-                                                value={model.label}
-                                                onChange={(e) => updateModel(model.id, "label", e.target.value)}
-                                                placeholder={`Model ${idx + 1}`}
-                                            />
-                                        </div>
-
-                                        <div>
-                                            <Label>Endpoint</Label>
-                                            <Select
-                                                value={model.endpointChoice}
-                                                onValueChange={(v: EndpointChoice) => updateModel(model.id, "endpointChoice", v)}
-                                            >
-                                                <SelectTrigger>
-                                                    <SelectValue placeholder="Choose endpoint source"/>
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    <SelectItem value="default">Use default</SelectItem>
-                                                    <SelectItem value="preset">Preset</SelectItem>
-                                                    <SelectItem value="custom">Custom URL…</SelectItem>
-                                                </SelectContent>
-                                            </Select>
-                                        </div>
+                                    <div className="flex items-center gap-3">
+                                        <Badge
+                                            variant="secondary"
+                                            className="text-xs"
+                                        >
+                                            Model {index + 1}
+                                        </Badge>
+                                        <span className="text-sm text-muted-foreground">
+                                            Effective endpoint:&nbsp;
+                                            {model.endpointChoice === "default"
+                                                ? effectiveDefaultEndpoint || "—"
+                                                : model.endpointChoice === "preset"
+                                                    ? model.selectedPresetEndpoint || "—"
+                                                    : model.customEndpoint?.trim() ||
+                                                    "—"}
+                                        </span>
                                     </div>
-
-                                    <div className="flex items-center gap-2 ml-2 shrink-0">
-                                        <Button variant="secondary" type="button"
-                                                onClick={() => duplicateModel(model.id)}>Duplicate</Button>
-                                        <Button variant="destructive" type="button"
-                                                onClick={() => removeModel(model.id)} disabled={models.length <= 1}>
+                                    <div className="flex gap-2">
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => duplicateModel(model.id)}
+                                            className="gap-2 border-border text-card-foreground hover:bg-muted"
+                                        >
+                                            <Copy className="h-4 w-4" />
+                                            Duplicate
+                                        </Button>
+                                        <Button
+                                            variant="destructive"
+                                            size="sm"
+                                            onClick={() => removeModel(model.id)}
+                                            disabled={models.length <= 1}
+                                            className="gap-2"
+                                        >
+                                            <Trash2 className="h-4 w-4" />
                                             Remove
                                         </Button>
                                     </div>
                                 </div>
 
-                                {(model.endpointChoice === "preset" || model.endpointChoice === "custom") && (
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="space-y-4">
+                                        <div className="space-y-2">
+                                            <Label>Label</Label>
+                                            <Input
+                                                id={`label-${model.id}`}
+                                                value={model.label}
+                                                onChange={(e) =>
+                                                    updateModel(
+                                                        model.id,
+                                                        "label",
+                                                        e.target.value
+                                                    )
+                                                }
+                                                placeholder={`Model ${index + 1}`}
+                                            />
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <Label>Endpoint</Label>
+                                            <Select
+                                                value={model.endpointChoice}
+                                                onValueChange={(
+                                                    v: EndpointChoice
+                                                ) =>
+                                                    updateModel(
+                                                        model.id,
+                                                        "endpointChoice",
+                                                        v
+                                                    )
+                                                }
+                                            >
+                                                <SelectTrigger>
+                                                    <SelectValue />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="default">
+                                                        Use default
+                                                    </SelectItem>
+                                                    <SelectItem value="preset">
+                                                        Preset
+                                                    </SelectItem>
+                                                    <SelectItem value="custom">
+                                                        Custom
+                                                    </SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+
                                         {model.endpointChoice === "preset" && (
-                                            <div>
+                                            <div className="space-y-2">
                                                 <Label>Preset Endpoint</Label>
                                                 <Select
                                                     value={model.selectedPresetEndpoint}
-                                                    onValueChange={(v) => updateModel(model.id, "selectedPresetEndpoint", v)}
+                                                    onValueChange={(v) =>
+                                                        updateModel(
+                                                            model.id,
+                                                            "selectedPresetEndpoint",
+                                                            v
+                                                        )
+                                                    }
                                                 >
                                                     <SelectTrigger>
-                                                        <SelectValue placeholder="Select preset endpoint"/>
+                                                        <SelectValue placeholder="Select preset endpoint" />
                                                     </SelectTrigger>
                                                     <SelectContent>
-                                                        {availableEvaluationEndpoints.map((ep: AnalysisEndpoint) => (
-                                                            <SelectItem key={ep.endpoint} value={ep.endpoint}>
-                                                                {ep.name}
-                                                            </SelectItem>
-                                                        ))}
+                                                        {availableEvaluationEndpoints.map(
+                                                            (ep: AnalysisEndpoint) => (
+                                                                <SelectItem
+                                                                    key={ep.endpoint}
+                                                                    value={ep.endpoint}
+                                                                >
+                                                                    {ep.name}
+                                                                </SelectItem>
+                                                            )
+                                                        )}
                                                     </SelectContent>
                                                 </Select>
                                             </div>
                                         )}
+
                                         {model.endpointChoice === "custom" && (
-                                            <div>
-                                                <Label htmlFor={`custom-${model.id}`}>Custom Endpoint</Label>
+                                            <div className="space-y-2">
+                                                <Label>Custom Endpoint</Label>
                                                 <Input
                                                     id={`custom-${model.id}`}
                                                     type="text"
                                                     placeholder="https://example.com/analysis/v1"
                                                     value={model.customEndpoint}
-                                                    onChange={(e) => updateModel(model.id, "customEndpoint", e.target.value)}
+                                                    onChange={(e) =>
+                                                        updateModel(
+                                                            model.id,
+                                                            "customEndpoint",
+                                                            e.target.value
+                                                        )
+                                                    }
                                                 />
                                             </div>
                                         )}
-                                    </div>
-                                )}
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                    <div>
-                                        <Label>LLM Base URL</Label>
-                                        <Input
-                                            type="text"
-                                            placeholder="https://api.openai.com/v1"
-                                            value={model.baseUrl || ""}
-                                            onChange={(e) => updateModel(model.id, "baseUrl", emptyToNull(e.target.value))}
-                                        />
+                                        <div className="space-y-2">
+                                            <Label>LLM Base URL</Label>
+                                            <Input
+                                                type="text"
+                                                placeholder="https://api.openai.com/v1"
+                                                value={model.baseUrl || ""}
+                                                onChange={(e) =>
+                                                    updateModel(
+                                                        model.id,
+                                                        "baseUrl",
+                                                        emptyToNull(e.target.value)
+                                                    )
+                                                }
+                                            />
+                                        </div>
                                     </div>
-                                    <div>
-                                        <Label>LLM Model Name</Label>
-                                        <Input
-                                            type="text"
-                                            placeholder="gpt-4o-mini"
-                                            value={model.modelName || ""}
-                                            onChange={(e) => updateModel(model.id, "modelName", emptyToNull(e.target.value))}
-                                        />
-                                    </div>
-                                    <div>
-                                        <Label>API Key</Label>
-                                        <PasswordInput
-                                            placeholder="Enter API key"
-                                            value={model.apiKey || ""}
-                                            onChange={(e) => updateModel(model.id, "apiKey", emptyToNull(e.target.value))}
-                                        />
-                                    </div>
-                                    <div>
-                                        <Label>LLM Response Timeout (seconds)</Label>
-                                        <Input
-                                            type="number"
-                                            placeholder="240"
-                                            value={model.timeoutSeconds ?? ""}
-                                            onChange={(e) => updateModel(model.id, "timeoutSeconds", safeIntOrNull(e.target.value))}
-                                        />
+
+                                    <div className="space-y-4">
+                                        <div className="space-y-2">
+                                            <Label>LLM Model Name</Label>
+                                            <Input
+                                                type="text"
+                                                placeholder="gpt-4o-mini"
+                                                value={model.modelName || ""}
+                                                onChange={(e) =>
+                                                    updateModel(
+                                                        model.id,
+                                                        "modelName",
+                                                        emptyToNull(e.target.value)
+                                                    )
+                                                }
+                                            />
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <Label>LLM Response Timeout (seconds)</Label>
+                                            <Input
+                                                type="number"
+                                                placeholder="240"
+                                                value={
+                                                    model.timeoutSeconds ?? ""
+                                                }
+                                                onChange={(e) =>
+                                                    updateModel(
+                                                        model.id,
+                                                        "timeoutSeconds",
+                                                        safeIntOrNull(e.target.value)
+                                                    )
+                                                }
+                                            />
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <Label>API Key</Label>
+                                            <PasswordInput
+                                                placeholder="Enter API key"
+                                                value={model.apiKey || ""}
+                                                onChange={(e) =>
+                                                    updateModel(
+                                                        model.id,
+                                                        "apiKey",
+                                                        emptyToNull(e.target.value)
+                                                    )
+                                                }
+                                            />
+                                        </div>
                                     </div>
                                 </div>
-
-                                <EffectiveEndpointHint
-                                    model={model}
-                                    effectiveDefaultEndpoint={effectiveDefaultEndpoint}
-                                />
                             </div>
                         ))}
-                    </div>
-                </section>
-
-                <hr className="border-border/50"/>
-
-                <section className="space-y-4">
-                    <Label>Datasets</Label>
-                    <MultiSelect
-                        defaultValue={selectedDatasets.map((id) => id.toString())}
-                        options={datasets.map((dataset) => {
-                            return { label: dataset.name, value: dataset.id.toString() }
-                        })}
-                        onValueChange={(newDatasets) => {
-                            setSelectedDatasets(newDatasets.map((id) => parseInt(id)))
-                        }}
-                    />
-                </section>
+                    </CardContent>
+                </Card>
 
                 {children}
-            </CardContent>
-        </Card>
+            </div>
+        </div>
     );
 }
 
@@ -511,7 +747,7 @@ function newModelRow(index: number): ModelRowState {
         baseUrl: null,
         modelName: null,
         apiKey: null,
-        timeoutSeconds: null
+        timeoutSeconds: null,
     };
 }
 
@@ -547,14 +783,20 @@ function nextLabel(base: string, existing: string[]): string {
 }
 
 function cryptoRandomId(): string {
-    if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
+    if (
+        typeof crypto !== "undefined" &&
+        "randomUUID" in crypto
+    ) {
         // @ts-ignore
         return crypto.randomUUID();
     }
     return Math.random().toString(36).slice(2);
 }
 
-function findPreset(endpoint: string, presets: AnalysisEndpoint[]) {
+function findPreset(
+    endpoint: string,
+    presets: AnalysisEndpoint[]
+) {
     return presets.find((p) => p.endpoint === endpoint);
 }
 
@@ -562,7 +804,9 @@ function pruneNulls<T>(obj: T): T {
     if (obj === null || obj === undefined) return obj;
     if (Array.isArray(obj)) {
         // @ts-ignore
-        return obj.map(pruneNulls).filter((v) => v !== null && v !== undefined) as any;
+        return obj
+            .map(pruneNulls)
+            .filter((v) => v !== null && v !== undefined) as any;
     }
     if (typeof obj === "object") {
         const out: any = {};
@@ -573,25 +817,4 @@ function pruneNulls<T>(obj: T): T {
         return out;
     }
     return obj;
-}
-
-function EffectiveEndpointHint({
-   model,
-   effectiveDefaultEndpoint
-}: {
-    model: ModelRowState;
-    effectiveDefaultEndpoint: string;
-}) {
-    const effective =
-        model.endpointChoice === "default"
-            ? effectiveDefaultEndpoint || "—"
-            : model.endpointChoice === "preset"
-                ? model.selectedPresetEndpoint || "—"
-                : model.customEndpoint?.trim() || "—";
-
-    return (
-        <div className="text-xs text-muted-foreground">
-            Effective endpoint for this model: <span className="font-mono">{effective || "(unset)"}</span>
-        </div>
-    );
 }
