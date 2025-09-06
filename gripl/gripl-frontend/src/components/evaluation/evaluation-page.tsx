@@ -39,6 +39,7 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
     const [currentStepInfos, setCurrentStepInfos] = useState<(EvaluationReportStepInfo & { modelLabel: string })[]>([]);
     const [errors, setErrors] = useState<(EvaluationReportError & { modelLabel: string })[]>([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [isFinished, setIsFinished] = useState(false);
 
     const handleEvaluationStart = async () => {
         if (!evaluationRequest) return;
@@ -46,8 +47,10 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
         setTestCases([]);
         setSummary(new Map());
         setCurrentStepInfos([]);
+        setModels(evaluationRequest.models.map((m) => m.label));
         setErrors([]);
         setIsLoading(true);
+        setIsFinished(false);
 
         console.log("Sending request", evaluationRequest)
 
@@ -108,9 +111,11 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
         }
 
         setIsLoading(false);
+        setIsFinished(true);
     };
 
     useEffect(() => {
+        if (isFinished || isLoading) return;
         setModels(evaluationRequest?.models.map((m) => m.label) || []);
     }, [evaluationRequest]);
 
@@ -212,6 +217,7 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
             }
         };
         reader.readAsText(file);
+        setIsFinished(true);
     };
 
     const summariesByModel = useMemo(
@@ -224,11 +230,11 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
             <EvaluationConfig onMultiConfigChanged={setEvaluationRequest} datasets={datasets} className="mb-6">
                 <div className="flex flex-row justify-between items-start flex-wrap mb-4 gap-4">
                     <div className="flex flex-row gap-4 flex-wrap">
-                        <Button variant="secondary" disabled={isLoading || testCases.length === 0} onClick={handleDownloadMarkdownReport}>
+                        <Button variant="secondary" disabled={!isFinished} onClick={handleDownloadMarkdownReport}>
                             <FileText className="h-4 w-4" />
                             Download Markdown Report
                         </Button>
-                        <Button variant="secondary" disabled={isLoading || testCases.length === 0} onClick={handleDownloadJsonReport}>
+                        <Button variant="secondary" disabled={!isFinished} onClick={handleDownloadJsonReport}>
                             <FileText className="h-4 w-4" />
                             Download JSON Report
                         </Button>
