@@ -34,7 +34,6 @@ interface EvaluationPageProps {
 export default function EvaluationPage({ datasets }: EvaluationPageProps) {
     const [evaluationRequest, setEvaluationRequest] = useState<MultiEvaluationRequest | null>(null);
 
-    const [models, setModels] = useState<string[]>([]);
     const [metadata, setMetadata] = useState<EvaluationMetadataReport | null>(null);
     const [testCases, setTestCases] = useState<(TestCaseReport & { modelLabel: string })[]>([]);
     const [summary, setSummary] = useState<Map<string, EvaluationReportSummary>>(new Map());
@@ -50,7 +49,6 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
         setTestCases([]);
         setSummary(new Map());
         setCurrentStepInfos([]);
-        setModels(evaluationRequest.models.map((m) => m.label));
         setErrors([]);
         setIsLoading(true);
         setIsFinished(false);
@@ -91,7 +89,6 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
                     console.log(`Received report for model: ${modelLabel}`, report);
 
                     if (report.type === "metadata") {
-                        console.log("Metadata report received:", report);
                         setMetadata(report);
                     } else if (report.type === "testCase") {
                         setTestCases((prev) => [...prev, { ...(report as TestCaseReport), modelLabel }]);
@@ -119,11 +116,6 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
         setIsLoading(false);
         setIsFinished(true);
     };
-
-    useEffect(() => {
-        if (isFinished || isLoading) return;
-        setModels(evaluationRequest?.models.map((m) => m.label) || []);
-    }, [evaluationRequest]);
 
     useEffect(() => {
         setCurrentStepInfos((infos) =>
@@ -223,7 +215,6 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
                 });
                 setSummary(summaryMap);
                 setErrors(parsed.errors || []);
-                setModels(Array.from(summaryMap.keys()));
             } catch (err) {
                 console.error("Failed to load report:", err);
                 alert("Failed to load report: " + (err as Error).message);
@@ -307,14 +298,14 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
                 <h2 className="text-2xl font-semibold mb-2">Results by Model</h2>
                 <Tabs className="w-full">
                     <TabsList className="w-full h-12 sticky top-0 z-10">
-                        {models.map((label) => (
+                        {metadata?.modelLabels.map((label) => (
                                 <TabsTrigger value={label} key={`${label}-trigger`}>
                                     {label}
                                 </TabsTrigger>
                             ))}
                     </TabsList>
 
-                    {models.map((label) => {
+                    {metadata?.modelLabels.map((label) => {
                         const modelSummary = summary?.get(label);
 
                         return (
