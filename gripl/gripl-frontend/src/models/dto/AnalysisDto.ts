@@ -3,10 +3,11 @@ export interface AnalysisRequest {
 }
 
 export interface AnalysisResponse {
-    relevantElements: AnalysisResponseElement[];
+    criticalElements: CriticalElement[];
 }
 
-export interface AnalysisResponseElement {
+export interface CriticalElement {
     id: string;
+    name: string;
     reason: string;
 }

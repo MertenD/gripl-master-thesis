@@ -4,12 +4,10 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import de.mertendieckmann.griplbackend.application.factory.AnalyzerFactory
 import de.mertendieckmann.griplbackend.config.LlmConfig
-import de.mertendieckmann.griplbackend.evaluation.EvaluationRunner
 import de.mertendieckmann.griplbackend.evaluation.MultiEvaluationRunner
 import de.mertendieckmann.griplbackend.model.dto.*
 import io.swagger.v3.oas.annotations.Operation
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.filter
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.core.env.Environment
 import org.springframework.core.io.buffer.DataBufferUtils
@@ -19,6 +17,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.http.codec.multipart.FilePart
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Mono
+import reactor.core.scheduler.Schedulers
 
 @RestController
 @RequestMapping("/gdpr")
@@ -76,14 +75,12 @@ class AnalysisController(
         }
 
         return bpmnXmlMono.flatMap { bpmnXml ->
-            val llm = llmConfig.buildWithOverride(resolvedLlmPropsOverride)
-            val analyzer = analyzerFactory.create(llm)
-
-            val analysisResult = analyzer.analyzeBpmnForGdpr(bpmnXml)
-
-            val response = AnalysisResponse(relevantElements = analysisResult.elements)
-            Mono.just(ResponseEntity(response, HttpStatus.OK))
-        }
+            Mono.fromCallable {
+                val llm = llmConfig.buildWithOverride(resolvedLlmPropsOverride)
+                val analyzer = analyzerFactory.create(llm)
+                analyzer.analyzeBpmnForGdpr(bpmnXml)
+            }.subscribeOn(Schedulers.boundedElastic())
+        }.map { ResponseEntity.ok(it) }
     }
 
     @Operation(

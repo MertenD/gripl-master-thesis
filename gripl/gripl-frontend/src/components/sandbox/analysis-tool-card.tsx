@@ -46,18 +46,13 @@ export default function AnalysisToolCard({ bpmnXml, analysisResult, setAnalysisR
         const jsonBlob = new Blob([JSON.stringify(llmProps)], { type: "application/json" });
         formData.append("llmProps", jsonBlob);
 
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 240000);
-
-        fetch(`/api/gdpr/analysis/v1`, {
+        fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/gdpr/analysis/v1`, {
             method: "POST",
             headers: {
                 Accept: "application/json"
             },
-            body: formData,
-            signal: controller.signal
+            body: formData
         } as RequestInit).then(response => {
-            clearTimeout(timeoutId);
             if (!response.ok) {
                 throw new Error("Fehler bei der Analyse des Diagramms");
             }
@@ -67,7 +62,6 @@ export default function AnalysisToolCard({ bpmnXml, analysisResult, setAnalysisR
             setIsAnalyzing(false);
             setAnalysisResult(data);
         }).catch(error => {
-            clearTimeout(timeoutId)
             console.error("Fehler bei der Analyse:", error);
             setIsAnalyzing(false);
             alert("Fehler bei der Analyse des Diagramms: " + error.message);
@@ -132,7 +126,7 @@ export default function AnalysisToolCard({ bpmnXml, analysisResult, setAnalysisR
             <Button
                 onClick={() => setAnalysisResult(null)}
                 variant="outline"
-                disabled={!analysisResult || analysisResult?.relevantElements.length === 0 || isAnalyzing}
+                disabled={!analysisResult || analysisResult.criticalElements.length === 0 || isAnalyzing}
             >
                 <RefreshCw className="mr-2 h-4 w-4" />
                 Clear Analysis Results

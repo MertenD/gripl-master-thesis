@@ -48,7 +48,7 @@ class HttpEvaluator(
                 .retrieve()
                 .awaitBody()
 
-            return analysisResponse.relevantElements.map { ExpectedValue(value = it.id, reason = it.reason) }
+            return analysisResponse.criticalElements.map { ExpectedValue(value = it.id, reason = it.reason) }
         } catch (e: WebClientResponseException) {
             throw RuntimeException("Failed to evaluate BPMN XML at endpoint '$absoluteEndpoint': ${e.responseBodyAsString}", e)
         }
