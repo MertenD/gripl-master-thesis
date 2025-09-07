@@ -69,8 +69,14 @@ class AnalysisController(
                 dataBuffer.asInputStream().bufferedReader().use { it.readText() }
             }
 
+        val resolvedLlmPropsOverride = llmPropsOverrides?.let {
+            jacksonObjectMapper().readValue<LlmConfig.Companion.LlmPropsOverride>(
+                env.resolvePlaceholders(jacksonObjectMapper().writeValueAsString(it))
+            )
+        }
+
         return bpmnXmlMono.flatMap { bpmnXml ->
-            val llm = llmConfig.buildWithOverride(llmPropsOverrides)
+            val llm = llmConfig.buildWithOverride(resolvedLlmPropsOverride)
             val analyzer = analyzerFactory.create(llm)
 
             val analysisResult = analyzer.analyzeBpmnForGdpr(bpmnXml)

@@ -1,7 +1,7 @@
 "use client"
 
 import {Button} from "@/components/ui/button";
-import {ConfirmationDialog} from "@/components/confirmation-dialog";
+import {ConfirmationDialog} from "@/components/ui/confirmation-dialog";
 import React, {useState} from "react";
 import {Trash2} from "lucide-react";
 import {useRouter} from "next/navigation";

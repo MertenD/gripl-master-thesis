@@ -5,13 +5,14 @@ import {useState} from "react";
 import {BpmnToolCard} from "@/models/BpmnToolCard";
 import AnalysisToolCard from "@/components/analysis-tool-card";
 import emptyDiagram from "@/data/empty-diagram.bpmn";
+import {AnalysisResponse} from "@/models/dto/AnalysisDto";
 
 export default function Home() {
   const [diagram, setDiagram] = useState<string>(emptyDiagram as string)
-  const [highlightedActivityIds, setHighlightedActivityIds] = useState<string[]>([])
+  const [analysisResult, setAnalysisResult] = useState<AnalysisResponse | null>(null)
 
   function handleCreateNewDiagram() {
-    setHighlightedActivityIds([])
+    setAnalysisResult(null)
   }
 
   const editorToolCards: BpmnToolCard[] = [
@@ -19,8 +20,8 @@ export default function Home() {
       position: "top-right",
       content: <AnalysisToolCard
           bpmnXml={diagram}
-          highlightedActivityIds={highlightedActivityIds}
-          setHighlightedActivityIds={setHighlightedActivityIds}
+          analysisResult={analysisResult}
+          setAnalysisResult={setAnalysisResult}
       />
     } as BpmnToolCard
   ]
@@ -29,7 +30,7 @@ export default function Home() {
     <div className="w-full h-full">
       <BpmnEditor
           bpmnXml={diagram}
-          highlightedActivityIds={highlightedActivityIds}
+          highlightedActivityIds={analysisResult?.relevantElements.map(e => e.id) || []}
           onNew={handleCreateNewDiagram}
           onDiagramChanged={setDiagram}
           cards={editorToolCards}

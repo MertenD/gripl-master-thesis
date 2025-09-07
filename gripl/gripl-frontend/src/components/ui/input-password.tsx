@@ -3,17 +3,19 @@ import { Eye, EyeOff } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
-export interface PasswordInputProps
-    extends Omit<React.ComponentProps<"input">, "type"> {}
+export interface PasswordInputProps extends Omit<React.ComponentProps<"input">, "type"> {
+    className?: string
+    list?: string
+}
 
 const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputProps>(
-    ({ className, ...props }, ref) => {
+    ({ className, list, ...props }, ref) => {
         const [visible, setVisible] = React.useState(false)
 
         const PLACEHOLDER_RE = /^\s*\$\{[^}]*\}\s*$/;
 
         function isVisible(value: any) {
-            return visible || PLACEHOLDER_RE.test(String(value ?? ""));
+            return visible || PLACEHOLDER_RE.test(String(value ?? "")) || value === "$" || value === "${" || (list && value.length === 0)
         }
 
         return (
@@ -25,6 +27,7 @@ const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputProps>(
                         className
                     )}
                     ref={ref}
+                    list={list}
                     {...props}
                 />
 
