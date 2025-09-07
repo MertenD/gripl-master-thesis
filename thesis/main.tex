@@ -19,11 +19,11 @@ BCOR15mm               % Bindekorrektur
 \usepackage[T1]{fontenc}
 \usepackage[printonlyused]{acronym}
 
+\usepackage{graphicx}
+
 % Helvetica als Standard-Dokumentschrift
 \usepackage[scaled]{helvet}
-\renewcommand{\familydefault}{\sfdefault} 
-
-\usepackage{graphicx}
+\renewcommand{\familydefault}{\sfdefault}
 
 % Literaturverzeichnis mit BibLaTeX
 \usepackage[babel,german=quotes]{csquotes}
@@ -148,17 +148,12 @@ pdfborder=0 0 0	% keine Box um die Links!
 
 \tableofcontents
 
-\cleardoublepage
-\addchap{Abkürzungen}
-\begin{acronym}[SVM]
-  \acro{GDPR}{General Data Protection Regulation}
-  \acro{LLM}{Large Language Model}
-  \acro{BPM}{Business Process Management}
-\end{acronym}
+\input{acronyms}
 
 \mainmatter
 
 % TODO Hier kommen die Kapitel (\input{chapters/...}) hin
+\input{chapters/basics/basics}
 
 \input{chapters/outline}
 
