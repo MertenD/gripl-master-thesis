@@ -28,7 +28,7 @@ jobs:
           context: ./gripl/gripl-frontend
           push: true
           tags: mertend/gripl-frontend:latest
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64
           build-args: |
             API_BASE_URL=https://gripl.mertendieckmann.de/api
 
@@ -38,4 +38,4 @@ jobs:
           context: ./gripl/gripl-backend
           push: true
           tags: mertend/gripl-backend:latest
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64
