@@ -17,6 +17,7 @@ BCOR15mm               % Bindekorrektur
 \usepackage[ngerman]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
+\usepackage[printonlyused]{acronym}
 
 % Helvetica als Standard-Dokumentschrift
 \usepackage[scaled]{helvet}
@@ -114,7 +115,6 @@ pdfborder=0 0 0	% keine Box um die Links!
 %{\bfseries Universität Ulm} \textbar ~89069 Ulm \textbar ~Germany
 \hspace*{115mm}\parbox[t]{35mm}{\bfseries Fakultät für\\
 \fakultaet\\
-% TODO hier Institut anpassen
 \mdseries \institut}\\[2cm]
 
 \parbox{140mm}{\bfseries \LARGE \titel}\\[2.5em]
@@ -147,6 +147,14 @@ pdfborder=0 0 0	% keine Box um die Links!
 \setstretch{1.2}
 
 \tableofcontents
+
+\cleardoublepage
+\addchap{Abkürzungen}
+\begin{acronym}[SVM]
+  \acro{GDPR}{General Data Protection Regulation}
+  \acro{LLM}{Large Language Model}
+  \acro{BPM}{Business Process Management}
+\end{acronym}
 
 \mainmatter
 
