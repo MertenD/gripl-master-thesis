@@ -86,4 +86,11 @@ class EvaluationDataRepository(
         val sql = "DELETE FROM evaluation_data WHERE id = ?"
         return jdbc.update(sql, id)
     }
+
+    fun countEvaluationDataForDatasets(datasetIds: List<Long>): Int {
+        if (datasetIds.isEmpty()) return 0
+        val inSql = datasetIds.joinToString(",")
+        val sql = "SELECT COUNT(*) FROM evaluation_data WHERE dataset_id IN ($inSql)"
+        return jdbc.queryForObject(sql, Int::class.java) ?: 0
+    }
 }

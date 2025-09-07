@@ -1,3 +1,13 @@
+export interface EvaluationMetadataReport {
+    type: "metadata";
+    modelLabels: string[],
+    datasets: { id: number; name: string }[];
+    timestamp: string;
+    totalTestCases: number;
+    defaultEvaluationEndpoint: string;
+    markdown: string;
+}
+
 export interface TestCaseReport {
     type: "testCase";
     testCaseId: number;
@@ -47,4 +57,4 @@ export interface EvaluationReportError {
     markdown: string;
 }
 
-export type EvaluationReport = TestCaseReport | EvaluationReportSummary | EvaluationReportStepInfo | EvaluationReportError;
+export type EvaluationReport = EvaluationMetadataReport | TestCaseReport | EvaluationReportSummary | EvaluationReportStepInfo | EvaluationReportError;

@@ -3,6 +3,7 @@
 import {Button} from "@/components/ui/button";
 import React, {useEffect, useMemo, useState} from "react";
 import {
+    EvaluationMetadataReport,
     EvaluationReport,
     EvaluationReportError,
     EvaluationReportStepInfo,
@@ -34,6 +35,7 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
     const [evaluationRequest, setEvaluationRequest] = useState<MultiEvaluationRequest | null>(null);
 
     const [models, setModels] = useState<string[]>([]);
+    const [metadata, setMetadata] = useState<EvaluationMetadataReport | null>(null);
     const [testCases, setTestCases] = useState<(TestCaseReport & { modelLabel: string })[]>([]);
     const [summary, setSummary] = useState<Map<string, EvaluationReportSummary>>(new Map());
     const [currentStepInfos, setCurrentStepInfos] = useState<(EvaluationReportStepInfo & { modelLabel: string })[]>([]);
@@ -44,6 +46,7 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
     const handleEvaluationStart = async () => {
         if (!evaluationRequest) return;
 
+        setMetadata(null);
         setTestCases([]);
         setSummary(new Map());
         setCurrentStepInfos([]);
@@ -87,7 +90,10 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
 
                     console.log(`Received report for model: ${modelLabel}`, report);
 
-                    if (report.type === "testCase") {
+                    if (report.type === "metadata") {
+                        console.log("Metadata report received:", report);
+                        setMetadata(report);
+                    } else if (report.type === "testCase") {
                         setTestCases((prev) => [...prev, { ...(report as TestCaseReport), modelLabel }]);
                     } else if (report.type === "summary") {
                         setSummary((prev) => {
@@ -143,6 +149,11 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
         }
         const sections: string[] = [];
 
+        if (metadata) {
+            sections.push("# Evaluation Report");
+            sections.push(metadata.markdown);
+        }
+
         const byModel = groupBy(testCases, (x) => x.modelLabel);
 
         Object.keys(byModel).forEach((label) => {
@@ -174,6 +185,7 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
             return;
         }
         const report = {
+            metadata,
             testCases,
             summaries: Array.from(summary.entries()).map(([label, s]) => ({ label, summary: s })),
             errors
@@ -203,6 +215,7 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
                 const parsed = JSON.parse(text);
                 if (!parsed.testCases || !parsed.summaries) throw new Error("Invalid report format");
 
+                setMetadata(parsed.metadata || null);
                 setTestCases(parsed.testCases);
                 const summaryMap = new Map<string, EvaluationReportSummary>();
                 parsed.summaries.forEach((s: { label: string; summary: EvaluationReportSummary }) => {
@@ -218,6 +231,10 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
         };
         reader.readAsText(file);
         setIsFinished(true);
+    };
+
+    const onUploadJsonReportClick = () => {
+        document.getElementById("upload-json-report")?.click()
     };
 
     const summariesByModel = useMemo(
@@ -240,7 +257,7 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
                         </Button>
                         <input id="upload-json-report" type="file" accept=".json" className="hidden" onChange={handleUploadJsonReport} />
                         <label htmlFor="upload-json-report">
-                            <Button variant="secondary" disabled={isLoading} asChild className="hover:cursor-pointer">
+                            <Button variant="secondary" onClick={onUploadJsonReportClick} disabled={isLoading} className="hover:cursor-pointer">
                                 <span className="flex flex-row items-center gap-2">
                                     <FileText className="h-4 w-4" />
                                     Upload JSON Report
@@ -278,9 +295,9 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
 
             <section className="px-6">
                 <h2 className="text-2xl font-semibold mb-2">Complete Result Overview</h2>
-                {summariesByModel.length > 0 ? <>
+                {summariesByModel.length > 0 || metadata ? <>
                     <div className="space-y-6 mb-8">
-                        <EvaluationReportSummaryCard reportSummaries={summariesByModel}/>
+                        <EvaluationReportSummaryCard reportSummaries={summariesByModel} metadata={metadata}/>
                         <MetricsCharts reportSummaries={summariesByModel}/>
                     </div>
                 </> : <Card className="p-4 mb-4">

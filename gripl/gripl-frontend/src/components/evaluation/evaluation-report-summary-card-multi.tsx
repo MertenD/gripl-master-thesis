@@ -1,16 +1,25 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { EvaluationReportSummary } from "@/models/dto/ReportData";
+import {EvaluationMetadataReport, EvaluationReportSummary} from "@/models/dto/ReportData";
 
 export default function EvaluationReportSummaryCardMulti({
  items,
-}: { items: Array<{ label: string; summary: EvaluationReportSummary }> }) {
+ metadata
+}: { items: Array<{ label: string; summary: EvaluationReportSummary }>, metadata: EvaluationMetadataReport | null }) {
     const pct = (v: number) => `${(v * 100).toFixed(1)}%`;
 
     return (
         <Card>
-            <CardHeader><CardTitle>Evaluation Summary (All Models)</CardTitle></CardHeader>
+            <CardHeader>
+                <CardTitle>Evaluation Summary (All Models)</CardTitle>
+                { metadata && <CardDescription>
+                    <p>Models: {metadata.modelLabels.join(", ")}</p>
+                    <p>Datasets: {metadata.datasets.map(d => d.name).join(", ")}</p>
+                    <p>Total Test Cases: {metadata.totalTestCases}</p>
+                    <p>Timestamp: {new Date(metadata.timestamp).toLocaleString()}</p>
+                </CardDescription> }
+            </CardHeader>
             <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {items.map(({ label, summary }) => {

@@ -2,6 +2,7 @@ package de.mertendieckmann.griplbackend.model.dto
 
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
+import java.sql.Timestamp
 
 @JsonTypeInfo(
     use = JsonTypeInfo.Id.NAME,
@@ -9,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
     property = "type"
 )
 @JsonSubTypes(
+    JsonSubTypes.Type(EvaluationMetadataReport::class, name = "metadata"),
     JsonSubTypes.Type(TestCaseReport::class, name = "testCase"),
     JsonSubTypes.Type(EvaluationReportSummary::class, name = "summary"),
     JsonSubTypes.Type(EvaluationReportStepInfo::class, name = "stepInfo"),
@@ -17,6 +19,29 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
 sealed class EvaluationReport{
     val markdown: String by lazy { toMarkdown() }
     abstract fun toMarkdown(): String
+}
+
+data class EvaluationMetadataReport(
+    val modelLabels: List<String>,
+    val datasets: List<DatasetInfo>,
+    val timestamp: Timestamp = Timestamp(System.currentTimeMillis()),
+    val totalTestCases: Int,
+    val defaultEvaluationEndpoint: String
+): EvaluationReport() {
+    override fun toMarkdown(): String {
+        return """
+            |## Evaluation Metadata
+            |- **Models:** ${modelLabels.joinToString(", ")}
+            |- **Datasets:** ${datasets.joinToString(", ")}
+            |- **Timestamp:** $timestamp
+            |- **Default Evaluation Endpoint:** $defaultEvaluationEndpoint
+        """.trimMargin()
+    }
+
+    data class DatasetInfo(
+        val id: Long,
+        val name: String
+    )
 }
 
 data class TestCaseReport(

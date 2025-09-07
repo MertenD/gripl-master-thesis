@@ -38,6 +38,13 @@ class DatasetRepository(
         return jdbc.query(sql, mapper, id).firstOrNull()
     }
 
+    fun getDatasetsByIds(ids: List<Long>): List<Dataset> {
+        if (ids.isEmpty()) return emptyList()
+        val inSql = ids.joinToString(",")
+        val sql = "SELECT * FROM dataset WHERE id IN ($inSql)"
+        return jdbc.query(sql, mapper)
+    }
+
     fun deleteDataset(id: Long): Int {
         val sql = "DELETE FROM dataset WHERE id = ?"
         return jdbc.update(sql, id)
