@@ -14,10 +14,15 @@ export default function EvaluationReportSummaryCardMulti({
             <CardHeader>
                 <CardTitle>Evaluation Summary (All Models)</CardTitle>
                 { metadata && <CardDescription>
-                    <p>Models: {metadata.modelLabels.join(", ")}</p>
-                    <p>Datasets: {metadata.datasets.map(d => d.name).join(", ")}</p>
-                    <p>Total Test Cases: {metadata.totalTestCases}</p>
-                    <p>Timestamp: {new Date(metadata.timestamp).toLocaleString()}</p>
+                    <table>
+                        <tbody>
+                            <tr><td>Models</td><td className="pl-4">{metadata.modelLabels.join(", ")}</td></tr>
+                            <tr><td>Datasets</td><td className="pl-4">{metadata.datasets.map(d => d.name).join(", ")}</td></tr>
+                            <tr><td>Total Test Cases</td><td className="pl-4">{metadata.totalTestCases}</td></tr>
+                            <tr><td>Default Evaluation Endpoint</td><td className="pl-4">{metadata.defaultEvaluationEndpoint}</td></tr>
+                            <tr><td>Timestamp</td><td className="pl-4">{new Date(metadata.timestamp).toLocaleString()}</td></tr>
+                        </tbody>
+                    </table>
                 </CardDescription> }
             </CardHeader>
             <CardContent>
