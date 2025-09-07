@@ -23,10 +23,12 @@ export default async function LabelingPage() {
         })
 
     return <div className="h-full w-full p-6 overflow-y-auto">
-        <div className="flex flex-row justify-between items-start">
-            <h2 className="font-bold text-3xl mb-6">Labeling Datasets</h2>
-            <CreateDatasetButton />
+        <div className="container mx-auto">
+            <div className="flex flex-row justify-between items-start">
+                <h2 className="font-bold text-3xl mb-6">Labeling Datasets</h2>
+                <CreateDatasetButton />
+            </div>
+            <DatasetList datasets={datasets} evaluationMetadata={evaluationMetadata}/>
         </div>
-        <DatasetList datasets={datasets} evaluationMetadata={evaluationMetadata}/>
     </div>
 }
