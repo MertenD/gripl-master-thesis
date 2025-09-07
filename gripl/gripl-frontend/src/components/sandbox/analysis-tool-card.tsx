@@ -2,10 +2,9 @@
 
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
-import {FileText, RefreshCw} from "lucide-react";
+import {Download, FileText, RefreshCw} from "lucide-react";
 import {useState} from "react";
 import {AnalysisResponse} from "@/models/dto/AnalysisDto";
-import {isLocalURL} from "next/dist/shared/lib/router/utils/is-local-url";
 import {Spinner} from "@/components/ui/spinner";
 import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
@@ -15,7 +14,6 @@ import {LlmPropsOverride} from "@/models/dto/MultiEvaluationRequest";
 import LlmBaseUrlDatalist from "@/components/datalist/llm-base-url-datalist";
 import LlmModelNameDatalist from "@/components/datalist/llm-model-name-datalist";
 import LlmApiKeyPlaceholderDatalist from "@/components/datalist/llm-api-key-placeholder-datalist";
-import {time} from "html2canvas/dist/types/css/types/time";
 
 interface AnalysisToolCardProps {
     bpmnXml: string;
@@ -66,6 +64,18 @@ export default function AnalysisToolCard({ bpmnXml, analysisResult, setAnalysisR
             setIsAnalyzing(false);
             alert("Fehler bei der Analyse des Diagramms: " + error.message);
         })
+    }
+
+    function handleDownloadResultClick() {
+        if (!analysisResult) return;
+
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(analysisResult, null, 2));
+        const downloadAnchorNode = document.createElement('a');
+        downloadAnchorNode.setAttribute("href", dataStr);
+        downloadAnchorNode.setAttribute("download", "gripl-analysis-result.json");
+        document.body.appendChild(downloadAnchorNode);
+        downloadAnchorNode.click();
+        downloadAnchorNode.remove();
     }
 
     return <Card className="max-w-80">
@@ -122,6 +132,14 @@ export default function AnalysisToolCard({ bpmnXml, analysisResult, setAnalysisR
                     <FileText className="mr-2 h-4 w-4" />
                     Analyze for GDPR
                 </> }
+            </Button>
+            <Button
+                onClick={handleDownloadResultClick}
+                variant="outline"
+                disabled={!analysisResult || analysisResult.criticalElements.length === 0 || isAnalyzing}
+            >
+                <Download className="mr-2 h-4 w-4" />
+                Download Report (Json)
             </Button>
             <Button
                 onClick={() => setAnalysisResult(null)}

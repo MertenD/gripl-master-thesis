@@ -34,7 +34,7 @@ export default function Home() {
       />
     } as BpmnToolCard,
     {
-      position: "bottom-right",
+      position: "bottom-center",
       content: <AnalysisResultCard analysisResult={analysisResult} selectedElementId={selectedElementId} />
     }
   ]

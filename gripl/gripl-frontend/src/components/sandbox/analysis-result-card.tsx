@@ -13,10 +13,10 @@ export default function AnalysisResultCard({ analysisResult, selectedElementId }
     const [isOpen, setIsOpen] = useState<boolean>(true)
 
     return analysisResult && <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-        <Card className="w-[900px]">
+        <Card className="container">
             <CollapsibleTrigger className="w-full">
-                <CardHeader className="w-full flex flex-row items-center justify-between hover:bg-muted/30">
-                    <CardTitle className="flex items-center gap-2">
+                <CardHeader className="w-full flex flex-row items-center justify-between hover:bg-muted/50">
+                    <CardTitle className="flex items-center gap-2 mr-4">
                         <Brain className="h-4 w-4" />
                         AI Model Reasoning
                     </CardTitle>
@@ -39,7 +39,7 @@ export default function AnalysisResultCard({ analysisResult, selectedElementId }
                         <tbody>
                         {analysisResult.criticalElements.map((element, index) => {
                             const isSelected = element.id === selectedElementId
-                            return <tr key={index} className={`border-t ${isSelected ? "bg-primary/20" : ""}`}>
+                            return <tr key={index} className={`border-t ${isSelected ? "bg-destructive/50" : ""}`}>
                                 <td className="font-medium text-sm mb-1 p-2">{element.name}</td>
                                 <td className="text-sm p-2">{element.reason || "No reasoning provided"}</td>
                             </tr>
