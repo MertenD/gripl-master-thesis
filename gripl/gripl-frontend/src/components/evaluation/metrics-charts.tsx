@@ -1,12 +1,12 @@
 import React from "react";
 import { EvaluationReportSummary } from "@/models/dto/ReportData";
-import ResultsStackedBars from "@/components/evaluation/charts/multi/results-stacked-bars";
-import ConfusionGroupedBars from "@/components/evaluation/charts/multi/confusion-grouped-bars";
-import TestResultsPie from "@/components/evaluation/charts/single/test-results-pie";
-import RadarMetrics from "@/components/evaluation/charts/single/radar-metrics";
-import MetricsBars from "@/components/evaluation/charts/single/metrics-bars";
-import ConfusionBars from "@/components/evaluation/charts/single/confusion-bars";
-import MetricsGroupedBars from "@/components/evaluation/charts/multi/metrics-grouped-bars";
+import ResultsPerModelBarsMulti from "@/components/evaluation/charts/multi/results-per-model-bars-multi";
+import ConfusionMatrixBarsMulti from "@/components/evaluation/charts/multi/confusion-matrix-bars-multi";
+import TestResultDistributionPieSingle from "@/components/evaluation/charts/single/test-result-distribution-pie-single";
+import PerformanceMetricsOverviewRadarSingle from "@/components/evaluation/charts/single/performance-metrics-overview-radar-single";
+import PerformanceMetricsBarsSingle from "@/components/evaluation/charts/single/performance-metrics-bars-single";
+import ConfusionMatrixBarsSingle from "@/components/evaluation/charts/single/confusion-matrix-bars-single";
+import PerformanceMetricsBarsMulti from "@/components/evaluation/charts/multi/performance-metrics-bars-multi";
 
 type SingleProps = { reportSummary: EvaluationReportSummary; reportSummaries?: undefined };
 type MultiProps  = { reportSummary?: undefined; reportSummaries: Array<{ label: string; summary: EvaluationReportSummary }> };
@@ -17,9 +17,9 @@ export default function MetricsCharts(props: Props) {
         const items = props.reportSummaries;
         return (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <MetricsGroupedBars items={items} />
-                <ResultsStackedBars items={items} />
-                <ConfusionGroupedBars items={items} />
+                <PerformanceMetricsBarsMulti items={items} />
+                <ResultsPerModelBarsMulti items={items} />
+                <ConfusionMatrixBarsMulti items={items} />
             </div>
         );
     }
@@ -27,10 +27,10 @@ export default function MetricsCharts(props: Props) {
     const { reportSummary } = props as SingleProps;
     return (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <TestResultsPie summary={reportSummary} />
-            <RadarMetrics summary={reportSummary} />
-            <MetricsBars summary={reportSummary} />
-            <ConfusionBars summary={reportSummary} />
+            <TestResultDistributionPieSingle summary={reportSummary} />
+            <PerformanceMetricsOverviewRadarSingle summary={reportSummary} />
+            <PerformanceMetricsBarsSingle summary={reportSummary} />
+            <ConfusionMatrixBarsSingle summary={reportSummary} />
         </div>
     );
 }

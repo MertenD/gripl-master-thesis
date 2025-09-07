@@ -284,7 +284,7 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
                 </div>
             </EvaluationConfig>
 
-            <section className="px-6">
+            <section className="px-6 container mx-auto">
                 <h2 className="text-2xl font-semibold mb-2">Complete Result Overview</h2>
                 {summariesByModel.length > 0 || metadata ? <>
                     <div className="space-y-6 mb-8">
