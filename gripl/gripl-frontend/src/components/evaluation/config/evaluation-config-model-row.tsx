@@ -10,6 +10,9 @@ import {Separator} from "@/components/ui/separator";
 import {Copy, Trash2} from "lucide-react";
 import {EndpointChoice, ModelRowState} from "@/models/evaluation/Config";
 import {emptyToNull, safeIntOrNull} from "@/lib/evaluation-config-utils";
+import LlmBaseUrlDatalist from "@/components/datalist/llm-base-url-datalist";
+import LlmModelNameDatalist from "@/components/datalist/llm-model-name-datalist";
+import LlmApiKeyPlaceholderDatalist from "@/components/datalist/llm-api-key-placeholder-datalist";
 
 interface EvaluationConfigModelRowProps {
     model: ModelRowState;
@@ -93,20 +96,40 @@ export default function EvaluationConfigModelRow({model, index, canRemove, effec
                     {model.endpointChoice === "custom" && (
                         <div className="space-y-2">
                             <Label>Custom Endpoint</Label>
-                            <Input id={`custom-${model.id}`} type="text" placeholder="https://example.com/analysis/v1" value={model.customEndpoint} onChange={(e) => updateModel(model.id, "customEndpoint", e.target.value)} />
+                            <Input
+                                id={`custom-${model.id}`}
+                                type="text"
+                                placeholder="https://example.com/analysis/v1"
+                                value={model.customEndpoint}
+                                onChange={(e) => updateModel(model.id, "customEndpoint", e.target.value)}
+                            />
                         </div>
                     )}
 
                     <div className="space-y-2">
                         <Label>LLM Base URL</Label>
-                        <Input type="text" placeholder="https://api.openai.com/v1" value={model.baseUrl || ""} onChange={(e) => updateModel(model.id, "baseUrl", emptyToNull(e.target.value))} />
+                        <Input
+                            type="text"
+                            placeholder="https://api.openai.com/v1"
+                            value={model.baseUrl || ""}
+                            onChange={(e) => updateModel(model.id, "baseUrl", emptyToNull(e.target.value))}
+                            list="llm-base-url-datalist"
+                        />
+                        <LlmBaseUrlDatalist id="llm-base-url-datalist" />
                     </div>
                 </div>
 
                 <div className="space-y-4">
                     <div className="space-y-2">
                         <Label>LLM Model Name</Label>
-                        <Input type="text" placeholder="gpt-4o-mini" value={model.modelName || ""} onChange={(e) => updateModel(model.id, "modelName", emptyToNull(e.target.value))} />
+                        <Input
+                            type="text"
+                            placeholder="gpt-4o-mini"
+                            value={model.modelName || ""}
+                            onChange={(e) => updateModel(model.id, "modelName", emptyToNull(e.target.value))}
+                            list="llm-model-name-datalist"
+                        />
+                        <LlmModelNameDatalist id="llm-model-name-datalist" />
                     </div>
 
                     <div className="space-y-2">
@@ -116,7 +139,13 @@ export default function EvaluationConfigModelRow({model, index, canRemove, effec
 
                     <div className="space-y-2">
                         <Label>API Key</Label>
-                        <PasswordInput placeholder="Enter API key" value={model.apiKey || ""} onChange={(e) => updateModel(model.id, "apiKey", emptyToNull(e.target.value))} />
+                        <PasswordInput
+                            placeholder="Enter API key"
+                            value={model.apiKey || ""}
+                            onChange={(e) => updateModel(model.id, "apiKey", emptyToNull(e.target.value))}
+                            list="llm-api-key-placeholder-datalist"
+                        />
+                        <LlmApiKeyPlaceholderDatalist id="llm-api-key-placeholder-datalist" />
                     </div>
                 </div>
             </div>
