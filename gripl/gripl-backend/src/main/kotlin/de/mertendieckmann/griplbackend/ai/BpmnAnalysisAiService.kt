@@ -29,7 +29,7 @@ interface BpmnAnalysisAiService {
 
         fun filterForValidActivities(bpmnElements: Set<BpmnElement>): BpmnAnalysisResult {
             val existingActivityIds = bpmnElements
-                .filter { it.type.typeName.lowercase().contains("task") }
+                .filter { it.type.lowercase().contains("task") }
                 .map { it.id }.toSet()
             return BpmnAnalysisResult(
                 elements = elements.filter { it.id in existingActivityIds }

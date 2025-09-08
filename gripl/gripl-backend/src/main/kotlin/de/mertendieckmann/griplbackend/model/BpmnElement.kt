@@ -1,9 +1,7 @@
 package de.mertendieckmann.griplbackend.model
 
-import org.camunda.bpm.model.xml.type.ModelElementType
-
 data class BpmnElement(
-    val type: ModelElementType,
+    val type: String,
     val id: String,
     val documentation: String? = null,
     val name: String? = null,

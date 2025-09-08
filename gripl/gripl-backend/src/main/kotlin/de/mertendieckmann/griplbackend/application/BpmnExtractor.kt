@@ -27,7 +27,7 @@ class BpmnExtractor {
             when (element) {
                 is Activity -> {
                     val bpmnElement = BpmnElement(
-                        type = element.elementType,
+                        type = element.elementType.typeName,
                         id = element.id,
                         name = element.name,
                         documentation = element.documentations.joinToString { it.rawTextContent },
@@ -53,7 +53,7 @@ class BpmnExtractor {
 
                 is FlowNode -> {
                     BpmnElement(
-                        type = element.elementType,
+                        type = element.elementType.typeName,
                         id = element.id,
                         name = element.name,
                         incomingFlowElementIds = element.incoming.mapNotNull {
@@ -74,7 +74,7 @@ class BpmnExtractor {
 
                 is DataStoreReference, is DataObjectReference -> {
                     BpmnElement(
-                        type = element.elementType,
+                        type = element.elementType.typeName,
                         id = element.id,
                         name = when (element) {
                             is DataStoreReference -> element.name
@@ -82,7 +82,7 @@ class BpmnExtractor {
                             else -> null
                         },
                         outgoingDataToElementIds = bpmnModel.getModelElementsByType(DataInputAssociation::class.java)
-                            .filter { association -> association.sources.any { it.id === element.id } }
+                            .filter { association -> association.sources.any { it.id == element.id } }
                             .mapNotNull {
                                 when (val parent = it.parentElement) {
                                     is FlowElement -> parent.id
@@ -90,7 +90,7 @@ class BpmnExtractor {
                                 }
                             },
                         incomingDataFromElementIds = bpmnModel.getModelElementsByType(DataOutputAssociation::class.java)
-                            .filter { association -> association.getAttributeValue("targetRef") === element.id }
+                            .filter { association -> association.getAttributeValue("targetRef") == element.id }
                             .mapNotNull {
                                 when (val parent = it.parentElement) {
                                     is FlowElement -> parent.id
@@ -105,7 +105,7 @@ class BpmnExtractor {
 
                 is TextAnnotation -> {
                     BpmnElement(
-                        type = element.elementType,
+                        type = element.elementType.typeName,
                         id = element.id,
                         documentation = element.textContent,
                         associatedElementIds = bpmnModel.getModelElementsByType(Association::class.java)
