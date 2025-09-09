@@ -46,7 +46,7 @@ class AnalysisController(
     }
 
     @Operation(
-        summary = "Analyzes BPMN-XML for GDPR relevance",
+        summary = "Analyzes BPMN-XML for GDPR relevance with prompt engineering",
         description = "Upload a BPMN XML document (file part **bpmnFile**). The service analyzes it with an LLM, and returns a list"
             + " of GDPR-relevant elements found in the BPMN model, including the reasoning for each element."
     )
@@ -72,6 +72,11 @@ class AnalysisController(
         }.map { ResponseEntity.ok(it) }
     }
 
+    @Operation(
+        summary = "Analyzes BPMN-XML for GDPR relevance using baseline method",
+        description = "Upload a BPMN XML document (file part **bpmnFile**). The service analyzes it with a baseline method, and returns a list"
+            + " of GDPR-relevant elements found in the BPMN model, including the reasoning for each element."
+    )
     @PostMapping(
         "/analysis/baseline",
         consumes = [MediaType.MULTIPART_FORM_DATA_VALUE],
