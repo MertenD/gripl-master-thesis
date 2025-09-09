@@ -1,17 +1,18 @@
-package de.mertendieckmann.griplbackend.application
+package de.mertendieckmann.griplbackend.application.analyzer
 
-import de.mertendieckmann.griplbackend.ai.BpmnAnalysisAiServiceFactory
+import de.mertendieckmann.griplbackend.ai.PromptBpmnAnalysisAiServiceFactory
+import de.mertendieckmann.griplbackend.application.BpmnExtractor
 import de.mertendieckmann.griplbackend.model.dto.AnalysisResponse
 import dev.langchain4j.model.chat.ChatModel
 import io.github.oshai.kotlinlogging.KotlinLogging
 
-class BpmnAnalyzer(
+class PromptBpmnAnalyzer(
     llm: ChatModel
-) {
+): BpmnAnalyzer {
     private val log = KotlinLogging.logger { }
-    private val bpmnAnalysisAiService = BpmnAnalysisAiServiceFactory.create(llm)
+    private val bpmnAnalysisAiService = PromptBpmnAnalysisAiServiceFactory.create(llm)
 
-    fun analyzeBpmnForGdpr(bpmnXml: String): AnalysisResponse {
+    override fun analyzeBpmnForGdpr(bpmnXml: String): AnalysisResponse {
         val extractor = BpmnExtractor()
         val bpmnElements = extractor.extractBpmnElements(bpmnXml)
 

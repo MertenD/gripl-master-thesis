@@ -4,11 +4,11 @@ import dev.langchain4j.model.chat.ChatModel
 import dev.langchain4j.model.input.PromptTemplate
 import dev.langchain4j.service.AiServices
 
-object BpmnAnalysisAiServiceFactory {
+object PromptBpmnAnalysisAiServiceFactory {
 
-    fun create(llm: ChatModel): BpmnAnalysisAiService {
+    fun create(llm: ChatModel): PromptBpmnAnalysisAiService {
         return AiServices
-            .builder(BpmnAnalysisAiService::class.java)
+            .builder(PromptBpmnAnalysisAiService::class.java)
             .chatModel(llm)
             .systemMessageProvider { getPromptTemplate().template() }
             .build()

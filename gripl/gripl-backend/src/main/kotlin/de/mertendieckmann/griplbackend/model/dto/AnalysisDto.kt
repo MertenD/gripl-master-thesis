@@ -1,7 +1,7 @@
 package de.mertendieckmann.griplbackend.model.dto
 
-import de.mertendieckmann.griplbackend.ai.BpmnAnalysisAiService
 import de.mertendieckmann.griplbackend.model.BpmnElement
+import de.mertendieckmann.griplbackend.model.analysis.BpmnAnalysisResult
 
 data class AnalysisResponse(
     val criticalElements: List<CriticalElement>
@@ -13,7 +13,7 @@ data class AnalysisResponse(
     )
 
     companion object {
-        fun fromBpmnAnalysisResult(result: BpmnAnalysisAiService.BpmnAnalysisResult, bpmnElements: Set<BpmnElement>): AnalysisResponse {
+        fun fromBpmnAnalysisResult(result: BpmnAnalysisResult, bpmnElements: Set<BpmnElement>): AnalysisResponse {
             val elements = result.elements.map { element ->
                 CriticalElement(
                     id = element.id,

@@ -1,6 +1,10 @@
 [
   {
-    "name": "Default Internal Analysis",
-    "endpoint": "/gdpr/analysis/v1"
+    "name": "Preprocessing & Prompt Engineering Analysis",
+    "endpoint": "/gdpr/analysis/prompt-engineering"
+  },
+  {
+    "name": "Baseline Analysis",
+    "endpoint": "/gdpr/analysis/baseline"
   }
 ]

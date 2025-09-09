@@ -1,14 +1,17 @@
 package de.mertendieckmann.griplbackend.application.factory
 
-import de.mertendieckmann.griplbackend.application.BpmnAnalyzer
-import de.mertendieckmann.griplbackend.config.LlmConfig
-import de.mertendieckmann.griplbackend.config.LlmConfig.Companion.LlmProps
+import de.mertendieckmann.griplbackend.application.analyzer.BaselineBpmnAnalyzer
+import de.mertendieckmann.griplbackend.application.analyzer.PromptBpmnAnalyzer
 import dev.langchain4j.model.chat.ChatModel
 import org.springframework.stereotype.Component
 
 @Component
 class AnalyzerFactory {
-    fun create(chatModel: ChatModel): BpmnAnalyzer {
-        return BpmnAnalyzer(chatModel)
+    fun createPromptEngineeringAnalyzer(chatModel: ChatModel): PromptBpmnAnalyzer {
+        return PromptBpmnAnalyzer(chatModel)
+    }
+
+    fun createBaselineAnalyzer(chatModel: ChatModel): BaselineBpmnAnalyzer {
+        return BaselineBpmnAnalyzer(chatModel)
     }
 }

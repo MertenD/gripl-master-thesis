@@ -53,11 +53,11 @@ class AnalysisController(
             + " of GDPR-relevant elements found in the BPMN model, including the reasoning for each element."
     )
     @PostMapping(
-        "/analysis/v1",
+        "/analysis/prompt-engineering",
         consumes = [MediaType.MULTIPART_FORM_DATA_VALUE],
         produces = [MediaType.APPLICATION_JSON_VALUE]
     )
-    fun analyzeBpmnForGdpr(
+    fun analyzeBpmnForGdprPromptEngineering(
         @RequestPart("bpmnFile") file: FilePart,
         @RequestPart("llmProps", required = false) llmPropsOverrides: LlmConfig.Companion.LlmPropsOverride? = null
     ): Mono<ResponseEntity<AnalysisResponse>> {
@@ -77,7 +77,38 @@ class AnalysisController(
         return bpmnXmlMono.flatMap { bpmnXml ->
             Mono.fromCallable {
                 val llm = llmConfig.buildWithOverride(resolvedLlmPropsOverride)
-                val analyzer = analyzerFactory.create(llm)
+                val analyzer = analyzerFactory.createPromptEngineeringAnalyzer(llm)
+                analyzer.analyzeBpmnForGdpr(bpmnXml)
+            }.subscribeOn(Schedulers.boundedElastic())
+        }.map { ResponseEntity.ok(it) }
+    }
+
+    @PostMapping(
+        "/analysis/baseline",
+        consumes = [MediaType.MULTIPART_FORM_DATA_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    fun analyzeBpmnForGdprBaseline(
+        @RequestPart("bpmnFile") file: FilePart,
+        @RequestPart("llmProps", required = false) llmPropsOverrides: LlmConfig.Companion.LlmPropsOverride? = null
+    ): Mono<ResponseEntity<AnalysisResponse>> {
+
+        val bpmnXmlMono: Mono<String> = DataBufferUtils
+            .join(file.content())
+            .map { dataBuffer ->
+                dataBuffer.asInputStream().bufferedReader().use { it.readText() }
+            }
+
+        val resolvedLlmPropsOverride = llmPropsOverrides?.let {
+            jacksonObjectMapper().readValue<LlmConfig.Companion.LlmPropsOverride>(
+                env.resolvePlaceholders(jacksonObjectMapper().writeValueAsString(it))
+            )
+        }
+
+        return bpmnXmlMono.flatMap { bpmnXml ->
+            Mono.fromCallable {
+                val llm = llmConfig.buildWithOverride(resolvedLlmPropsOverride)
+                val analyzer = analyzerFactory.createBaselineAnalyzer(llm)
                 analyzer.analyzeBpmnForGdpr(bpmnXml)
             }.subscribeOn(Schedulers.boundedElastic())
         }.map { ResponseEntity.ok(it) }

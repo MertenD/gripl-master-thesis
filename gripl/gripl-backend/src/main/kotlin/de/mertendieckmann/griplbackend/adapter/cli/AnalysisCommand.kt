@@ -44,7 +44,7 @@ class AnalysisCommand(
             timeoutSeconds = timeoutSeconds
         ))
 
-        val analyzer = analyzerFactory.create(llm)
+        val analyzer = analyzerFactory.createDefaultAnalyzer(llm)
         val result = analyzer.analyzeBpmnForGdpr(bpmnXml)
         CliOutput.print(result, outputFormat)
     }
