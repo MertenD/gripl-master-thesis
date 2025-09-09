@@ -1,7 +1,6 @@
 package de.mertendieckmann.griplbackend.adapter.web
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
+import de.mertendieckmann.griplbackend.adapter.web.utils.ControllerUtils
 import de.mertendieckmann.griplbackend.application.factory.AnalyzerFactory
 import de.mertendieckmann.griplbackend.config.LlmConfig
 import de.mertendieckmann.griplbackend.evaluation.MultiEvaluationRunner
@@ -10,7 +9,6 @@ import io.swagger.v3.oas.annotations.Operation
 import kotlinx.coroutines.flow.Flow
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.core.env.Environment
-import org.springframework.core.io.buffer.DataBufferUtils
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -62,17 +60,8 @@ class AnalysisController(
         @RequestPart("llmProps", required = false) llmPropsOverrides: LlmConfig.Companion.LlmPropsOverride? = null
     ): Mono<ResponseEntity<AnalysisResponse>> {
 
-        val bpmnXmlMono: Mono<String> = DataBufferUtils
-            .join(file.content())
-            .map { dataBuffer ->
-                dataBuffer.asInputStream().bufferedReader().use { it.readText() }
-            }
-
-        val resolvedLlmPropsOverride = llmPropsOverrides?.let {
-            jacksonObjectMapper().readValue<LlmConfig.Companion.LlmPropsOverride>(
-                env.resolvePlaceholders(jacksonObjectMapper().writeValueAsString(it))
-            )
-        }
+        val bpmnXmlMono: Mono<String> = ControllerUtils.getBpmnXmlMono(file)
+        val resolvedLlmPropsOverride = ControllerUtils.resolveEnvironmentVariables(llmPropsOverrides, env)
 
         return bpmnXmlMono.flatMap { bpmnXml ->
             Mono.fromCallable {
@@ -93,17 +82,8 @@ class AnalysisController(
         @RequestPart("llmProps", required = false) llmPropsOverrides: LlmConfig.Companion.LlmPropsOverride? = null
     ): Mono<ResponseEntity<AnalysisResponse>> {
 
-        val bpmnXmlMono: Mono<String> = DataBufferUtils
-            .join(file.content())
-            .map { dataBuffer ->
-                dataBuffer.asInputStream().bufferedReader().use { it.readText() }
-            }
-
-        val resolvedLlmPropsOverride = llmPropsOverrides?.let {
-            jacksonObjectMapper().readValue<LlmConfig.Companion.LlmPropsOverride>(
-                env.resolvePlaceholders(jacksonObjectMapper().writeValueAsString(it))
-            )
-        }
+        val bpmnXmlMono: Mono<String> = ControllerUtils.getBpmnXmlMono(file)
+        val resolvedLlmPropsOverride = ControllerUtils.resolveEnvironmentVariables(llmPropsOverrides, env)
 
         return bpmnXmlMono.flatMap { bpmnXml ->
             Mono.fromCallable {
@@ -124,8 +104,10 @@ class AnalysisController(
     ): String {
         val sb = StringBuilder()
         var currentLabel: String? = null
+        val resolvedRequest = ControllerUtils.resolveEnvironmentVariables(request, env)
+            ?: throw IllegalArgumentException("Invalid request after resolving environment variables.")
 
-        multiEvaluationRunner.runAll(request).collect { envelope ->
+        multiEvaluationRunner.runAll(resolvedRequest).collect { envelope ->
             val (label, report) = envelope
 
             if (currentLabel != label) {
@@ -153,9 +135,8 @@ class AnalysisController(
     suspend fun evaluateStream(
         @RequestBody request: MultiEvaluationRequest
     ): Flow<ModelReportEnvelope> {
-        val resolvedRequest: MultiEvaluationRequest = jacksonObjectMapper().readValue<MultiEvaluationRequest>(
-                env.resolvePlaceholders(jacksonObjectMapper().writeValueAsString(request)
-            ))
+        val resolvedRequest = ControllerUtils.resolveEnvironmentVariables(request, env)
+            ?: throw IllegalArgumentException("Invalid request after resolving environment variables.")
         return multiEvaluationRunner.runAll(resolvedRequest)
     }
 }
