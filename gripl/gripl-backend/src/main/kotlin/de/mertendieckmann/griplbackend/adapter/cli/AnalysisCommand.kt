@@ -1,6 +1,6 @@
 package de.mertendieckmann.griplbackend.adapter.cli
 
-import de.mertendieckmann.griplbackend.application.factory.AnalyzerFactory
+import de.mertendieckmann.griplbackend.application.analyzer.AnalyzerFactory
 import de.mertendieckmann.griplbackend.config.LlmConfig
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Component

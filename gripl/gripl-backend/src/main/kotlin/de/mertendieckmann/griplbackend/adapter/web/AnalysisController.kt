@@ -1,7 +1,7 @@
 package de.mertendieckmann.griplbackend.adapter.web
 
 import de.mertendieckmann.griplbackend.adapter.web.utils.ControllerUtils
-import de.mertendieckmann.griplbackend.application.factory.AnalyzerFactory
+import de.mertendieckmann.griplbackend.application.analyzer.AnalyzerFactory
 import de.mertendieckmann.griplbackend.config.LlmConfig
 import de.mertendieckmann.griplbackend.evaluation.MultiEvaluationRunner
 import de.mertendieckmann.griplbackend.model.dto.*

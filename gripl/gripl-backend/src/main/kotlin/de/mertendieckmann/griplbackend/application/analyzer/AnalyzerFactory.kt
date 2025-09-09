@@ -1,7 +1,5 @@
-package de.mertendieckmann.griplbackend.application.factory
+package de.mertendieckmann.griplbackend.application.analyzer
 
-import de.mertendieckmann.griplbackend.application.analyzer.BaselineBpmnAnalyzer
-import de.mertendieckmann.griplbackend.application.analyzer.PromptBpmnAnalyzer
 import dev.langchain4j.model.chat.ChatModel
 import org.springframework.stereotype.Component
 
