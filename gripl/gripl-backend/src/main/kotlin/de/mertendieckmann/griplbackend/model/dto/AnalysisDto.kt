@@ -1,5 +1,6 @@
 package de.mertendieckmann.griplbackend.model.dto
 
+import de.mertendieckmann.griplbackend.application.BpmnExtractor
 import de.mertendieckmann.griplbackend.model.BpmnElement
 import de.mertendieckmann.griplbackend.model.analysis.BpmnAnalysisResult
 
@@ -25,6 +26,12 @@ data class AnalysisResponse(
             return AnalysisResponse(
                 criticalElements = elements
             )
+        }
+
+        fun fromBpmnAnalysisResult(result: BpmnAnalysisResult, bpmnXml: String): AnalysisResponse {
+            val extractor = BpmnExtractor()
+            val bpmnElements = extractor.extractBpmnElements(bpmnXml)
+            return fromBpmnAnalysisResult(result, bpmnElements)
         }
     }
 }

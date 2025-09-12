@@ -1,7 +1,6 @@
 package de.mertendieckmann.griplbackend.application.analyzer
 
 import de.mertendieckmann.griplbackend.ai.BaselineBpmnAnalysisAiServiceFactory
-import de.mertendieckmann.griplbackend.application.BpmnExtractor
 import de.mertendieckmann.griplbackend.model.dto.AnalysisResponse
 import dev.langchain4j.model.chat.ChatModel
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -17,8 +16,6 @@ class BaselineBpmnAnalyzer(
         val result = bpmnAnalysisAiService.analyze(bpmnXml).filterForValidActivities(bpmnXml)
         log.info { "BPMN Analysis Result: $result" }
 
-        val extractor = BpmnExtractor()
-        val bpmnElements = extractor.extractBpmnElements(bpmnXml)
-        return AnalysisResponse.fromBpmnAnalysisResult(result, bpmnElements)
+        return AnalysisResponse.fromBpmnAnalysisResult(result, bpmnXml)
     }
 }
