@@ -1,0 +1,9 @@
+\section{API}\label{sec:api}
+
+\begin{itemize}
+    \item Klassifizierungspipeline ist über HTTP-Endpunkt aufrufbar, wo das BPMN-XML und ggf. Attribute zum Überschreiben des genutzten LLMs übergeben werden
+    \item Klassifizierungspipeline kann außerdem lokal über CLI gestartet werden und legt Ergebnisse in Datei ab
+    \item Dadurch kann die Klassifizierung leicht in das Evaluationsframework eingebunden werden, während das Evaluationsframework flexibel bleibt und beliebige Klassifizierungsalgorithmen benutzen kann, welche ebenfalls die gleiche HTTP-Schnittstelle anbieten
+    \item Beispielaufruf des Klassifizierungsendpunkts
+    \item Irgendwo hier oder auch in einem nächsten Abschnitt die ``Schnittstelle'' mit BPMN-XML rein und JSON mit Liste der kritischen Elemente (evtl. mit Begründung) wieder. Durch diese Vereinheitlichung ist es möglich verschiedene Algorithmen in dem Evaluationsframework zu vergleichen (Stichwort Standardisierung). Vielleicht gehe ich auch soweit, dass ich den Standard für zukünftige Arbeiten propose, damit spätere Arbeiten meinen Standard zum Vergleich nutzen können
+\end{itemize}

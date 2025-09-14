@@ -16,6 +16,7 @@ Ein binäres Screening mit Fokus auf europäischen Open-Source Modellen
 
 - Es fehlt ein standardisierter reproduzierbarer Vergleich verschiedener Modelle für die Aufgabe Aktivitäten in Business Prozessen nach kritisch oder nicht kritisch zu klassifizieren
 - Besonders interessant ist wie sich Open Source EU Modelle schlagen und welche Trade-offs ggf. entstehen
+- Warum ist das Schwer? -> BPMN Modelle sind Multimodal (Test + Struktur), Datenobjekte fehlen oft in der Modellierung -> Datennutzung muss impliziert werden
 
 ### 1.3 Zielsetzung und Beiträge
 
@@ -23,7 +24,7 @@ Ein binäres Screening mit Fokus auf europäischen Open-Source Modellen
 - Ein Evaluationsframework zum vergleich beliebiger Modelle und Algorithmen über eine einheitliche Schnittstelle unter der Nutzung gelabelter Businessprozesse
 - Eine Labelingsoftware für das Erstellen und Labeln von Datensätzen für die Evaluierung
 - Erstellung eines repräsentativen Datensatzes aus gelabelten Businessprozessen (Inkl. Erklärung nach welchen Kriterien gelabelt wurde)
-- Empirische Befunde um die Forschungsfragen beantworten zu können
+- Empirische Befunde um die Forschungsfragen beantworten zu können (Wenn ich bis dahin ein Seed habe, will ich die Befunde auch noch nachprüfbar machen, Code + Config + Seeds bereitstellen)
 
 ### 1.4 Forschungsfrage und Unterfragen
 
@@ -48,13 +49,14 @@ Ein binäres Screening mit Fokus auf europäischen Open-Source Modellen
 - Rolle von Elementen, welche zusätzliche Hinweise auf verarbeitung von personenbezogenen Daten geben (Bspw. Aktivtät holt sich Informationen aus einer Datenbank wo Kundendaten gespeichert sind; dargestellt durch Assoziation)
 - BpmnXML erläutern, weil das auch das Format ist in dem Businessprozesse gespeichert sind und welches ich auch als Eingabe für die Klassifizierungspipeline nutze
 - Stabile Ids für Elemente im Businessprozess sind essenziell, damit die Ausgabe des LLM immer auf die gleichen Aktivitäten bezieht und man das Ergebnis deterministisch überprüfen kann
+- Kleines Beispiel wie eine Datenassoziation signalisieren kann, dass eine Aktivität datenschutzkritisch ist, was nur mit dem Namen der Aktivität nicht möglich ist
 
 ### 2.3 LLMs
 
 - Prompting (System Message, User Prompt)
 - Zero-/Few-Shot
-- JSON Konforme Ausgaben
-- typische Fehlerbilder (Halluzination, ungültiges JSON) + Gegenmaßnahmen
+- JSON Konforme Ausgaben (Schema Enforcing)
+- typische Fehlerbilder (Halluzination, ungültiges JSON) + Gegenmaßnahmen (Retry/Repair)
 - Finetuning (?) Auch wenn ich es nicht nutze ?
 
 ### 2.4 Verwandte Arbeiten
@@ -83,6 +85,7 @@ Ein binäres Screening mit Fokus auf europäischen Open-Source Modellen
 
 ### 3.3 Scope und Annahmen
 
+// TODO Das muss ich noch anpassen
 - Sprachen sind DE und EN
 - Keine Bewertung der Rechtmäßigkeit an sich, sondern nur ein Screening nach kritischen Aktivitäten (Wie ein Vorfilter)
 - Risiken und Grenzen (Bspw. schlechte Einschätzung des LLM wenn Artefakte wie Datenobjekte im BPMN Modell fehlen) werden transparent gemacht
@@ -128,7 +131,7 @@ data class BpmnElement(
 
 - Referenz auf Zero-Shot/Few-Shot (?)
 - Prompt Sprache (Passendes Paper referenzieren)
-- Erklärung des System Prompt (Anleitung was als kritisch klassifiziert werden soll, Auflistung wichtiger DSGVO kritischer Inhalte und Definitionen aus der DSGVO wie "Verarbeitung", Definition des Ausgabeformats mit Langchain4j)
+- Erklärung des System Prompt (Anleitung was als kritisch klassifiziert werden soll, Auflistung wichtiger DSGVO kritischer Inhalte und Definitionen aus der DSGVO wie "Verarbeitung", Definition des Ausgabeformats mit Langchain4j) (System Prompt im Anhang beifügen oder hier direkt integrieren)
 - Was steht im User Prompt drin
 
 ### 4.4 Validierung der Ausgabe
@@ -150,7 +153,7 @@ data class AnalysisResponse(
 
 // TODO Entscheiden, ob ich hier noch Ablationen brauche (Falls ja hier noch ein Kapitel darüber einbauen) wie eine Baseline ohne zusätzliches Prompt Engineering, Varianten wo beim Preprocessing Lanes und Pools, Datenobjekte etc. weggelassen werden
 
-### 4.5 HTTP Schnittstelle
+### 4.5 API
 
 - Klassifizierungspipeline ist über HTTP Endpunk aufrufbar, wo das BPMN XML und ggf. Attribute zum Überschreiben des genutzten LLMs übergeben werden
 - Klassifizierungspipeline kann außerdem lokal über CLI gestartet werden und legt Ergebnisse in Datei ab
@@ -237,7 +240,9 @@ datasets:
 - Neue Klassifizierungsalgorithmen/pipelines können ergänzt werden, wenn sie das vorgegebene HTTP Schnittstelle unterstützen
 - Die Testdatensätze werden aus Datenbank ausgelesen und können für jeden Evaluations run neu gesetzt werden
 
-## 6. Labelingsoftware
+## 6. Labeling und Datensätze
+
+### 6.1 Labeling Tool
 
 Hier brauche noch genaue Kapitel, aber hier soll auf jeden Fall folgendes rein:
 - Definition von Labeln hier, oder kommt das schon vorher?
@@ -248,9 +253,7 @@ Hier brauche noch genaue Kapitel, aber hier soll auf jeden Fall folgendes rein:
 - Zusätzlich bietet der Editor eine Labeling Funktionalität, mit welcher Aktivitäten, welche als kritisch erkannt werden sollen, gelabelt werden. Zusätzlich kann auch eine Erklärung angegeben werden
 - Datensätze und gelabelte Testcases werden in Datenbank gespeichert und werden während der Evaluierung des Evaluationsframeworks benutzt
 
-## 7. Erstellung der Datensätze
-
-### 7.1 Quellen und Eigenschaften 
+### 6.1 Quellen und Eigenschaften der Datensätze
 
 - Es werden drei unterschiedliche Datensätze genutzt
   - Von der Uni bekommen
@@ -260,7 +263,7 @@ Hier brauche noch genaue Kapitel, aber hier soll auf jeden Fall folgendes rein:
 - Hier sollte ich glaub ich noch besser erklären warum die Auswahl heterogen ist (und damit möglichst aussagekräftige Ergebnisse in der Evaluierung erzeugen)
 - Eventuell (im Anhang) eine Liste aller Testfälle jeweils auch mit den Eckdaten und auf diese verweisen. Da kann dann auch immer noch eine kurze Beschreibung dazu was daran besonders ist
 
-### 7.2 Labeling-Guide
+### 6.2 Labeling-Guide
 
 - Eine Aktivität ist als kritisch gelabelt, wenn sie personenbezogene Daten erhebt, nutzt, speichert, übermittelt oder löscht oder anderweitig explizit eine DSGVO Pflicht auslöst (Auskunft, Löschung) (Hier auch die Kriterien von der originalen DSGVO einbinden und daran Ableiten, wie man labeln soll)
 - Beispiele einbauen, was als kritisch gelabelt wurde und Gegenbeispiele aufzeigen, damit Grenzfälle klar definiert sind
@@ -277,10 +280,12 @@ Hier brauche noch genaue Kapitel, aber hier soll auf jeden Fall folgendes rein:
   - Frei verfügbare Gewichte
   - Permissive Lizenz
 - Größenklassen (Bspw. <8B, 8-20B, ...)
+- Herkunftsland, Hosting Land
 - Letztes Update
 - Downloads
 - Lizens
 - Kontext (Wichtig auch für die Größe der Prozesse, die damit verarbeitet werden können. Irgendwo muss ich das auch nochmal thematisieren)
+- Ich brauche noch irgendwo den Stand/das Datum nach dem ich nicht mehr nach neuen modellen gesucht habe
 
 ### 8.2 Modellvorstellung
 
@@ -298,6 +303,7 @@ Ich habe noch nicht die Unterkapitel (außer Metriken) aber folgendes soll hier 
 - Es werden vom gleichen LLM-Modell die unterschiedlichen Größen verglichen
 - ...
 - Ein Tetcase gilt als korrekt klassifiziert, wenn genau die als kritisch gelabelten Aktivitäten als kritisch klassifiziert worden sind. Sobald es False Positives oder False Negatives gibt, ist ein Testcase nciht korrekt klassifiziert worden
+- LLM Temeprature 0 vorstellen (Falls ich das mit den Seeds noch umsetze) für reproduzierbare Ergebnisse
 
 ### Metriken
 
@@ -340,6 +346,7 @@ Ich habe noch nicht die Unterkapitel (außer Metriken) aber folgendes soll hier 
 
 - Hier werde ich (wahrscheinlich 2-3) spezifische exemplarische Ergebnisse von Testcases heraussuchen und genauer unter die Lupe nehmen. Was ist hier besonders aufgefallen oder Interessant?
 - Hier kann ich die Bilder mit den highlights hernehmen
+- Idealerweise habe ich Beispiele für 1. TN, 2. FP aber plausible Erklärung und 3. FN
 
 ### 11.5 Robustheit
 
@@ -378,6 +385,7 @@ Ich habe noch nicht die Unterkapitel (außer Metriken) aber folgendes soll hier 
 
 - Wären Grenzen wie BPMN-Modell Größe im Zusammenhang mit der Kontextlänge des LLM interessant?
 - Keine Aussagekräftige Rechtsberatung, sondern stand jetzt eher ein Vorscreening, was nochmal überprüft werden muss
+- Ggf notwendige Anonymisierung von Prozessen diskutieren (Wenn das in BPMN Modellen überhaupt ein Problem ist)
 
 ## 13. Zusammenfassung
 

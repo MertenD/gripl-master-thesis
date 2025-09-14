@@ -1,0 +1,15 @@
+\section{Ziel und Annahmen}\label{sec:ziel-und-annahmen}
+
+\begin{itemize}
+    \item Eingabe ist BPMN-XML, Ausgabe sind die IDs der kritischen Aktivitäten mit ggf. Erklärung
+    \item Getestet wird mit BPMN-Modellen aus Camunda und bpmn.io
+    \item Der Algorithmus klassifiziert Aktivitäten in BPMN-Prozessen binär nach ``kritisch'' oder ``nicht kritisch''
+    \item Ausgegeben werden ausschließlich die IDs der kritischen Aktivitäten ggf. mit Erklärung, warum sie als kritisch klassifiziert wurde
+    \item Das Ziel ist ein robustes und reproduzierbares Verhalten über unterschiedliche Modelle
+    \begin{itemize}
+        \item Granularität der Prozesse (Bspw. $>$5 Aktivitäten, 20+ Aktivitäten)
+        \item Gateways, Datenobjekte, Datenbanken
+        \item Mehrere Pools/Lanes, Message Flows
+        \item Evtl. (?) verschiedene Sprachen, Text-Annotationen
+    \end{itemize}
+\end{itemize}

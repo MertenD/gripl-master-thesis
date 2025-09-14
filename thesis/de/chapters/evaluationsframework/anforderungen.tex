@@ -1,0 +1,13 @@
+\section{Anforderungen und Use-Cases}\label{sec:anforderungen-und-use-cases}
+
+\begin{itemize}
+    \item Das Framework ermöglicht einen Vergleich von Modellen (Austauschbar durch LLMPropsOverride) und Algorithmen (Austauschbar über HTTP-Endpunkt) auf Basis von gelabelten Testdaten
+    \item Evaluations-Run über YAML konfigurierbar (Modelle, Endpunkte, Testdaten)
+    \item Detaillierte Ausgabe der Ergebnisse
+    \begin{itemize}
+        \item Side-by-side Diagramme von Accuracy, Precision, Recall und F1-Score sowie FP, FN, TP, TN und generell wie viele Testcases erfolgreich waren
+        \item Detailliertere Ansicht nochmal pro Modell und dafür nochmal pro Testcase
+    \end{itemize}
+    \item Zielnutzer sind Forschende und Entwickler die Modelle und Algorithmen auswerten und ggf. untereinander vergleichen wollen
+    \item Frontend zur einfachen Bedienung
+\end{itemize}

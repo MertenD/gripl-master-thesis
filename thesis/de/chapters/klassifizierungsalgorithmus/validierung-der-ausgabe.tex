@@ -1,0 +1,24 @@
+\section{Validierung der Ausgabe}\label{sec:validierung-der-ausgabe}
+
+\begin{itemize}
+    \item Ausgabeschema wird in LangChain4j deklarativ beschrieben
+    \item Erklären was LangChain4j im Hintergrund tut, damit das Schema eingehalten wird und die Ausgabe das korrekte Format hat
+\end{itemize}
+
+\begin{verbatim}
+data class AnalysisResponse(
+    val criticalElements: List<CriticalElement>
+) {
+    data class CriticalElement(
+        val id: String,
+        val name: String?,
+        val reason: String
+    )
+}
+\end{verbatim}
+
+\begin{itemize}
+    \item Abgleichen der ausgegebenen IDs mit den vorhandenen aus dem Prozess. ggf. unzulässige entfernen
+\end{itemize}
+
+// TODO Entscheiden, ob ich hier noch Ablationen brauche (Falls ja hier noch ein Kapitel darüber einbauen) wie eine Baseline ohne zusätzliches Prompt Engineering, Varianten wo beim Preprocessing Lanes und Pools, Datenobjekte etc. weggelassen werden

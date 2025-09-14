@@ -1,0 +1,15 @@
+\chapter{Versuchsaufbau}\label{ch:versuchsaufbau}
+
+Ich habe noch nicht die Unterkapitel (außer Metriken) aber folgendes soll hier u.\,a. rein:
+
+\begin{itemize}
+    \item Die Modelle werden jeweils mit dem gleichen Klassifizierungsalgorithmus und den gleichen Datensätzen benutzt
+    \item Die Evaluierung wird jeweils für jeden vorhandenen Testdatensatz durchgeführt (Uni, reale größere Prozesse, kleine Prozesse)
+    \item Die Evaluationen werden pro Konfiguration (Modelle, Datensätze) mehrfach durchgeführt (Unterschiedliche Seeds, falls ich bis dahin Seeds unterstütze)
+    \item Es werden verschiedene LLM-Modelle vergleichen
+    \item Es werden vom gleichen LLM-Modell die unterschiedlichen Größen verglichen
+    \item \ldots
+    \item Ein Testcase gilt als korrekt klassifiziert, wenn genau die als kritisch gelabelten Aktivitäten als kritisch klassifiziert worden sind. Sobald es False Positives oder False Negatives gibt, ist ein Testcase nicht korrekt klassifiziert worden
+    \item LLM Temperature 0 vorstellen (Falls ich das mit den Seeds noch umsetze) für reproduzierbare Ergebnisse
+\end{itemize}
+

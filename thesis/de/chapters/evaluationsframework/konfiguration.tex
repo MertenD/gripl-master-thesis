@@ -1,0 +1,33 @@
+\section{Konfiguration einer Evaluierung}\label{sec:konfiguration-einer-evaluierung}
+
+\begin{itemize}
+    \item Evaluierung kann mit einer YAML Datei konfiguriert werden
+\end{itemize}
+
+\begin{verbatim}
+defaultEvaluationEndpoint: /gdpr/analysis/prompt-engineering
+maxConcurrent: 10
+models:
+  - label: Mistral Medium 3.1
+    llmProps:
+      baseUrl: https://openrouter.ai/api/v1
+      modelName: mistralai/mistral-medium-3.1
+      apiKey: ${OPEN_ROUTER_API_KEY}
+  - label: Deepseek Chat v3.1
+    llmProps:
+      baseUrl: https://openrouter.ai/api/v1
+      modelName: deepseek/deepseek-chat-v3.1
+      apiKey: ${OPEN_ROUTER_API_KEY}
+  - label: GPT oss 120b
+    llmProps:
+      baseUrl: https://openrouter.ai/api/v1
+      modelName: openai/gpt-oss-120b
+      apiKey: ${OPEN_ROUTER_API_KEY}
+datasets:
+  - 2
+  - 7
+\end{verbatim}
+
+\begin{itemize}
+    \item Secrets können entweder im Klartext angegeben werden oder sicher mit \texttt{\$\{...\}} referenziert werden, wenn sie im Backend als Umgebungsvariable hinterlegt sind
+\end{itemize}

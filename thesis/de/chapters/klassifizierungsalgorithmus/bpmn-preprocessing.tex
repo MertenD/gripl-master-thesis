@@ -1,0 +1,25 @@
+\section{BPMN Preprocessing}\label{sec:bpmn-preprocessing}
+
+\begin{itemize}
+    \item BPMN-XML wird geparst
+    \item Relationen von Flow-Elementen zu anderen Elementen werden extrahiert:
+\end{itemize}
+
+\begin{verbatim}
+data class BpmnElement(
+    val type: String,
+    val id: String,
+    val documentation: String? = null,
+    val name: String? = null,
+    val outgoingFlowElementIds: List<String> = emptyList(),
+    val incomingFlowElementIds: List<String> = emptyList(),
+    val incomingDataFromElementIds: List<String> = emptyList(),
+    val outgoingDataToElementIds: List<String> = emptyList(),
+    val associatedElementIds: List<String> = emptyList()
+)
+\end{verbatim}
+
+\begin{itemize}
+    \item Dadurch entsteht für jedes Element ein strukturierter Kontext (id, name, pool, lane, eingehende Elemente, \ldots)
+    \item Dieser Kontext wird später im Prompt genutzt, um dem LLM alle notwendigen Informationen strukturiert bereitzustellen
+\end{itemize}
