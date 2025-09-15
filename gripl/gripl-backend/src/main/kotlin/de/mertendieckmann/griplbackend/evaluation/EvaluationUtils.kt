@@ -52,7 +52,7 @@ fun buildPreviewUrl(
 ): String {
     fun enc(xs: List<String>) = xs.joinToString(",") { URLEncoder.encode(it, StandardCharsets.UTF_8) }
     return buildString {
-        append("https://gripl.mertendieckmann.de/api/dataset/$testCaseId/preview")
+        append("https://gripl.mertendieckmann.de/api/dataset/testcase/$testCaseId/preview")
         append("?correctIds=${enc(correctActivityIds)}")
         append("&falsePositiveIds=${enc(falsePositiveIds)}")
         append("&falseNegativeIds=${enc(falseNegativeIds)}")
