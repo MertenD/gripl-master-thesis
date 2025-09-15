@@ -30,6 +30,7 @@ export function useEvaluationConfig(
     const [defaultEndpointChoice, setDefaultEndpointChoice] = useState<EndpointChoice>("preset");
     const [defaultPresetEndpoint, setDefaultPresetEndpoint] = useState<string>("");
     const [defaultCustomEndpoint, setDefaultCustomEndpoint] = useState<string>("");
+    const [seed, setSeed] = useState<string>("");
 
     const [maxConcurrent, setMaxConcurrent] = useState<number>(4);
     const [models, setModels] = useState<ModelRowState[]>(() => [newModelRow(1)]);
@@ -75,11 +76,12 @@ export function useEvaluationConfig(
             models: dtoModels,
             datasets: selectedDatasets,
             defaultEvaluationEndpoint: effectiveDefaultEndpoint,
+            seed: seed || undefined,
             maxConcurrent: maxConcurrent,
         };
 
         onMultiConfigChanged(multi);
-    }, [models, selectedDatasets, effectiveDefaultEndpoint, maxConcurrent, onMultiConfigChanged]);
+    }, [models, selectedDatasets, effectiveDefaultEndpoint, seed, maxConcurrent, onMultiConfigChanged]);
 
     function addModel() {
         setModels((prev) => [...prev, newModelRow(prev.length + 1)]);
@@ -114,6 +116,7 @@ export function useEvaluationConfig(
         defaultEndpointChoice,
         defaultPresetEndpoint,
         defaultCustomEndpoint,
+        seed,
         maxConcurrent,
         models,
         selectedDatasets,
@@ -121,6 +124,7 @@ export function useEvaluationConfig(
         setDefaultEndpointChoice,
         setDefaultPresetEndpoint,
         setDefaultCustomEndpoint,
+        setSeed,
         setMaxConcurrent,
         setSelectedDatasets,
         setModels,

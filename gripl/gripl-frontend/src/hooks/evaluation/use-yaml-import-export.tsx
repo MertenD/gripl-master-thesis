@@ -6,15 +6,17 @@ import { MultiEvaluationRequest, ModelRunConfig } from "@/models/dto/MultiEvalua
 import {ModelRowState} from "@/models/evaluation/Config";
 import {cryptoRandomId, findPreset, normalize, pruneNulls} from "@/lib/evaluation-config-utils";
 
-export function useYamlImportExport(options: {
+export function useYamlImportExport(props: {
     availableEvaluationEndpoints: AnalysisEndpoint[];
     effectiveDefaultEndpoint: string;
     models: ModelRowState[];
     selectedDatasets: number[];
+    seed: string;
     maxConcurrent: number;
     setDefaultEndpointChoice: (v: "preset" | "custom") => void;
     setDefaultPresetEndpoint: (v: string) => void;
     setDefaultCustomEndpoint: (v: string) => void;
+    setSeed: (v: string) => void;
     setMaxConcurrent: (v: number) => void;
     setSelectedDatasets: (v: number[]) => void;
     setModels: (v: ModelRowState[]) => void;
@@ -24,14 +26,16 @@ export function useYamlImportExport(options: {
         effectiveDefaultEndpoint,
         models,
         selectedDatasets,
+        seed,
         maxConcurrent,
         setDefaultEndpointChoice,
         setDefaultPresetEndpoint,
         setDefaultCustomEndpoint,
+        setSeed,
         setMaxConcurrent,
         setSelectedDatasets,
         setModels,
-    } = options;
+    } = props;
 
     const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -56,6 +60,7 @@ export function useYamlImportExport(options: {
 
     function applyYamlConfig(cfg: any) {
         const defaultEvaluationEndpoint: string | undefined = cfg?.defaultEvaluationEndpoint;
+        const seedString = cfg?.seed;
         const maxConc: number | undefined = cfg?.maxConcurrent ?? cfg?.maxConcurrency;
         const modelItems: any[] = Array.isArray(cfg?.models) ? cfg.models : [];
         const datasets: number[] = Array.isArray(cfg?.datasets) ? cfg.datasets.map((d: any) => parseInt(d)) : [];
@@ -71,6 +76,10 @@ export function useYamlImportExport(options: {
                 setDefaultEndpointChoice("custom");
                 setDefaultCustomEndpoint(defaultEvaluationEndpoint);
             }
+        }
+
+        if (typeof seedString === "string") {
+            setSeed(seedString);
         }
 
         if (typeof maxConc === "number" && Number.isFinite(maxConc) && maxConc > 0) {
@@ -145,6 +154,7 @@ export function useYamlImportExport(options: {
 
         return {
             defaultEvaluationEndpoint: effectiveDefaultEndpoint,
+            seed: seed || undefined,
             maxConcurrent: maxConcurrent || 1,
             models: dtoModels,
             datasets: selectedDatasets,

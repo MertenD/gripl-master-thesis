@@ -26,10 +26,12 @@ export default function EvaluationConfig({ className, children, datasets, onMult
         effectiveDefaultEndpoint: config.effectiveDefaultEndpoint,
         models: config.models,
         selectedDatasets: config.selectedDatasets,
+        seed: config.seed,
         maxConcurrent: config.maxConcurrent,
         setDefaultEndpointChoice: (v) => config.setDefaultEndpointChoice(v),
         setDefaultPresetEndpoint: config.setDefaultPresetEndpoint,
         setDefaultCustomEndpoint: config.setDefaultCustomEndpoint,
+        setSeed: config.setSeed,
         setMaxConcurrent: config.setMaxConcurrent,
         setSelectedDatasets: config.setSelectedDatasets,
         setModels: config.setModels,
@@ -61,10 +63,12 @@ export default function EvaluationConfig({ className, children, datasets, onMult
                         defaultEndpointChoice={config.defaultEndpointChoice}
                         defaultPresetEndpoint={config.defaultPresetEndpoint}
                         defaultCustomEndpoint={config.defaultCustomEndpoint}
+                        seed={config.seed}
                         maxConcurrent={config.maxConcurrent}
                         setDefaultEndpointChoice={config.setDefaultEndpointChoice}
                         setDefaultPresetEndpoint={config.setDefaultPresetEndpoint}
                         setDefaultCustomEndpoint={config.setDefaultCustomEndpoint}
+                        setSeed={config.setSeed}
                         onMaxConcurrentChange={(v) => config.setMaxConcurrent(v)}
                     />
 
