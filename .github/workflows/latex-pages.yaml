@@ -8,7 +8,7 @@ on:
       - '!thesis/README.md'
       - '!thesis/.gitignore'
       - '!thesis/thesis.iml'
-      - '.github/workflows/latex-pages.yml'
+      - '.github/workflows/latex-pages.yaml'
 
 permissions:
   contents: write

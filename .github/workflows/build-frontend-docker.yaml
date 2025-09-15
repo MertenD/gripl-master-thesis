@@ -3,6 +3,9 @@ name: Build and Push Docker Images
 on:
   push:
     branches: [ main ]
+    paths:
+      - 'gripl/gripl-frontend/**'
+      - '.github/workflows/build-frontend-docker.yaml'
   workflow_dispatch:
 
 jobs:
@@ -31,11 +34,3 @@ jobs:
           platforms: linux/amd64
           build-args: |
             API_BASE_URL=https://gripl.mertendieckmann.de/api
-
-      - name: Build and push backend Docker image
-        uses: docker/build-push-action@v4
-        with:
-          context: ./gripl/gripl-backend
-          push: true
-          tags: mertend/gripl-backend:latest
-          platforms: linux/amd64
