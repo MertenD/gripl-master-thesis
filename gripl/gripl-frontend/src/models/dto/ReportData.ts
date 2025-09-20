@@ -5,6 +5,7 @@ export interface EvaluationMetadataReport {
     timestamp: string;
     totalTestCases: number;
     defaultEvaluationEndpoint: string;
+    seed: number;
     markdown: string;
 }
 

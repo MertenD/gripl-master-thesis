@@ -6,6 +6,7 @@ import {RefreshCw, Trash2} from "lucide-react";
 export interface GenerateRandomInputProps extends Omit<React.ComponentProps<"input">, "type"> {
     className?: string
     length?: number
+    alphabet?: string
 }
 
 const GenerateRandomInput = React.forwardRef<HTMLInputElement, GenerateRandomInputProps>(
@@ -24,7 +25,7 @@ const GenerateRandomInput = React.forwardRef<HTMLInputElement, GenerateRandomInp
 
         function randomSeedString(
             length: number,
-            alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+            alphabet = props.alphabet ? props.alphabet : "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
         ): string {
             let out = "";
             for (let i = 0; i < length; i++) {

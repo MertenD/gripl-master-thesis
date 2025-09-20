@@ -35,6 +35,7 @@ class LlmConfig(private val defaultProps: LlmProps) {
             .logRequests(true)
             .logResponses(true)
             .listeners(listOf(usageListener))
+            .seed(props.seed)
             .build()
     }
 
@@ -47,14 +48,16 @@ class LlmConfig(private val defaultProps: LlmProps) {
             var modelName: String? = "gpt-3.5-turbo",
             var baseUrl: String? = "https://api.openai.com/v1",
             var apiKey: String? = null,
-            var timeoutSeconds: Long = 240L
+            var timeoutSeconds: Long = 240L,
+            var seed: Int? = null
         )
 
         data class LlmPropsOverride(
             var baseUrl: String? = null,
             var modelName: String? = null,
             var apiKey: String? = null,
-            var timeoutSeconds: Long? = null
+            var timeoutSeconds: Long? = null,
+            var seed: Int? = null
         )
 
         fun LlmProps.withOverride(override: LlmPropsOverride?): LlmProps =
@@ -62,7 +65,8 @@ class LlmConfig(private val defaultProps: LlmProps) {
                 modelName      = override.modelName?.takeIf { it.isNotBlank() } ?: modelName,
                 baseUrl        = override.baseUrl?.takeIf { it.isNotBlank() } ?: baseUrl,
                 apiKey         = override.apiKey?.takeIf { it.isNotBlank() } ?: apiKey,
-                timeoutSeconds = override.timeoutSeconds ?: timeoutSeconds
+                timeoutSeconds = override.timeoutSeconds ?: timeoutSeconds,
+                seed           = override.seed ?: seed
             )
 
         val usageListener = object : ChatModelListener {

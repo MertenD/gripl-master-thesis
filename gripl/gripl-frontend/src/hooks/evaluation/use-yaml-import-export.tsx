@@ -11,12 +11,12 @@ export function useYamlImportExport(props: {
     effectiveDefaultEndpoint: string;
     models: ModelRowState[];
     selectedDatasets: number[];
-    seed: string;
+    seed: number | null;
     maxConcurrent: number;
     setDefaultEndpointChoice: (v: "preset" | "custom") => void;
     setDefaultPresetEndpoint: (v: string) => void;
     setDefaultCustomEndpoint: (v: string) => void;
-    setSeed: (v: string) => void;
+    setSeed: (v: number) => void;
     setMaxConcurrent: (v: number) => void;
     setSelectedDatasets: (v: number[]) => void;
     setModels: (v: ModelRowState[]) => void;
@@ -78,7 +78,7 @@ export function useYamlImportExport(props: {
             }
         }
 
-        if (typeof seedString === "string") {
+        if (typeof seedString === "number") {
             setSeed(seedString);
         }
 

@@ -20,6 +20,7 @@ export default function EvaluationReportSummaryCardMulti({
                             <tr><td>Datasets:</td><td className="pl-4">{metadata.datasets.map(d => d.name).join(", ")}</td></tr>
                             <tr><td>Total Test Cases:</td><td className="pl-4">{metadata.totalTestCases}</td></tr>
                             <tr><td>Default Evaluation Endpoint:</td><td className="pl-4">{metadata.defaultEvaluationEndpoint}</td></tr>
+                            <tr><td>Seed:</td><td className="pl-4">{metadata.seed}</td></tr>
                             <tr><td>Timestamp:</td><td className="pl-4">{new Date(metadata.timestamp).toLocaleString()}</td></tr>
                         </tbody>
                     </table>

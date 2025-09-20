@@ -1,5 +1,6 @@
 package de.mertendieckmann.griplbackend.evaluation
 
+import de.mertendieckmann.griplbackend.config.LlmConfig
 import de.mertendieckmann.griplbackend.model.dto.EvaluationMetadataReport
 import de.mertendieckmann.griplbackend.model.dto.EvaluationRequest
 import de.mertendieckmann.griplbackend.model.dto.ModelReportEnvelope
@@ -21,7 +22,8 @@ class MultiEvaluationRunner(
     fun runAll(request: MultiEvaluationRequest): Flow<ModelReportEnvelope> = flow {
         require(request.models.isNotEmpty()) { "models must not be empty" }
 
-        emit(ModelReportEnvelope("", createMetadata(request)))
+        val seed = request.seed ?: (System.currentTimeMillis() * (Math.random() * 10) % Int.MAX_VALUE).toInt()
+        emit(ModelReportEnvelope("", createMetadata(request, seed)))
 
         for ((index, model) in request.models.withIndex()) {
             val effectiveEndpoint = model.evaluationEndpoint ?: request.defaultEvaluationEndpoint
@@ -29,7 +31,7 @@ class MultiEvaluationRunner(
 
             val singleRequest = EvaluationRequest(
                 evaluationEndpoint = effectiveEndpoint,
-                llmProps = model.llmProps,
+                llmProps = model.llmProps?.copy(seed = seed),
                 maxConcurrent = request.maxConcurrent,
                 datasets = request.datasets
             )
@@ -42,7 +44,7 @@ class MultiEvaluationRunner(
         }
     }
 
-    private fun createMetadata(request: MultiEvaluationRequest): EvaluationMetadataReport {
+    private fun createMetadata(request: MultiEvaluationRequest, seed: Int): EvaluationMetadataReport {
         val datasets = datasetRepository.getDatasetsByIds(request.datasets.map { it.toLong() })
         val totalTestCases = evaluationDataRepository.countEvaluationDataForDatasets(request.datasets.map { it.toLong() })
 
@@ -50,6 +52,7 @@ class MultiEvaluationRunner(
             modelLabels = request.models.map { it.label },
             datasets = datasets.map { EvaluationMetadataReport.DatasetInfo(it.id, it.name) },
             totalTestCases = totalTestCases,
+            seed = seed,
             defaultEvaluationEndpoint = request.defaultEvaluationEndpoint
         )
     }

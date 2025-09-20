@@ -6,6 +6,7 @@ data class MultiEvaluationRequest(
     val defaultEvaluationEndpoint: String,
     val maxConcurrent: Int = 4,
     val models: List<ModelRunConfig>,
+    val seed: Int?,
     val datasets: List<Int>,
 )
 

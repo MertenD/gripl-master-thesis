@@ -30,7 +30,7 @@ export function useEvaluationConfig(
     const [defaultEndpointChoice, setDefaultEndpointChoice] = useState<EndpointChoice>("preset");
     const [defaultPresetEndpoint, setDefaultPresetEndpoint] = useState<string>("");
     const [defaultCustomEndpoint, setDefaultCustomEndpoint] = useState<string>("");
-    const [seed, setSeed] = useState<string>("");
+    const [seed, setSeed] = useState<number | null>(null);
 
     const [maxConcurrent, setMaxConcurrent] = useState<number>(4);
     const [models, setModels] = useState<ModelRowState[]>(() => [newModelRow(1)]);

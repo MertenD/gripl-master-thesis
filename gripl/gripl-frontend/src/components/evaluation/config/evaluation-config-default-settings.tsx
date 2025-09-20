@@ -12,12 +12,12 @@ interface EvaluationConfigDefaultSettingsProps {
     defaultEndpointChoice: EndpointChoice;
     defaultPresetEndpoint: string;
     defaultCustomEndpoint: string;
-    seed: string;
+    seed: number | null;
     maxConcurrent: number;
     setDefaultEndpointChoice: (endpoint: EndpointChoice) => void;
     setDefaultPresetEndpoint: (endpoint: string) => void;
     setDefaultCustomEndpoint: (endpoint: string) => void;
-    setSeed: (seed: string) => void;
+    setSeed: (seed: number | null) => void;
     onMaxConcurrentChange: (v: number) => void;
 }
 
@@ -93,9 +93,10 @@ export default function EvaluationConfigDefaultSettings(props: EvaluationConfigD
                 <div className="space-y-2">
                     <Label>Seed</Label>
                     <GenerateRandomInput id="seed" placeholder="Optional seed for reproducibility"
-                           length={16}
-                           value={seed}
-                           onChange={(e) => setSeed(e.target.value)}
+                           length={8}
+                           value={seed || ""}
+                           alphabet={"0123456789"}
+                           onChange={(e) => setSeed(parseInt(e.target.value))}
                            className="w-full"/>
                     <p className="text-sm text-muted-foreground">Warning: Not all models support a seed, but it will be used for models that support them.</p>
                 </div>

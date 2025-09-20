@@ -26,13 +26,16 @@ data class EvaluationMetadataReport(
     val datasets: List<DatasetInfo>,
     val timestamp: Timestamp = Timestamp(System.currentTimeMillis()),
     val totalTestCases: Int,
-    val defaultEvaluationEndpoint: String
+    val defaultEvaluationEndpoint: String,
+    val seed: Int? = null
 ): EvaluationReport() {
     override fun toMarkdown(): String {
         return """
             |## Evaluation Metadata
             |- **Models:** ${modelLabels.joinToString(", ")}
             |- **Datasets:** ${datasets.joinToString(", ")}
+            |- **Total Test Cases:** $totalTestCases
+            |${if (seed != null) "- **Seed:** $seed" else ""}
             |- **Timestamp:** $timestamp
             |- **Default Evaluation Endpoint:** $defaultEvaluationEndpoint
         """.trimMargin()
