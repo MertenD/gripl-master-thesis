@@ -26,6 +26,9 @@ jobs:
         with:
           working_directory: 'thesis'
           root_file: 'main.tex'
+          pre_compile: |
+            tlmgr update --self --all
+            tlmgr install biber biblatex csquotes
           args: -pdf -latexoption=-file-line-error -latexoption=-interaction=nonstopmode
 
       - name: Generate preview image
