@@ -137,3 +137,200 @@
   howpublished={\url{https://www.gesetze-im-internet.de/rdg/}},
   urldate={2025-08-15},
 }
+
+@online{ibm-gpt,
+  title={Was ist ein GPT (Generative Pre-Trained Transformer)?},
+  author={Belcic, Ivan and Stryker, Cole},
+  year={2024},
+  month={09},
+  day={18},
+  urldate={2025-09-18},
+  url={https://www.ibm.com/de-de/think/topics/gpt}
+}
+
+@online{openai-models,
+  author = {OpenAI},
+  title = {Model Overview},
+  year = {2025},
+  url = {https://platform.openai.com/docs/models},
+  urldate = {2025-09-18}
+}
+
+@article{vaswani2017attention,
+  author={Ashish Vaswani and
+                  Noam Shazeer and
+                  Niki Parmar and
+                  Jakob Uszkoreit and
+                  Llion Jones and
+                  Aidan N. Gomez and
+                  Lukasz Kaiser and
+                  Illia Polosukhin},
+  title={Attention Is All You Need},
+  journal={CoRR},
+  volume= {abs/1706.03762},
+  year= {2017},
+  url= {http://arxiv.org/abs/1706.03762},
+  eprinttype= {arXiv},
+  eprint= {1706.03762},
+  timestamp= {Sat, 23 Jan 2021 01:20:40 +0100},
+  biburl= {https://dblp.org/rec/journals/corr/VaswaniSPUJGKP17.bib},
+  bibsource= {dblp computer science bibliography, https://dblp.org},
+  abstract={The dominant sequence transduction models are based on complex recurrent or
+convolutional neural networks that include an encoder and a decoder. The best
+performing models also connect the encoder and decoder through an attention
+mechanism. We propose a new simple network architecture, the Transformer,
+based solely on attention mechanisms, dispensing with recurrence and convolutions
+entirely. Experiments on two machine translation tasks show these models to
+be superior in quality while being more parallelizable and requiring significantly
+less time to train. Our model achieves 28.4 BLEU on the WMT 2014 English-
+to-German translation task, improving over the existing best results, including
+ensembles, by over 2 BLEU. On the WMT 2014 English-to-French translation task,
+our model establishes a new single-model state-of-the-art BLEU score of 41.8 after
+training for 3.5 days on eight GPUs, a small fraction of the training costs of the
+best models from the literature. We show that the Transformer generalizes well to
+other tasks by applying it successfully to English constituency parsing both with
+large and limited training data.},
+}
+
+@misc{minaee2025largelanguagemodelssurvey,
+  title={Large Language Models: A Survey},
+  author={Shervin Minaee and Tomas Mikolov and Narjes Nikzad and Meysam Chenaghlu and Richard Socher and Xavier Amatriain and Jianfeng Gao},
+  year={2025},
+  eprint={2402.06196},
+  archivePrefix={arXiv},
+  primaryClass={cs.CL},
+  url={https://arxiv.org/abs/2402.06196},
+  abstract={Large Language Models (LLMs) have drawn a lot of attention due to their strong performance on a wide range of natural language tasks, since the release of ChatGPT in November 2022. LLMs' ability of general-purpose language understanding and generation is acquired by training billions of model's parameters on massive amounts of text data, as predicted by scaling laws \cite{kaplan2020scaling,hoffmann2022training}. The research area of LLMs, while very recent, is evolving rapidly in many different ways. In this paper, we review some of the most prominent LLMs, including three popular LLM families (GPT, LLaMA, PaLM), and discuss their characteristics, contributions and limitations. We also give an overview of techniques developed to build, and augment LLMs. We then survey popular datasets prepared for LLM training, fine-tuning, and evaluation, review widely used LLM evaluation metrics, and compare the performance of several popular LLMs on a set of representative benchmarks. Finally, we conclude the paper by discussing open challenges and future research directions. },
+}
+
+@article{liu2023prompting,
+  author = {Liu, Pengfei and Yuan, Weizhe and Fu, Jinlan and Jiang, Zhengbao and Hayashi, Hiroaki and Neubig, Graham},
+  title = {Pre-train, Prompt, and Predict: A Systematic Survey of Prompting Methods in Natural Language Processing},
+  year = {2023},
+  issue_date = {September 2023},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  volume = {55},
+  number = {9},
+  issn = {0360-0300},
+  url = {https://doi.org/10.1145/3560815},
+  doi = {10.1145/3560815},
+  abstract = {This article surveys and organizes research works in a new paradigm in natural language processing, which we dub “prompt-based learning.” Unlike traditional supervised learning, which trains a model to take in an input x and predict an output y as P(y|x), prompt-based learning is based on language models that model the probability of text directly. To use these models to perform prediction tasks, the original input x is modified using a template into a textual string prompt x′ that has some unfilled slots, and then the language model is used to probabilistically fill the unfilled information to obtain a final string x̂, from which the final output y can be derived. This framework is powerful and attractive for a number of reasons: It allows the language model to be pre-trained on massive amounts of raw text, and by defining a new prompting function the model is able to perform few-shot or even zero-shot learning, adapting to new scenarios with few or no labeled data. In this article, we introduce the basics of this promising paradigm, describe a unified set of mathematical notations that can cover a wide variety of existing work, and organize existing work along several dimensions, e.g., the choice of pre-trained language models, prompts, and tuning strategies. To make the field more accessible to interested beginners, we not only make a systematic review of existing works and a highly structured typology of prompt-based concepts but also release other resources, e.g., a website  including constantly updated survey and paperlist.},
+  journal = {ACM Comput. Surv.},
+  month = jan,
+  articleno = {195},
+  numpages = {35},
+  keywords = {Pre-trained language models, prompting}
+}
+
+@inproceedings{brown2020fewshot,
+  author = {Brown, Tom and Mann, Benjamin and Ryder, Nick and Subbiah, Melanie and Kaplan, Jared D and Dhariwal, Prafulla and Neelakantan, Arvind and Shyam, Pranav and Sastry, Girish and Askell, Amanda and Agarwal, Sandhini and Herbert-Voss, Ariel and Krueger, Gretchen and Henighan, Tom and Child, Rewon and Ramesh, Aditya and Ziegler, Daniel and Wu, Jeffrey and Winter, Clemens and Hesse, Chris and Chen, Mark and Sigler, Eric and Litwin, Mateusz and Gray, Scott and Chess, Benjamin and Clark, Jack and Berner, Christopher and McCandlish, Sam and Radford, Alec and Sutskever, Ilya and Amodei, Dario},
+  booktitle = {Advances in Neural Information Processing Systems},
+  editor = {H. Larochelle and M. Ranzato and R. Hadsell and M.F. Balcan and H. Lin},
+  pages = {1877--1901},
+  publisher = {Curran Associates, Inc.},
+  title = {Language Models are Few-Shot Learners},
+  url = {https://proceedings.neurips.cc/paper_files/paper/2020/file/1457c0d6bfcb4967418bfb8ac142f64a-Paper.pdf},
+  volume = {33},
+  year = {2020}
+}
+
+@misc{openai_function_calling_2023,
+  title        = {Function calling and other API updates},
+  author       = {{OpenAI}},
+  howpublished = {\url{https://openai.com/index/function-calling-and-other-api-updates/}},
+  year         = {2023},
+  urldate         = {2025-07-10}
+}
+
+@online{mistralai_structured_output,
+  author  = {Mistral AI},
+  title   = {Mistral AI - Structured Output},
+  year    = {2025},
+  url     = {https://docs.mistral.ai/capabilities/structured-output/structured_output_overview/},
+  urldate = {2025-07-11}
+}
+
+@online{openai_structured_output,
+  author  = {OpenAI},
+  title   = {OpenAI - Structured model outputs},
+  url     = {https://docs.mistral.ai/capabilities/structured-output/structured_output_overview/},
+  urldate = {2025-07-11}
+}
+
+@online{openai-hello-gpt-4o,
+  author  = {OpenAI},
+  title   = {Hello GPT-4o},
+  year    = {2024},
+  month = {5},
+  day = {13},
+  url     = {https://openai.com/index/hello-gpt-4o/},
+  urldate = {2025-07-21}
+
+}
+
+@article{scholak2021picard,
+  author       = {Torsten Scholak and
+                  Nathan Schucher and
+                  Dzmitry Bahdanau},
+  title        = {{PICARD:} Parsing Incrementally for Constrained Auto-Regressive Decoding
+                  from Language Models},
+  journal      = {CoRR},
+  volume       = {abs/2109.05093},
+  year         = {2021},
+  url          = {https://arxiv.org/abs/2109.05093},
+  eprinttype    = {arXiv},
+  eprint       = {2109.05093},
+  timestamp    = {Tue, 21 Sep 2021 17:46:04 +0200},
+  biburl       = {https://dblp.org/rec/journals/corr/abs-2109-05093.bib},
+  bibsource    = {dblp computer science bibliography, https://dblp.org},
+  abstract = {Large pre-trained language models for textual data have an unconstrained output space; at each decoding step, they can produce any of 10,000s of sub-word tokens. When fine-tuned to target constrained formal languages like SQL, these models often generate invalid code, rendering it unusable. We propose PICARD (code and trained models available at this https URL), a method for constraining auto-regressive decoders of language models through incremental parsing. PICARD helps to find valid output sequences by rejecting inadmissible tokens at each decoding step. On the challenging Spider and CoSQL text-to-SQL translation tasks, we show that PICARD transforms fine-tuned T5 models with passable performance into state-of-the-art solutions. },
+}
+
+@misc{kalai2025languagemodelshallucinate,
+  title={Why Language Models Hallucinate},
+  author={Adam Tauman Kalai and Ofir Nachum and Santosh S. Vempala and Edwin Zhang},
+  year={2025},
+  eprint={2509.04664},
+  archivePrefix={arXiv},
+  primaryClass={cs.CL},
+  url={https://arxiv.org/abs/2509.04664},
+  abstract = {Like students facing hard exam questions, large language models sometimes guess when uncertain, producing plausible yet incorrect statements instead of admitting uncertainty. Such "hallucinations" persist even in state-of-the-art systems and undermine trust. We argue that language models hallucinate because the training and evaluation procedures reward guessing over acknowledging uncertainty, and we analyze the statistical causes of hallucinations in the modern training pipeline. Hallucinations need not be mysterious -- they originate simply as errors in binary classification. If incorrect statements cannot be distinguished from facts, then hallucinations in pretrained language models will arise through natural statistical pressures. We then argue that hallucinations persist due to the way most evaluations are graded -- language models are optimized to be good test-takers, and guessing when uncertain improves test performance. This "epidemic" of penalizing uncertain responses can only be addressed through a socio-technical mitigation: modifying the scoring of existing benchmarks that are misaligned but dominate leaderboards, rather than introducing additional hallucination evaluations. This change may steer the field toward more trustworthy AI systems. },
+}
+
+@article{ji2023hallucinationsurvey,
+  author = {Ji, Ziwei and Lee, Nayeon and Frieske, Rita and Yu, Tiezheng and Su, Dan and Xu, Yan and Ishii, Etsuko and Bang, Ye Jin and Madotto, Andrea and Fung, Pascale},
+  title = {Survey of Hallucination in Natural Language Generation},
+  year = {2023},
+  issue_date = {December 2023},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  volume = {55},
+  number = {12},
+  issn = {0360-0300},
+  url = {https://doi.org/10.1145/3571730},
+  doi = {10.1145/3571730},
+  abstract = {Natural Language Generation (NLG) has improved exponentially in recent years thanks to the development of sequence-to-sequence deep learning technologies such as Transformer-based language models. This advancement has led to more fluent and coherent NLG, leading to improved development in downstream tasks such as abstractive summarization, dialogue generation, and data-to-text generation. However, it is also apparent that deep learning based generation is prone to hallucinate unintended text, which degrades the system performance and fails to meet user expectations in many real-world scenarios. To address this issue, many studies have been presented in measuring and mitigating hallucinated texts, but these have never been reviewed in a comprehensive manner before.In this survey, we thus provide a broad overview of the research progress and challenges in the hallucination problem in NLG. The survey is organized into two parts: (1) a general overview of metrics, mitigation methods, and future directions, and (2) an overview of task-specific research progress on hallucinations in the following downstream tasks, namely abstractive summarization, dialogue generation, generative question answering, data-to-text generation, and machine translation. This survey serves to facilitate collaborative efforts among researchers in tackling the challenge of hallucinated texts in NLG.},
+  journal = {ACM Comput. Surv.},
+  month = mar,
+  articleno = {248},
+  numpages = {38},
+  keywords = {consistency in NLG, factuality in NLG, faithfulness in NLG, extrinsic hallucination, intrinsic hallucination, Hallucination}
+}
+
+@online{deepseek,
+  author  = {DeepSeek AI},
+  title   = {DeepSeek AI Open Source Hugging Face Models},
+  year    = {2025},
+  url     = {https://huggingface.co/deepseek-ai},
+  urldate = {2025-07-17}
+}
+
+@online{qwen,
+  author  = {Alibaba Qwen},
+  title   = {Qwen Open Source Hugging Face Models},
+  year    = {2025},
+  url     = {https://huggingface.co/Qwen},
+  urldate = {2025-07-17}
+}
+

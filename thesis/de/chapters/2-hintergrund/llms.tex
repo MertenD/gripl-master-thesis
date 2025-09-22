@@ -1,10 +1,18 @@
 \section{Large Language Models (LLMs)}\label{sec:llms}
 
-\begin{itemize}
-    \item Basiert auf Transformer Architektur
-    \item Prompting (System Message, User Prompt)
-    \item Zero-/Few-Shot (Später Interessant für Prompt des Algorithmus)
-    \item JSON-konforme Ausgaben (Schema-Enforcing, Wichtig für die Klassifizierung)
-    \item typische Fehlerbilder (Halluzination, ungültiges JSON) + Gegenmaßnahmen (Retry/Repair) (Im Klassifizierungsalgorithmus gibt es Reparaturmechanismen wir das herausfiltern ungültiger Aktivität IDs)
-    \item Gpt-4o als aktuellen Standard präsentieren
-\end{itemize}
+\acp{LLM} sind große, vortrainierte Sprachmodelle, die auf der Transformer-Architektur basieren. Transformer, erstmals in \cite{vaswani2017attention} beschrieben, verarbeiten eine Eingabe nicht strikt sequenziell, sondern beachten alle Tokens einer Sequenz parallel. Über Self-Attention gewichten sie, welche Token füreinander relevant sind. Als Token gelten Wörter oder Wortbestandteile, in die der Text vorab zerlegt wird. Dieser Mechanismus erfasst Abhängigkeiten über große Distanzen innerhalb der Sequenz und ermöglicht dadurch eine effiziente Kontextmodellierung. Die Transformer-Architektur bildet heute das Fundament moderner Sprachmodelle wie der GPT-Familie von OpenAI \cite{ibm-gpt, minaee2025largelanguagemodelssurvey, openai-models}.
+
+In chatbasierten Systemen wird das Verhalten des \ac{LLM} über System- und User-Prompts gesteuert. Gutes Prompt Engineering kann die Leistung und Format-Treue der Ausgabe verbessern, ohne dass die Modellparameter verändert werden müssen \cite{liu2023prompting}. Ein deutlicher Vorteil aktueller \acp{LLM} ist Zero-/Few-Shot Learning. Damit lassen sich Aufgaben alleine über Instruktionen und wenige Beipsiele lösen, ohne dass erneutes Training benötigt wird \cite{brown2020fewshot, liu2023prompting}. Das ist besonders nützlich für Klassifikationsaufgaben, bei denen nur wenige gelabelte Beispiele vorliegen, wie etwa die Identifikation von \ac{DSGVO}-kritischen Aktivitäten in Prozessmodellen.
+
+Um \acp{LLM} in automatisierten Pipelines zu integrieren sind schema-konforme Ausgaben, wie ein gültiges JSON, unerlässlich. In der Praxis gibt es dafür drei Ansätze:
+
+\begin{enumerate}
+    \item Klare Angaben über das Ausgabeformat im System- oder User-Prompt \cite{liu2023prompting}.
+    \item API-gestützte Mechanismen wie Function Calling oder Structured-Output/JSON-Mode mit Schemaüberprüfung \cite{mistralai_structured_output, openai_function_calling_2023, openai_structured_output}.
+    \item Constrained Decoding, das die Generierung auf eine vorgegebene Grammatik beschränkt. Ein Beispiel ist PICARD: Bei jedem Generationsschritt des \ac{LM} werden nur zulässige Tokens ausgewählt \cite{scholak2021picard}.
+\end{enumerate}
+
+Typische Fehlerbilder bei der Nutzung von \acp{LLM} sind Halluzinationen (plausibel wirkende, aber fehlerhafte Aussagen) und Formatfehler (wie z.B. ungültiges JSON). In \cite{kalai2025languagemodelshallucinate} wird argumentiert, dass Halluzinationen bereits beim Erstellen des \ac{LLM} durch die Trainings- und Evaluationsmethoden begünstigt werden, die das Modell dazu bringen, eher zu raten als Unsicherheit zuzugeben. Das Raten bei Unsicherheit verbessert die Testergebnisse. Gegenmaßnahmen gegen Halluzinationen sind u.a. präzisere Prompts, Informationserweiterung des Prompts durch \ac{RAG} und Self-Check/Retry-Strategien als Post-Processing Methoden nach der Generierung \cite{ji2023hallucinationsurvey}.
+
+Die meisten großen \acp{LLM} werden von Unternehmen wie OpenAI, Google oder Anthropic entwickelt und als API-Dienste angeboten. In der Industrie zählt GPT-4o aktuell zu den am weit verbreitetsten Modellen \cite{openai-hello-gpt-4o}. Es ist ein multimodales Modell mit starken Text-, Bild- und Audiofähigkeiten. Properitäre Modelle wie GPT-4o sind oft leistungsstark, aber auch teuer und intransparent. Als Alternative gibt es eine wachsende Zahl an Open-Source \acp{LLM}, die frei verfügbar sind und lokal betrieben werden können. Beispiele sind Die von Mistral \cite{mistralai},
+Deepseek \cite{deepseek} und Qwen \cite{qwen}. Open-Source Modelle bieten Vorteile wie Kostenersparnis, Datenschutz und Anpassbarkeit. In dieser Arbeit werden sowohl proprietäre als auch Open-Source \acp{LLM} evaluiert.
