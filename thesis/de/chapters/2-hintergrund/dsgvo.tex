@@ -1,6 +1,17 @@
 \section{Datenschutzgrundverordnung (DSGVO)}\label{sec:dsgvo}
 
+Die europäische \acf{DSGVO} \cite{GDPR2016} bildet den zentralen rechtlichen Rahmen für den Schutz personenbezogener Daten in der \ac{EU}. Sie gilt seit dem 25. Mai 2018. Durch die \ac{DSGVO} werden Betroffenenrechte gestärkt und Verantwortliche zu technischen und organisatorischen Maßnahmen verpflichtet, wie z.\,B.\ \emph{Datenschutz durch Technikgestaltung} und \emph{datenschutzfreundliche Voreinstellungen} (Art.~25 DSGVO) \cite{gdpr-guidelines-2019}.
+
+\subsection*{Definitionen}
+
+Im Folgenden werden zentrale Begriffe der \ac{DSGVO} erläutert, die für das Verständnis dieser Arbeit relevant sind:
+
 \begin{itemize}
-    \item Definitionen: Personenbezogene Daten, Verarbeitung, typische Auslöser für ``kritisch'' (Erhebung, Nutzung, Speichern, Übermitteln, Löschen, \ldots)
-    \item Abgrenzung, dass es sich hier bei den Klassifizierungen durch die Algorithmen nur um ein Risiko-Screening handelt und nicht um eine Rechtsberatung (Sollte ich vielleicht erwähnen, damit auch die Ergebnisse am Ende besser eingeordnet werden können)
+    \item \textbf{Personenbezogene Daten} sind alle Informationen, die sich auf eine identifizierte oder identifizierbare natürliche Person beziehen (Art.~4 Abs.~1 DSGVO) \cite{GDPR2016}. Eine Person ist identifizierbar, wenn sie direkt oder indirekt bestimmbar ist (z.\,B.\ anhand von Name, Kennnummer, Standortdaten, Online-Kennung).
+    \item \textbf{Verarbeitung} bezeichnet \emph{jeden} mit personenbezogenen Daten vorgenommenen Vorgang (Art.~4 Abs.~2 DSGVO) und umfasst insbesondere das \textbf{Erheben}, \textbf{Speichern}, \textbf{Verwenden/Nutzen}, \textbf{Offenlegen durch Übermittlung} sowie das \textbf{Löschen/Vernichten} \cite{GDPR2016}.
+    \item Im \ac{BPMN}-Kontext sind alle Aktivitäten als \textbf{datenschutzkritisch} zu betrachten, die solche Verarbeitungshandlungen an personenbezogenen Daten vornehmen oder auslösen (z.\,B.\ Abruf aus einem Kundendaten-Speicher, Übergabe an externe Stellen).
 \end{itemize}
+
+\subsection*{Abgrenzung: Risiko-Screening vs.\ Rechtsberatung}
+
+Die in dieser Arbeit eingesetzten Klassifizierungsverfahren dienen einem \emph{automatisierten Risiko-Vorscreening} von Prozessaktivitäten. Sie ersetzen keine individuelle Rechtsprüfung im Einzelfall. Insbesondere in Deutschland ist die Erbringung kronkreter Rechtsdienstleistungen Personen mit entsprechender Befugnis vorbehalten \cite{rdg-2007}. Die Ergebnisse sind daher als Entscheidungshilfe zu verstehen und bedürfen - insbesondere bei Grenzfällen - der Bewertung durch qualifizierte Experten.
