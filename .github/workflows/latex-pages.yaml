@@ -26,6 +26,7 @@ jobs:
         with:
           working_directory: 'thesis'
           root_file: 'main.tex'
+          args: -pdf -latexoption=-file-line-error -latexoption=-interaction=nonstopmode -use-biber
 
       - name: Generate preview image
         run: |
