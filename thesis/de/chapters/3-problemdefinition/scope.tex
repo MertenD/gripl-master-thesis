@@ -1,9 +1,23 @@
 \section{Scope und Annahmen}\label{sec:scope-und-annahmen}
 
-// TODO Das muss ich noch anpassen
+Dieser Abschnitt definiert Geltungsbereich, Annahmen und Risiken des Ansatzes. Dadurch wird eine klare Einordnung der Ergebnisse und ihrer Reproduzierbarkeit ermöglicht.
+
+\subsection{Geltungsbereich}
+
+Die folgenden Punkte definieren den Geltungsbereich der Arbeit:
 
 \begin{itemize}
-    \item Sprachen sind DE und EN
-    \item Keine Bewertung der Rechtmäßigkeit an sich, sondern nur ein Screening nach kritischen Aktivitäten (Wie ein Vorfilter)
-    \item Risiken und Grenzen (Bspw. schlechte Einschätzung des LLM wenn Artefakte wie Datenobjekte im BPMN-Modell fehlen) werden transparent gemacht
+    \item Klassifiziert werden ausschließlich Aktivitäten. Dafür wird sinvoller Kontext (z.\,B. Prozessname, Pool/Lane, Datenobjekte) berücksichtigt.
+    \item Labels und Artefakte liegen in Deutsch vor.
+    \item Es handelt sich um ein Screening und nicht um eine Rechtsprüfung. Die Rechtmäßigkeit wird nicht bewertet. Die Lösung dient als \emph{Vorfilter}, der potenziell kritische Aktivitäten markiert, die dann juristisch geprüft werden.
+\end{itemize}
+
+\subsection{Annahmen und Risiken}
+
+Die folgenden Annahmen und potenziellen Risiken sind für die Interpretation der Ergebnisse relevant:
+
+\begin{itemize}
+    \item Bei fehlenden Datenobjekten oder mehrdeutigen Labels kann sich die Einschätzung verschlechtern. Das ist ein bekanntes Problem in ähnlichen Studien \cite{nake2023towards}.
+    \item Optional generierte \ac{LLM}-Begründungen sind als \emph{Hilfetexte} zu verstehen, um die Entscheidung des \ac{LLM} besser einordnen zu können, bilden aber nicht zwingend die tatsächlichen Entscheidungsgründe des Modells ab.
+    \item Ungültiges \ac{BPMN}-XML oder Laufzeitfehler werden als \enquote{technischer Fehler} erfasst und nicht in die Metrikzählung eingerechnet. Sie werden separat berichtet.
 \end{itemize}

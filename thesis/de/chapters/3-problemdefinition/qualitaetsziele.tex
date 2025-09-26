@@ -1,12 +1,30 @@
 \section{Qualitätsziele}\label{sec:qualitatsziele}
 
+Die Domäne, Prozesse nach Datenschutzrecht zu klassifizieren, ist risikosensitiv. Übersehene kritische Aktivitäten (\acp{FN}) können zu Compliance-Risiken und hohen Strafen laut \ac{DSGVO} führen. Daher ist das \textbf{Hauptziel}:
+
+\begin{quote}
+    \textbf{Maximaler Recall} bei \emph{minimierten \acp{FN}}, bei zugleich noch \emph{akzeptabler Precision}, um den manuellen Prüfaufwand (\acp{FP}) begrenzt zu halten.
+\end{quote}
+
+\subsection*{Metriken}
+
+Relevante Metriken für eine aussagekräftige Evaluierung sind \emph{Accuracy}, \emph{Precision}, \emph{Recall}, \emph{F1-Score} sowie die Konfusionsmatrix-Zahlen (\acp{TP}, \acp{FP}, \acp{TN}, \acp{FN}) und die Anzahl korrekt/inkorrekt klassifizierter Testfälle. Technische Fehler (z.\,B. Parsing-Fehler oder überschrittene Token Limits) werden separat ausgewiesen.
+
+\subsection*{Zielwerte}
+
+Ähnliche Arbeiten, wie von Nake et al. \cite{nake2023towards}, zeigen Referenzwerte von einem maximalen \emph{Recall} $\approx 0{,}83$ und \emph{F1-Score} $\approx 0{,}81$ bei der Identifikation \ac{DSGVO}-kritischer Aufgaben in Prozessbeschreibungen. Jüngere \ac{DSGVO}-nahe \ac{LLM}-Studien berichten von \emph{Precision/Recall} im hohen 0{,}8x bis 0{,}9x-Bereich \cite{hooda2024policylr} und F1-Scores von $\approx 0{,}68$~bis zu \approx $0{,}79$~\cite{schwerin2024systematic}.
+
+Basierend darauf werden folgende Zielkorridore als \emph{pragmatische Abnahmekriterien} gesetzt:
+
 \begin{itemize}
-    \item Hauptziel ist ein hoher Recall mit minimalen False Negatives, bei noch akzeptabler Precision und somit auch überschaubaren False Positives
+    \item \textbf{Recall} soll ein Mindestniveau von $\mathbf{\geq 0{,}80}$ erreichen und ein \emph{angestrebter} Bereich ist $\geq 0{,}85$.
+    \item \textbf{Precision} soll $\mathbf{\geq 0{,}75}$ als Untergrenze zur Begrenzung des Prüfaufwands erreichen.
+    \item \textbf{F1-Score} soll $\mathbf{\geq 0{,}80}$  erreichen.
+    \item \textbf{False Positives je Prozess} sollen im Mittel \textbf{$\leq 1{,}5$} betragen.
 \end{itemize}
 
-// TODO Aktuell unterstützt meine Evaluierung noch keine Seeds, aber das sollte ich noch umsetzen können und dann Temperature bei den LLMs auf 0 setzen
+Nake~et~al.\ \cite{nake2023towards} zeigen, dass selbst ein \emph{Recall} von $0{,}83$ für kritische Aufgaben ohne menschliche Nachkontrolle nicht ausreicht, da die Strafen für Nichteinhaltung der \ac{DSGVO} sehr hoch sind. Viel mehr eignet sich ein System mit diesem Recall-Wert für \emph{assistierte} Prüfungen, bei denen die Ergebnisse durch qualifizierte Experten validiert werden. Für ein Screening von Geschäftsprozessen, wie es in dieser Arbeit angestrebt wird, sind die genannten Zielwerte daher als realistisch und praxisrelevant einzuschätzen.
 
-\begin{itemize}
-    \item Sekundäres Ziel ist Stabilität über mehrere Seeds hinweg
-    \item Hier könnte ich noch bestimmte Wertebereiche vorschlagen, sie sinnvoll wären wie Recall $\geq 80\%$, False Positives $\leq 1{,}5/$Prozess. Unbedingt dafür noch in anderen Papern nach guten Werten schauen, wenn ich das machen sollte
-\end{itemize}
+\subsection*{Stabilität über Wiederholungen}
+
+Da \acp{LLM} nicht-deterministisch sind, ist das Berichten eines einzelnen Leistungswertes nicht ausreichend für den Vergleich von Modellen. Studien wie von Reimers et al. \cite{reimers2017reporting} zeigen, dass die Abhängigkeit vom Seed-Wert der \acp{LLM} zu statistisch signifikanten Unterschieden in der Performance führen kann. Diese Varianz kann dazu führen, dass ein modernes, leistungsfähiges Modell von sehr gut bis mittelmäßig abschneidet. Stattdessen wird vorgschlagen, Score-Verteilungen zu vergleichen, die auf mehreren Durchläufen basieren. Dadurch wird das Risiko reduziert, dass ein Modell nur aufgrund eines günstigen Seeds gut oder aufgrund eines ungünstigen Seeds schlecht abschneidet. In dieser Arbeit werden daher die Ergebnisse auf Basis von Widerholungen berichtet. Er wird der Mittelwert $\pm$ Standardabweichung ($\sigma$) je Metrik angegeben, da die Standardabweichung die Stabilität eines Modells über verschiedene Läufe hinweg darstellt. Modellvergleiche basieren am Ende auf diesen Verteilungen (nicht auf Einzelfällen), um eine fundierte Bewertung zu ermöglichen.

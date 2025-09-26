@@ -1,9 +1,11 @@
 @ONLINE{omgbpmn,
   author = {OMG},
   title = {Business Process Model and Notation (BPMN)},
-  year = {2011},
-  url = {https://www.omg.org/spec/BPMN/2.0/PDF},
-  urldate = "2023-05-01"
+  version = {2.0.2},
+  year = {2013},
+  month = {12},
+  url = {https://www.omg.org/spec/BPMN/2.0.2/PDF},
+  urldate = {2025-06-03}
 }
 
 @ONLINE{omgbpmn-xsd,
@@ -11,7 +13,7 @@
   title = {About the Business Process Model And Notation Specification Version 2.0},
   url = {https://www.omg.org/spec/BPMN/2.0/About-BPMN},
   year = {2011},
-  urldate = "2023-04-20"
+  urldate = {2025-06-03}
 }
 
 @misc{GDPR2016,
@@ -334,3 +336,31 @@ large and limited training data.},
   urldate = {2025-07-17}
 }
 
+@misc{hooda2024policylr,
+  title={PolicyLR: A Logic Representation For Privacy Policies},
+  author={Ashish Hooda and Rishabh Khandelwal and Prasad Chalasani and Kassem Fawaz and Somesh Jha},
+  year={2024},
+  eprint={2408.14830},
+  archivePrefix={arXiv},
+  primaryClass={cs.CR},
+  url={https://arxiv.org/abs/2408.14830},
+  abstract = {Privacy policies are crucial in the online ecosystem, defining how services handle user data and adhere to regulations such as GDPR and CCPA. However, their complexity and frequent updates often make them difficult for stakeholders to understand and analyze. Current automated analysis methods, which utilize natural language processing, have limitations. They typically focus on individual tasks and fail to capture the full context of the policies. We propose PolicyLR, a new paradigm that offers a comprehensive machine-readable representation of privacy policies, serving as an all-in-one solution for multiple downstream tasks. PolicyLR converts privacy policies into a machine-readable format using valuations of atomic formulae, allowing for formal definitions of tasks like compliance and consistency. We have developed a compiler that transforms unstructured policy text into this format using off-the-shelf Large Language Models (LLMs). This compiler breaks down the transformation task into a two-stage translation and entailment procedure. This procedure considers the full context of the privacy policy to infer a complex formula, where each formula consists of simpler atomic formulae. The advantage of this model is that PolicyLR is interpretable by design and grounded in segments of the privacy policy. We evaluated the compiler using ToS;DR, a community-annotated privacy policy entailment dataset. Utilizing open-source LLMs, our compiler achieves precision and recall values of 0.91 and 0.88, respectively. Finally, we demonstrate the utility of PolicyLR in three privacy tasks: Policy Compliance, Inconsistency Detection, and Privacy Comparison Shopping.},
+}
+
+@inproceedings{reimers2017reporting,
+  title = "Reporting Score Distributions Makes a Difference: Performance Study of {LSTM}-networks for Sequence Tagging",
+  author = "Reimers, Nils  and
+      Gurevych, Iryna",
+  editor = "Palmer, Martha  and
+      Hwa, Rebecca  and
+      Riedel, Sebastian",
+  booktitle = "Proceedings of the 2017 Conference on Empirical Methods in Natural Language Processing",
+  month = sep,
+  year = "2017",
+  address = "Copenhagen, Denmark",
+  publisher = "Association for Computational Linguistics",
+  url = "https://aclanthology.org/D17-1035/",
+  doi = "10.18653/v1/D17-1035",
+  pages = "338--348",
+  abstract = "In this paper we show that reporting a single performance score is insufficient to compare non-deterministic approaches. We demonstrate for common sequence tagging tasks that the seed value for the random number generator can result in statistically significant ($p < 10^{-4}$) differences for state-of-the-art systems. For two recent systems for NER, we observe an absolute difference of one percentage point F₁-score depending on the selected seed value, making these systems perceived either as state-of-the-art or mediocre. Instead of publishing and reporting single performance scores, we propose to compare score distributions based on multiple executions. Based on the evaluation of 50.000 LSTM-networks for five sequence tagging tasks, we present network architectures that produce both superior performance as well as are more stable with respect to the remaining hyperparameters."
+}
