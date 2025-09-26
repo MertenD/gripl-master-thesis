@@ -1,9 +1,14 @@
 \section{Motivation}\label{sec:motivation}
 
-\begin{itemize}
-    \item Geschäftsprozesse fast in allen Organisationen allgegenwärtig und bilden die Grundlage für effiziente Abläufe
-    \item Außerdem ist durch die \ac{DSGVO} in Europa Datenschutz ein zentraler regulatorischer Aspekt \cite{Capodieci2023BPMNEnabledDP, GDPR2016}. Unternehmen müssen sicherstellen, dass in Prozessen personenbezogene Daten rechtskonform verarbeitet werden. Ansonsten drohen Strafen von bis zu 20 Millionen Euro oder 4\% des weltweiten gesamten erzielten Jahresumsatzes \cite{GDPR2016}.
-    \item Die Überprüfung von Prozessen auf konformität in Bezug auf Datenschutz ist jedoch zeit- und kostenintensiv \cite{nake2023towards, varela2025business}. Besonders in großen Organisationen mit hunderten von Prozessen parallel ist eine manuelle Analyse nicht wirklich praktikabel und fehleranfällig. Fehlerhafte Untererkennung datenschutzkritischer Aktivitäten, also False Negatives, kann weitreichende Folgen haben - von Reputationsschäden bis hin zu hohen Bußgeldern \cite{nake2023towards}.
-    \item \acp{LLM} sind eine aufstrebende \ac{KI} Technologie. Sie sind darauf trainiert, natürliche Sprache auch in langen und komplexen Texten zu verstehen, Zusammenhänge über große Kontexte hinweg zu erkennen und Anweisungen zu befolgen. Vor diesem Hintergrund erscheinen \acp{LLM} als vielversprechender Ansatz für das automatisierte Screening von Prozessmodellen. Erste Arbeiten zeigen das Potenzial von \acp{LLM}, etwa bei der Identifikation datenschutzrelevanter Verarbeitungstätigkeiten oder in der Analyse von Datenschutzerklärungen \cite{ciaramella2022leveraging, pragyan2024toward}.
-    \item Besonders interessant sind dabei europäische Open-Source-Modelle wie die von Mistral \cite{mistralai}. Sie sind zum einen frei verfügbar und transparent und zum anderen wurden sie bislang kaum auf Hinblick auf \ac{DSGVO}-bezogene Aufgaben evaluiert. Es fehlen belastbare, reproduzierbare empirische Vergleiche, die eine fundierte Bewertung dieser Modelle erlauben würden \cite{schwerin2024systematic}.
-\end{itemize}
+Geschäftsprozesse sind in nahezu allen Organisationen allgegenwärtig und bilden die Grundlage für effiziente Abläufe. Zugleich ist in Europa durch die \ac{DSGVO} der Datenschutz zu einem zentralen regulatorischen Aspekt geworden \cite{Capodieci2023BPMNEnabledDP, GDPR2016}. Unternehmen müssen sicherstellen, dass in ihren Prozessen personenbezogene Daten rechtskonform verarbeitet werden; andernfalls drohen Strafen von bis zu 20 Millionen Euro oder 4\% des weltweit gesamten erzielten Jahresumsatzes \cite{GDPR2016}.
+
+
+Die Überprüfung von Prozessen auf Konformität in Bezug auf Datenschutz ist jedoch zeit- und kostenintensiv \cite{nake2023towards, varela2025business}. Besonders in großen Organisationen mit hunderten parallel laufenden Prozessen ist eine manuelle Analyse kaum praktikabel und zudem fehleranfällig. Fehlerhafte Untererkennungen datenschutzkritischer Aktivitäten (False Negatives) können weitreichende Folgen haben – von Reputationsschäden bis hin zu hohen Bußgeldern \cite{nake2023towards}.
+
+
+Vor diesem Hintergrund rücken \acp{LLM} als aufstrebende \ac{KI} Technologie in den Fokus. Sie sind darauf trainiert, natürliche Sprache auch in langen und komplexen Texten zu verstehen, Zusammenhänge über große Kontexte hinweg zu erkennen und Anweisungen zu befolgen. Damit erscheinen \acp{LLM} als vielversprechender Ansatz für das automatisierte Screening von Prozessmodellen. Erste Arbeiten belegen dieses Potenzial, etwa bei der Identifikation datenschutzrelevanter Verarbeitungstätigkeiten oder in der Analyse von Datenschutzerklärungen \cite{ciaramella2022leveraging, pragyan2024toward}.
+
+
+Besonders interessant sind in diesem Kontext europäische Open-Source-Modelle wie die von Mistral \cite{mistralai}. Sie sind zum einen frei verfügbar und transparent, zum anderen wurden sie bislang kaum im Hinblick auf \ac{DSGVO}-bezogene Aufgaben evaluiert. Es fehlen belastbare, reproduzierbare empirische Vergleiche, die eine fundierte Bewertung dieser Modelle erlauben würden \cite{schwerin2024systematic}.
+
+
