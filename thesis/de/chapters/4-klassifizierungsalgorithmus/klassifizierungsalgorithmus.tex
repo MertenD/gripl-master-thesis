@@ -1,14 +1,9 @@
 \chapter{Klassifizierungsalgorithmus (Design und Implementierung)}\label{ch:klassifizierungsalgorithmus-(design-und-implementierung)}
 
-\begin{itemize}
-    \item Im gesamten Kapitel werden die genutzten Technologien an geeigneter Stelle aufgezeigt und beschrieben (Camunda-BPMN, LangChain4j, Spring Boot, Kotlin, \ldots)
-    \begin{itemize}
-        \item TODO: Ggf. extra Unterkapitel für die genutzten Technologien oder doch immer da erwähnen wo es gerade passt
-        \item Aufzählungen für die Technologien nutzen
-    \end{itemize}
-\end{itemize}
+Dieses Kapitel beschreibt die Pipeline zur Klassifikation \ac{DSGVO}-kritischer Aktivitäten in \ac{BPMN}-Prozessen. Ausgehend von der in kapitel \ref{sec:aufgabenstellung} formulierten Aufgabenstellung wird der gesamte Weg von der Eingabe eines \emph{BPMN-XML} über die Vorverarbeitung, das Prompt Engineering bis hin zur strukturierten, schema-konformen Ausgabe aufgezeigt. Außerdem wird ein HTTP-basiertes API-Design vorgestellt, das die Einbindung in weitere Werkzeuge und das Evaluationsframework ermöglicht.
 
-\input{de/chapters/4-klassifizierungsalgorithmus/ziel-und-annahmen}
+Die Klassifizierungspipeline soll eine binäre Entscheidung auf Ebene einzelner BPMN-Aktivitäten treffen: Für jede Aktivität eines Eingabemodells wird bestimmt, ob sie \emph{kritisch} im Sinne der \ac{DSGVO} ist. Die Pipeline ist so konzipiert, dass sie mit Modellen aus gängigen Modellierungswerkzeugen kompatibel ist.
+
 \input{de/chapters/4-klassifizierungsalgorithmus/bpmn-preprocessing}
 \input{de/chapters/4-klassifizierungsalgorithmus/prompt-engineering}
 \input{de/chapters/4-klassifizierungsalgorithmus/validierung-der-ausgabe}
