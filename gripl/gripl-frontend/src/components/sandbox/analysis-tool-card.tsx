@@ -44,7 +44,7 @@ export default function AnalysisToolCard({ bpmnXml, analysisResult, setAnalysisR
         const jsonBlob = new Blob([JSON.stringify(llmProps)], { type: "application/json" });
         formData.append("llmProps", jsonBlob);
 
-        fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/gdpr/analysis/v1`, {
+        fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/gdpr/analysis/prompt-engineering`, {
             method: "POST",
             headers: {
                 Accept: "application/json"
