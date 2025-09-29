@@ -1,24 +1,7 @@
 \section{Validierung der Ausgabe}\label{sec:validierung-der-ausgabe}
 
-\begin{itemize}
-    \item Ausgabeschema wird in LangChain4j deklarativ beschrieben
-    \item Erklären was LangChain4j im Hintergrund tut, damit das Schema eingehalten wird und die Ausgabe das korrekte Format hat
-\end{itemize}
+Zusätzlich zu den in Kapitel \ref{sec:prompt-engineering} beschriebenen Maßnahmen zur Sicherstellung strukturierter Ausgaben wird die Antwort des \ac{LLM} durch LangChain4j validiert. Wenn das erwartete Schema vom \ac{LLM} nicht eingehalten wird, wirft Langchain4j eine \texttt{OutputParsingException}.
 
-\begin{verbatim}
-data class AnalysisResponse(
-    val criticalElements: List<CriticalElement>
-) {
-    data class CriticalElement(
-        val id: String,
-        val name: String?,
-        val reason: String
-    )
-}
-\end{verbatim}
+// TODO Eventuell noch Retry Mechanismus wenn am Ende noch Zeit ist mit Nachrichtenverlauf und Parsing Fehlermeldung. Das muss aber auch erst einmal implementiert werden. Aktuell gibt es nur den Parsing Error.
 
-\begin{itemize}
-    \item Abgleichen der ausgegebenen IDs mit den vorhandenen aus dem Prozess. ggf. unzulässige entfernen
-\end{itemize}
-
-// TODO Entscheiden, ob ich hier noch Ablationen brauche (Falls ja hier noch ein Kapitel darüber einbauen) wie eine Baseline ohne zusätzliches Prompt Engineering, Varianten wo beim Preprocessing Lanes und Pools, Datenobjekte etc. weggelassen werden
+Ein weiterer Mechanismus zur Validierung der Ausgabe ist die Überprüfung der ausgegebenen \texttt{ids}. Da das \ac{LLM} theoretisch jede beliebige \texttt{id} ausgeben könnte, werden die ausgegebenen \texttt{ids} mit den tatsächlichen \texttt{ids} der Aktivitäten aus dem Prozess abgeglichen. Falls eine ausgegebene Aktivität nicht im Prozess existiert, wird diese aus der Antwort der Klassifizierung entfernt. Dadurch wird sichergestellt, dass nur gültige \texttt{ids} in der finalen Ausgabe enthalten sind.

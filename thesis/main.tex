@@ -62,6 +62,29 @@ BCOR15mm               % Bindekorrektur
   basicstyle=\ttfamily,
   numberstyle=\tiny}
 
+\usepackage[T1]{fontenc}
+\usepackage[scaled]{beramono}
+\lstdefinelanguage{Kotlin}{
+  morekeywords={data,class,object,val,var,fun,interface,override,package,import,null,true,false},
+  sensitive=true,
+  morecomment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  morestring=[b]"
+}
+\lstset{
+  basicstyle=\ttfamily\small,
+  columns=fullflexible,
+  showstringspaces=false,
+  tabsize=2,
+  language=Kotlin,
+  breaklines=true,
+  breakatwhitespace=false,
+  columns=fullflexible,
+  keepspaces=true,
+  postbreak=\mbox{$\hookrightarrow$\space},
+  breakindent=1em
+}
+
 % hier Namen etc. einsetzen
 \newcommand{\fullname}{Merten Dieckmann}
 \newcommand{\email}{merten.dieckmann@uni-ulm.de}
