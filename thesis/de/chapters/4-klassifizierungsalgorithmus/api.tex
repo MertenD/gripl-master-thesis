@@ -19,7 +19,7 @@ Die Klassifizierungspipeline ist über einen HTTP-Endpunkt nutzbar. Der \texttt{
 
 Die \texttt{llmProps} erlauben es, verschiedene \acp{LLM} und deren Konfigurationen flexibel zu für die Klassifizierung zu nutzen, ohne die Anwendung neu starten zu müssen. Dies ist besonders nützlich im Evaluationsframework, um verschiedene Modelle zu vergleichen.
 
-\begin{lstlisting}[language=json,caption={JSON-Schema der \texttt{llmProps}.},label={lst:api-request-schema}]
+\begin{lstlisting}[caption={JSON-Schema der \texttt{llmProps}.},label={lst:api-request-schema}]
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "LlmProps",
@@ -37,7 +37,7 @@ Die \texttt{llmProps} erlauben es, verschiedene \acp{LLM} und deren Konfiguratio
 
 Die Antwort des Endpunkts wird als \texttt{application/json} geliefert und enthält eine Liste der als \ac{DSGVO}-kritisch klassifizierten Elemente, einschließlich einer optionalen Begründung für jede Klassifikation und einem optionalen Namen des Elements für bessere Lesbarkeit. Das JSON-Schema der API-Antwort ist in Listing \ref{lst:api-response-schema} dargestellt.
 
-\begin{lstlisting}[language=json,caption={JSON-Schema der API-Antwort.},label={lst:api-response-schema}]
+\begin{lstlisting}[caption={JSON-Schema der API-Antwort.},label={lst:api-response-schema}]
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "BpmnAnalysisResult",
