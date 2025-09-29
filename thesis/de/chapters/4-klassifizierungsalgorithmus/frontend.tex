@@ -1,7 +1,21 @@
-\section{Nutzung über Frontend}\label{sec:nutzung-uber-frontend}
+\section{Nutzung über Webapp}\label{sec:nutzung-uber-webapp}
 
-\begin{itemize}
-    \item Die Klassifizierung kann über eine Sandbox im Frontend genutzt werden. Dort können auch die LLM-Parameter angepasst werden, um andere Modelle testen zu können
-    \item Sandbox ist ein voller BPMN-Editor basierend auf BPMN.js und bietet zusätzlich die Funktionalität zur Klassifizierung an
-    \item Als kritisch klassifizierte Elemente werden im Editor farblich hervorgehoben
-\end{itemize}
+Zur interaktiven Nutzung der Klassifizierung wurde eine \emph{Sandbox} in Form einer Webapp entwickelt. Sie verbindet einen vollwertigen \ac{BPMN}-Editor auf Basis von \texttt{BPMN.js} \cite{bpmn-js} mit der in Kapitel~\ref{sec:api-design} beschriebenen HTTP-Schnittstelle und macht die Analyse damit ganz einfach bedienbar. In der Sandbox können \ac{BPMN}-Modelle erstellt, verändert, exportiert und importiert sowie auf Datenschutzrelevanz analysiert werden. Als kritisch klassifizierte Aktivitäten werden nach der Analyse direkt im Editor farblich hervorgehoben, wie in Abbildung \ref{fig:sandbox-frontend-analyzed-model} zu sehen.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{images/sandbox/sandbox-analyzed-model}
+    \caption{Sandbox im Frontend mit hervorgehobenen kritischen Aktivitäten nach Analyse.}
+    \label{fig:sandbox-frontend-analyzed-model}
+\end{figure}
+
+Außerdem können die vom \ac{LLM} generierten Begründungen zu jeder als kritisch erkannten Aktivität im Editor eingesehen werden. Diese Erläuterungen werden gesammelt in einer aufklappbaren Karte im unteren Bereich des Editors angezeigt, siehe Abbildung \ref{fig:sandbox-frontend-ai-reasoning}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{images/sandbox/sandbox-ai-reasoning}
+    \caption{Begründung der Klassifikation durch das LLM in der Sandbox.}
+    \label{fig:sandbox-frontend-ai-reasoning}
+\end{figure}
+
+Um verschiedene \acp{LLM} vergleichen zu können, verfügt die Sandbox auf der rechten Seite über ein Einstellungsmenü mit konfigurierbaren \ac{LLM}-Parametern (siehe Abbildung \ref{fig:sandbox-frontend-analyzed-model}). Diese Parameter sind identisch zu den in Kapitel \ref{sec:api-design} beschriebenen \texttt{llmProps} und werden beim Absenden der Analyse in die API-Anfrage überführt.
