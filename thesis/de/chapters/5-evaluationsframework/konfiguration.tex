@@ -4,7 +4,7 @@ Die funktionale Anforderung \hyperlink{FA02}{FA02} fordert, dass Evaluationsläu
 Erstens bietet die Weboberfläche, die in \ref{sec:visualisierung-im-frontend} gezeigt wird, die Möglichkeit, Evaluationsläufe interaktiv zu konfigurieren und zu starten.
 Zweitens lässt sich eine Evaluierung über eine YAML-Datei beschreiben, die entweder in der Weboberfläche hochgeladen oder per CLI an das Evaluationsframework übergeben wird. Auf diese Weise werden Reproduzierbarkeit und Versionierung der Evaluationsläufe sichergestellt. Listing \ref{lst:evaluation-config} zeigt ein Beispiel für eine solche YAML-Konfiguration. Ein ausführliches JSON-Schema ist im Anhang (Listing \ref{lst:evaluation-config-schema}) zu finden.
 
-\begin{lstlisting}[language=yaml,caption={Beispiel einer Evaluierungskonfiguration in YAML.},label={lst:evaluation-config}]
+\begin{lstlisting}[caption={Beispiel einer Evaluierungskonfiguration in YAML.},label={lst:evaluation-config}]
 defaultEvaluationEndpoint: /gdpr/analysis/prompt-engineering
 maxConcurrent: 10
 seed: 42
