@@ -5,3 +5,10 @@
     \item HTTP-Endpunkt oder CLI zum Starten -> Holen der notwendigen Testdatensätze -> Aufruf der Klassifizierung pro Modell und pro Testcase -> Akkumulieren der Ergebnisse pro Testcase + ggf. frühzeitige Rückgabe des Ergebnisses des Testcase für Live-Ansicht in UI -> Aufarbeiten der akkumulierten Ergebnisse und berechnen wichtiger Metriken
     \item EvaluationController, MultiEvaluationRunner, EvaluationRunner, HttpEvaluator, MetricsAccumulator, ggf. Frontend (Concurrency von MultiEvaluationRunner)
 \end{itemize}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=.7\linewidth]{images/evaluation/evaluation-framework-architecture}
+    \caption{Architektur des Evaluationsframeworks}
+    \label{fig:evaluation-framework-architecture}
+\end{figure}

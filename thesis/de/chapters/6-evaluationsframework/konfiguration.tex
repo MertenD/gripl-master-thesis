@@ -1,6 +1,6 @@
 \section{Konfiguration einer Evaluierung}\label{sec:konfiguration-einer-evaluierung}
 
-Die funktionale Anforderung \hyperlink{FA02}{FA02} fordert, dass Evaluationsläufe deklarativ konfiguriert werden können. Das Framework unterstützt dies auf zwei Wegen:
+Die funktionale Anforderung \hyperlink{FA03}{FA03} fordert, dass Evaluationsläufe deklarativ konfiguriert werden können. Das Framework unterstützt dies auf zwei Wegen:
 Erstens bietet die Weboberfläche, die in \ref{sec:visualisierung-im-frontend} gezeigt wird, die Möglichkeit, Evaluationsläufe interaktiv zu konfigurieren und zu starten.
 Zweitens lässt sich eine Evaluierung über eine YAML-Datei beschreiben, die entweder in der Weboberfläche hochgeladen oder per CLI an das Evaluationsframework übergeben wird. Auf diese Weise werden Reproduzierbarkeit und Versionierung der Evaluationsläufe sichergestellt. Listing \ref{lst:evaluation-config} zeigt ein Beispiel für eine solche YAML-Konfiguration. Ein ausführliches JSON-Schema ist im Anhang (Listing \ref{lst:evaluation-config-schema}) zu finden.
 
@@ -36,7 +36,7 @@ Die Evaluierungskonfiguration umfasst die folgenden Bausteine:
     \item \texttt{maxConcurrent} gibt die maximale Anzahl parallel auszuführender Testfälle an. So lassen sich beispielsweise Rate-Limits von \acp{LLM} einhalten.
     \item \texttt{seed} legt einen Startwert (Seed) für reproduzierbare Evaluationsläufe fest. Er wird bei jedem Modell an die \texttt{llmProps} weitergereicht und bei der Kommunikation mit den \acp{LLM} verwendet, sofern diese einen Seed unterstützen.
     \item \texttt{models} enthält die zu evaluierenden Modelle. Jedes Modell besitzt ein \texttt{label} zur Identifikation und optional spezifische \texttt{llmProps}, um die Eigenschaften des verwendeten \acp{LLM} zu definieren.
-    \item \texttt{datasets} ist eine Liste von Datensatz-IDs, die in der Evaluierung verwendet werden. Die IDs referenzieren Datensätze, die in der Datenbank verwaltet werden. \textcolor{orange}{// TODO Hier muss ich irgendwie auf die gelabelten Prozesse verweisen. Vielleicht ergibt es Sinn, dass ich das Labeling und Datensätze Kapitel vorziehe, damit das bereits bekannt ist wenn ich die in der Evaluierungskonfiguration erwähne.}
+    \item \texttt{datasets} ist eine Liste von Datensatz-\texttt{ids}, die in der Evaluierung verwendet werden. Die \texttt{ids} referenzieren die Datensätze, die in der Datenbank verwaltet werden und jeweils eine Menge von Testfällen beinhalten.
 \end{itemize}
 
 Wie im Schema in Listing \ref{lst:evaluation-config-schema} gezeigt, kann jedem Modell optional ein eigener \texttt{evaluationEndpoint} zugewiesen werden, der den in \texttt{defaultEvaluationEndpoint} definierten Standard überschreibt. Dadurch lassen sich unterschiedliche Klassifizierungsalgorithmen oder -versionen gezielt pro Modell vergleichen. Ist kein spezifischer Endpunkt angegeben, greift automatisch der Standardendpunkt.

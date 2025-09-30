@@ -21,20 +21,27 @@ In der folgenden Tabelle sind die funktionalen Anforderungen an das Evaluationsf
 
 \begin{center}
     \reqTable{01}
-    {Vergleichbarkeit von Modellen und Algorithmen}
-    {Das Framework erlaubt den direkten Vergleich verschiedener \acp{LLM} sowie unterschiedlicher Klassifizierungsalgorithmen anhand gelabelter Testdaten. Die Anbindung an Klassifizierungsalgorithmen erfolgt über die in Kapitel~\ref{sec:api-design} definierte, standardisierte HTTP-Schnitstelle.}
+    {Nutzen gelabelter Testdatensätze}
+    {Das Framework kann die gelabelten Testdatensätze benutzten, die mit dem Labeling-Tool aus \ref{sec:labeling-tool} erstellt worden sind.}
     {}
 \end{center}
 
 \begin{center}
     \reqTable{02}
-    {Deklarative Konfiguration}
-    {Ein Evaluationslauf ist vollständig über eine YAML-Datei konfigurierbar. Dazu zöhlen Modelle, Klassifizierungsendpunkte, Testdatensätze, Seed. Experimente werden dadurch portabel und wiederholbar.}
+    {Vergleichbarkeit von Modellen und Algorithmen}
+    {Das Framework erlaubt den direkten Vergleich verschiedener \acp{LLM} sowie unterschiedlicher Klassifizierungsalgorithmen anhand gelabelter Testdaten. Die Anbindung an Klassifizierungsalgorithmen erfolgt über die in Kapitel~\ref{sec:api-design} definierte, standardisierte HTTP-Schnitstelle.}
     {01}
 \end{center}
 
 \begin{center}
     \reqTable{03}
+    {Deklarative Konfiguration}
+    {Ein Evaluationslauf ist vollständig über eine YAML-Datei konfigurierbar. Dazu zöhlen Modelle, Klassifizierungsendpunkte, Testdatensätze, Seed. Experimente werden dadurch portabel und wiederholbar.}
+    {02}
+\end{center}
+
+\begin{center}
+    \reqTable{04}
     {Detaillierte Ergebnisaufbereitung}
     {
     Das Framework gibt Ergebnisse auf zwei Ebenen aus.
@@ -44,19 +51,19 @@ In der folgenden Tabelle sind die funktionalen Anforderungen an das Evaluationsf
     \end{enumerate}
     Zusätzlich protokolliert das Framework Metadaten der Evaluation, z.\,B. Endpunkt, verwendete Modelle und den Seed.
     }
-    {01}
-\end{center}
-
-\begin{center}
-    \reqTable{04}
-    {Frontend}
-    {Für eine einfache Bedienung und Ansicht der Ergebnisse bietet das Evaluationsframework ein Frontend an.}
-    {01,02,03}
+    {02}
 \end{center}
 
 \begin{center}
     \reqTable{05}
+    {Frontend}
+    {Für eine einfache Bedienung und Ansicht der Ergebnisse bietet das Evaluationsframework ein Frontend an.}
+    {02,03,04}
+\end{center}
+
+\begin{center}
+    \reqTable{06}
     {Visualisierung und Berichte der Gesamtresultate}
     {Kennzahlen werden als Side-by-Side-Diagramme und tabellarisch dargestellt. Zusätzlich stehen Export/Import der Ergebnisse als JSON sowie ein Markdown-Report zur Verfügung.}
-    {04}
+    {05}
 \end{center}
