@@ -50,3 +50,64 @@ data class BpmnAnalysisResult(
     /* Some other methods are not included */
 }
 \end{lstlisting}
+
+\begin{lstlisting}[caption={Schema der YAML-Evaluationskonfiguration},label={lst:evaluation-config-schema}]
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$ref": "#/definitions/Configuration",
+    "definitions": {
+        "Configuration": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "defaultEvaluationEndpoint": {
+                    "type": "string"
+                },
+                "maxConcurrent": { "type": "integer" },
+                "models": {
+                    "type": "array",
+                    "items": { "$ref": "#/definitions/Model" }
+                },
+                "datasets": {
+                    "type": "array",
+                    "items": { "type": "integer" }
+                },
+                "seed": { "type": "integer" }
+            },
+            "required": [
+                "defaultEvaluationEndpoint",
+                "models"
+                "datasets",
+            ],
+            "title": "Configuration"
+        },
+        "Model": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "label": { "type": "string" },
+                "evaluationEndpoint": { "type": "string" },
+                "llmProps": { "$ref": "#/definitions/LlmProps" }
+            },
+            "required": [ "label" ],
+            "title": "Model"
+        },
+        "LlmProps": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "baseUrl": {
+                    "type": "string",
+                    "format": "uri",
+                    "qt-uri-protocols": [ "https" ]
+                },
+                "modelName": { "type": "string" },
+                "apiKey": { "type": "string"},
+                "timeoutSeconds": { "type": "number" }
+            },
+            "required": [],
+            "title": "LlmProps"
+        }
+    }
+}
+\end{lstlisting}

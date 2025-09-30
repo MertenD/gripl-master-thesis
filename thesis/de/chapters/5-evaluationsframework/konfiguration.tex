@@ -1,12 +1,13 @@
 \section{Konfiguration einer Evaluierung}\label{sec:konfiguration-einer-evaluierung}
 
-\begin{itemize}
-    \item Evaluierung kann mit einer YAML Datei konfiguriert werden
-\end{itemize}
+Die funktionale Anforderung \hyperlink{FA02}{FA02} fordert, dass Evaluationsläufe deklarativ konfiguriert werden können. Das Framework unterstützt dies auf zwei Wegen:
+Erstens bietet die Weboberfläche, die in \ref{sec:visualisierung-im-frontend} gezeigt wird, die Möglichkeit, Evaluationsläufe interaktiv zu konfigurieren und zu starten.
+Zweitens lässt sich eine Evaluierung über eine YAML-Datei beschreiben, die entweder in der Weboberfläche hochgeladen oder per CLI an das Evaluationsframework übergeben wird. Auf diese Weise werden Reproduzierbarkeit und Versionierung der Evaluationsläufe sichergestellt. Listing \ref{lst:evaluation-config} zeigt ein Beispiel für eine solche YAML-Konfiguration. Ein ausführliches JSON-Schema ist im Anhang (Listing \ref{lst:evaluation-config-schema}) zu finden.
 
-\begin{verbatim}
+\begin{lstlisting}[language=yaml,caption={Beispiel einer Evaluierungskonfiguration in YAML.},label={lst:evaluation-config}]
 defaultEvaluationEndpoint: /gdpr/analysis/prompt-engineering
 maxConcurrent: 10
+seed: 42
 models:
   - label: Mistral Medium 3.1
     llmProps:
@@ -26,8 +27,18 @@ models:
 datasets:
   - 2
   - 7
-\end{verbatim}
+\end{lstlisting}
+
+Die Evaluierungskonfiguration umfasst die folgenden Bausteine:
 
 \begin{itemize}
-    \item Secrets können entweder im Klartext angegeben werden oder sicher mit \texttt{\$\{...\}} referenziert werden, wenn sie im Backend als Umgebungsvariable hinterlegt sind
+    \item \texttt{defaultEvaluationEndpoint} ist der Standardendpunkt für die Klassifizierung. Er wird verwendet, wenn für ein Modell kein eigener Endpunkt angegeben ist. Der Endpunkt muss die in Kapitel \ref{sec:api-design} beschriebene API-Spezifikation erfüllen und kann relativ (gegen die Basis-URL des Evaluationsframeworks) oder absolut (für einen externen Dienst) angegeben werden.
+    \item \texttt{maxConcurrent} gibt die maximale Anzahl parallel auszuführender Testfälle an. So lassen sich beispielsweise Rate-Limits von \acp{LLM} einhalten.
+    \item \texttt{seed} legt einen Startwert (Seed) für reproduzierbare Evaluationsläufe fest. Er wird bei jedem Modell an die \texttt{llmProps} weitergereicht und bei der Kommunikation mit den \acp{LLM} verwendet, sofern diese einen Seed unterstützen.
+    \item \texttt{models} enthält die zu evaluierenden Modelle. Jedes Modell besitzt ein \texttt{label} zur Identifikation und optional spezifische \texttt{llmProps}, um die Eigenschaften des verwendeten \acp{LLM} zu definieren.
+    \item \texttt{datasets} ist eine Liste von Datensatz-IDs, die in der Evaluierung verwendet werden. Die IDs referenzieren Datensätze, die in der Datenbank verwaltet werden. \textcolor{orange}{// TODO Hier muss ich irgendwie auf die gelabelten Prozesse verweisen. Vielleicht ergibt es Sinn, dass ich das Labeling und Datensätze Kapitel vorziehe, damit das bereits bekannt ist wenn ich die in der Evaluierungskonfiguration erwähne.}
 \end{itemize}
+
+Wie im Schema in Listing \ref{lst:evaluation-config-schema} gezeigt, kann jedem Modell optional ein eigener \texttt{evaluationEndpoint} zugewiesen werden, der den in \texttt{defaultEvaluationEndpoint} definierten Standard überschreibt. Dadurch lassen sich unterschiedliche Klassifizierungsalgorithmen oder -versionen gezielt pro Modell vergleichen. Ist kein spezifischer Endpunkt angegeben, greift automatisch der Standardendpunkt.
+
+API-Keys in den \texttt{llmProps} können optional als Umgebungsvariablen referenziert werden, wie im Beispiel in Listing \ref{lst:evaluation-config} gezeigt. So lassen sich sensible Daten sicher handhaben, ohne sie direkt in der Konfigurationsdatei zu speichern. Die Umgebungsvariablen werden zur Laufzeit aufgelöst und müssen daher im Kontext des Anwendung verfügbar sein.
