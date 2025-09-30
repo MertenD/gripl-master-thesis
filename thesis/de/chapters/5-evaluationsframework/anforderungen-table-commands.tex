@@ -1,0 +1,56 @@
+% Functional-Requirement Table Design
+%
+% Oberhalb und unterhalb des Zeilen Contents muss noch irgendwie Platzeingefügt werden
+\newcounter{linkcount}
+\newcounter{linktotal}
+
+\newcommand{\countLinks}[1]{%
+    \setcounter{linkcount}{0}%
+    \setcounter{linktotal}{0}%
+    \renewcommand*{\do}[1]{\stepcounter{linktotal}}%
+    \docsvlist{#1}%
+}
+
+\newcommand{\createHyperlinks}[1]{%
+    \ifthenelse{\equal{#1}{-}}%
+    {-}%
+    {%
+        \countLinks{#1}%
+        \renewcommand*{\do}[1]{%
+            \stepcounter{linkcount}%
+            \hyperlink{FA##1}{FA##1}%
+            \ifnum\value{linkcount}<\value{linktotal}%
+            ,\ %
+            \fi%
+        }%
+        \docsvlist{#1}%
+    }%
+}
+
+\newcommand{\reqTable}[4]{
+        {\rowcolors{2}{gray!50!white!20}{gray!40!white!10}
+    \phantomsection\hypertarget{FA#1}{}
+    \begin{tabular}{ p{3cm} p{10.2cm} }
+        \rowcolor{darkgray}\textcolor{white}{\textbf{ID:}} & \textcolor{white}{\textbf{FA#1}} \\
+        Titel: & #2 \\
+        Beschreibung: & #3 \\
+        Abhängigkeit: & \createHyperlinks{#4} \\
+    \end{tabular}
+    }
+}
+
+\newcommand{\createHyperlinksNFA}[1]{%
+    \ifthenelse{\equal{#1}{-}}%
+    {-}%
+    {%
+        \countLinks{#1}%
+        \renewcommand*{\do}[1]{%
+            \stepcounter{linkcount}%
+            \hyperlink{NFA##1}{NFA##1}%
+            \ifnum\value{linkcount}<\value{linktotal}%
+            ,\ %
+            \fi%
+        }%
+        \docsvlist{#1}%
+    }%
+}
