@@ -6,7 +6,7 @@ Das Evaluationsframework ist modular aufgebaut und nutzt eine Pipeline-Architekt
 
 \begin{figure}
     \centering
-    \includegraphics[width=\linewidth]{images/evaluation/evaluation-framework-architecture}
+    \includegraphics[width=\linewidth]{images/evaluation/evaluation-framework-architecture.drawio}
     \caption{Architektur des Evaluationsframeworks}
     \label{fig:evaluation-framework-architecture}
 \end{figure}
@@ -49,7 +49,7 @@ Nach Abschluss aller Testfälle erzeugt der \texttt{MetricsAccumulator} ein\brea
 \subsection*{Zusammenfassung}
 
 Die Architektur trennt Zuständigkeiten strikt:
-\textt{MultiEvaluationRunner} koordiniert Modellläufe,
-\textt{EvaluationRunner} verarbeitet Testfälle und sammelt Metriken,
-\textt{HttpEvaluator} kommuniziert mit der Klassifizierungs-Pipeline,
-\textt{MetricsAccumulator} aggregiert Ergebnisse pro Modell über mehrere Testfälle.
+\texttt{MultiEvaluationRunner} koordiniert Modellläufe,
+\texttt{EvaluationRunner} verarbeitet Testfälle und sammelt Metriken,
+\texttt{HttpEvaluator} kommuniziert mit der Klassifizierungs-Pipeline,
+\texttt{MetricsAccumulator} aggregiert Ergebnisse pro Modell über mehrere Testfälle.
