@@ -78,7 +78,7 @@ export default function EvaluationReportSummaryCardSingle({ reportSummary }: Sum
                 </CardContent>
             </Card>
 
-            <Card>
+            {/*<Card>
                 <CardHeader>
                     <CardTitle>Confusion Matrix</CardTitle>
                 </CardHeader>
@@ -179,7 +179,7 @@ export default function EvaluationReportSummaryCardSingle({ reportSummary }: Sum
                         </TableBody>
                     </Table>
                 </CardContent>
-            </Card>
+            </Card>*/}
         </div>
     );
 }

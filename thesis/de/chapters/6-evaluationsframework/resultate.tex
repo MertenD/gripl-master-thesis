@@ -1,7 +1,25 @@
-\section{Generierte Resultate}\label{sec:generierte-resultate}
+\section{Evaluationsergebnisse}\label{sec:generierte-resultate}
 
-\begin{itemize}
-    \item Für jeden Testfall werden pro Modell Ergebnisse gesammelt (klassifizierte Aktivitäten mit Erklärung, TP/FP/FN/TN, Bild-URL mit farblich hervorgehobenen Aktivitäten, bestanden oder nicht bestanden)
-    \item Pro Modell werden ``Summary-Objekte'' erstellt mit jeweils Precision, Accuracy, Recall, F1-Score, Confusion (TP/FP/FN/TN), Anzahl korrekter Testfälle, Anzahl falsch klassifizierter Testfälle und Anzahl Testfälle in denen es zu Problemen kam (Bspw. Parsing Fehler, Token Limit überschritten, \ldots)
-    \item Generelle Metadaten über die genutzten Modelle, Endpunkte zur Klassifizierung und Testdatensätze, sowie Zeitstempel (und Seed????)
-\end{itemize}
+Im vorherigen Abschnitt wurde erwähnt, dass die Komponenten des Evaluationsframeworks Berichtartefakte zurückgeben. Diese sind im im Architekturbild \ref{fig:evaluation-framework-architecture} als Beschriftungen über den gestrichelten Pfeilen dargestellt. Im Folgenden werden die Berichtartefakte beschrieben:
+
+\begin{description}
+    \item[\texttt{MetadataReport}] Berichtsartefakt, das der \texttt{MultiEvaluationRunner} zu Beginn der Evaluierung erzeugt. Es enthält Metadaten zur Evaluierung, z.\,B.\ Informationen über die Testdatensätze, die Anzahl der Testfälle sowie den verwendeten Seed. Das \texttt{MetadataReport}-Artefakt wird zuerst zurückgegeben, damit die Weboberfläche bereits Metadaten anzeigen kann, während die Evaluierung noch läuft.
+
+    \item[\texttt{TestCaseReport}] Berichtsartefakt, das der \texttt{EvaluationRunner} für jeden abgeschlossenen Testfall erzeugt. Es enthält u.\,a.\ die Testfall-\texttt{id}, das Klassifizierungsergebnis und die für diesen Testfall berechneten Metriken. \texttt{TestCaseReport}-Artefakte werden fortlaufend bereitgestellt, sobald ein Testfall abgeschlossen ist, sodass die Weboberfläche Ergebnisse unmittelbar anzeigen kann.
+
+    \item[\texttt{EvaluationReportSummary}] Berichtsartefakt, das der \texttt{MetricsAccumulator} am Ende der Evaluierung eines Modells erzeugt. Es fasst die aggregierten Metriken, wie z.\,B.\ \emph{Precision}, \emph{Recall}, \emph{F1-Score} und \emph{Accuracy}, sowie die Konfusionsmatrix zusammen. Das \texttt{EvaluationReportSummary}-Artefakt wird als letztes Berichtsartefakt pro Modell zurückgegeben und dient dem Modellvergleich in der Weboberfläche.
+\end{description}
+
+Die Informationen dieser Berichtsartefakte ermöglichen die Generierung eines ausführlichen Evaluierungsberichts, wie in \hyperlink{FA04}{FA04} gefordert. Im Folgenden ist dargestellt, welche Informationen nach Abschluss einer Evaluierung vorliegen.
+
+\subsection*{Pro Testfall und Modell}
+
+Für jeden Testfall eines Modells liegen vor: die von der Klassifizierungs-Pipeline zurückgegebenen klassifizierten Aktivitäten (mit optionalen Begründungen), die gelabelten erwarteten Aktivitäten, die Zählwerte für \emph{\ac{TP}}, \emph{\ac{FP}}, \emph{\ac{FN}} und \emph{\ac{TN}} sowie eine Bild-URL zur Visualisierung des \ac{BPMN}-Modells mit hervorgehobenen Aktivitäten. Aus diesen Informationen lässt sich ableiten, ob der Testfall erfolgreich war. Ein Testfall gilt als erfolgreich, wenn die klassifizierten Aktivitäten exakt den erwarteten Aktivitäten entsprechen. Technische Probleme, die während der Klassifizierung auftreten, werden ebenfalls erfasst, z.\,B.\ Parsing-Fehler, ungültiges \ac{BPMN}, Token-Limit-Überschreitungen oder Zeitüberschreitungen.
+
+\subsection*{Pro Modell über alle Testfälle}
+
+Auf Modellebene stehen die Gesamtergebnisse über alle Testfälle zur Verfügung. Dazu gehören die aggregierten Kennzahlen \emph{Precision}, \emph{Accuracy}, \emph{Recall} und \emph{F1-Score} sowie eine Konfusionsmatrix mit den Gesamtwerten für \emph{\ac{TP}}, \emph{\ac{FP}}, \emph{\ac{FN}} und \emph{\ac{TN}}. Zusätzlich sind die Anzahlen der korrekt bzw.\ falsch klassifizierten sowie der technisch fehlgeschlagenen Testfälle aufgeführt.
+
+\subsection*{Über alle Modelle}
+
+Abschließend sind die Metadaten der gesamten Evaluierung verfügbar: die verwendeten Testdatensätze, die Anzahl der Testfälle, die konfigurierten Modelle, der für die Reproduzierbarkeit verwendete Seed sowie ein Zeitstempel der Evaluierung. Zum unmittelbaren Vergleich werden die aggregierten Kennzahlen aller Modelle nebeneinander dargestellt.
