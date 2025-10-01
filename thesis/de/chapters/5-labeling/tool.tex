@@ -1,14 +1,29 @@
 \section{Labeling Tool}\label{sec:labeling-tool}
 
-Hier sollte ich auch darauf eingehen, dass die fertigen gelabelten Testdaten in einer Datenbank abgelegt werden, damit ich mich im Kapitel \ref{sec:testdaten} des Evaluationsframeworks darauf beziehen kann, dass die Datensätze über ihre IDs, die in der Konfig angegeben werden, aus der Datenbank gelesen werden.
+Um die Erstellung und Verwaltung von gelabelten \ac{BPMN}-Prozessmodellen zu erleichtern, wurde eine Webapplikation entwickelt. Mit dieser können \ac{BPMN}-Testfälle erstellt, bearbeitet und Aktivitäten mit Labeln versehen werden. Wichtige Funktionen des Labeling-Tools umfassen:
 
-Hier brauche noch genaue Kapitel, aber hier soll auf jeden Fall folgendes rein:
 \begin{itemize}
-    \item Definition von Labeln hier, oder kommt das schon vorher? (Muss im Verlauf beim schreiben entschieden werden)
-    \item Labeling Software wurde entwickelt
-    \item Es können Datensätze mit Namen und Beschreibungen erstellt werden
-    \item Für jeden Datensatz können beliebig viele Testcases erstellt werden
-    \item Ein Testcase ist ein BPMN Diagramm, welches direkt in der App mithilfe von bpmn.io bearbeitet werden kann
-    \item Zusätzlich bietet der Editor eine Labeling Funktionalität, mit welcher Aktivitäten, welche als kritisch erkannt werden sollen, gelabelt werden. Zusätzlich kann auch eine Erklärung angegeben werden
-    \item Datensätze und gelabelte Testcases werden in Datenbank gespeichert und werden während der Evaluierung des Evaluationsframeworks benutzt
+    \item Anlegen und Verwalten von Datensätzen.
+    \item Erstellung beliebig vieler Testfälle pro Datensatz.
+    \item Direkte Bearbeitung von \ac{BPMN}-Modellen im Browser mittels BPMN.io \cite{bpmnio}.
+    \item Labeling-Modus, in dem Aktivitäten als \ac{DSGVO}-kritisch markiert werden können. Optional kann eine Begründung für die Markierung angegeben werden.
+    \item Persistente Speicherung der annotierten Testfälle in einer Datenbank für die spätere Nutzung im Evaluationsframework (siehe Kapitel \ref{ch:evaluationsframework}).
 \end{itemize}
+
+Abbildung \ref{fig:labeling-editor} zeigt den Labeling-Editor: Hier können Anwender Prozessmodelle erstellen und Aktivitäten im Labeling-Modus direkt als kritisch markieren. Optional kann für jede markierte Aktivität eine Begründung eingegeben werden. Diese Begründung ist ausschließlich als Hilfe für den Anwender gedacht, um die eigene Entscheidung zu dokumentieren. Die Begründung wird nicht in der Evaluierung berücksichtigt.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{images/labeling/labeling-editor}
+    \caption{Labeling-Editor im Labeling-Modus mit exemplarischem Modell.}
+    \label{fig:labeling-editor}
+\end{figure}
+
+In der Übersicht der Datensätze aus Abbildung \ref{fig:labeling-datasets} sind alle angelegten Datensätze und zugehörigen Testfälle aufgelistet. Von hier aus können neue Datensätze und Testfälle erstellt sowie bestehende bearbeitet werden.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{images/labeling/labeling-datasets}
+    \caption{Übersicht der Datensätze im Labeling-Tool.}
+    \label{fig:labeling-datasets}
+\end{figure}

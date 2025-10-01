@@ -1,13 +1,46 @@
 \section{Quellen und Eigenschaften der Datensätze}\label{sec:quellen-und-eigenschaften-der-datensatze}
 
-\begin{itemize}
-    \item Es werden drei unterschiedliche Datensätze genutzt
-    \begin{itemize}
-        \item Von der Uni bekommen
-        \item Mittelgroße realistische Prozesse aus unterschiedlichen Branchen (mit Pools, Lanes, Datenobjekten, Gateways, \ldots)
-        \item Kleine Prozesse mit maximal 5 Aktivitäten und keinen weiteren Elementen
-    \end{itemize}
-    \item Eventuell tabellarische Aufzählung von Eckdaten zu jedem Datensatz (Anzahl Elemente, Sprache, benutzte Elemente)
-    \item Hier sollte ich glaube ich noch besser erklären warum die Auswahl heterogen ist (und damit möglichst aussagekräftige Ergebnisse in der Evaluierung erzeugen)
-    \item Eventuell (im Anhang) eine Liste aller Testfälle jeweils auch mit den Eckdaten und auf diese verweisen. Da kann dann auch immer noch eine kurze Beschreibung dazu was daran besonders ist
-\end{itemize}
+Für die Evaluation wurden drei Gruppen von \ac{BPMN}-Datensätzen eingesetzt:
+
+\begin{enumerate}
+    \item Prozesse, die von der Universität Ulm bereitgestellt wurden (z.B.\ Lehrbeispiele aus Übungsaufgaben).
+    \item Realistische, mittelgroße Szenarien aus verschiedenen Domänen. Diese Prozesse beinhalten Elemente wie Pools, Lanes, Datenobjekte und Gateways.
+    \item Kleine, reduzierte Testfälle mit maximal fünf Aktivitäten und wenigen weiteren Elementen (z.B. einfacher Sequenzfluss ohne Pools).
+\end{enumerate}
+
+Diese heterogene Auswahl ist bewusst getroffen worden, da die Mischung aus verschiedenen Domänen und Modellkomplexitäten eine aussagekräftige Evaluation ermöglicht. In der Literatur wird betont, dass eine erhöhte Datensatzvielfalt die Robustheit der Bewertung steigert und einseitige Ergebnisse vermeidet \cite{blake2025datasetdiversity}. Tabelle \ref{tab:datensaetze-eckdaten} zeigt die Eckdaten der Datensätze.
+
+\textcolor{orange}{// TODO Noch mehr Testfälle hinzufügen - insbesondere, um auf die Datenassoziationsthematik aus dem Kapitel \ref{sec:bpmn} einzugehen. Ich sollte also mindestens ein kleines Beipsiel jeweils mit und ohne Datenassoziation haben, um den Unterschied zu verdeutlichen. Das bedeutet aber auch, dass ich die Tabelle \ref{tab:datensaetze-eckdaten} neu berechnen muss.}
+
+\begin{table}[htbp]
+    \centering
+    \begin{threeparttable}
+    \caption{Eckdaten der verwendeten Datensätze}
+    \label{tab:datensaetze-eckdaten}
+    \begin{tabular}{l r r r}
+        \toprule
+        & Uni-Prozesse & Reale Szenarien & Kleine Testfälle \\
+        \midrule
+        Testfälle Gesamt                  & 5  & 5  & 10 \\
+        Testfälle (DE)                    & 0 & 4 & 10 \\
+        Testfälle (EN)                    & 5 & 1 & 0 \\
+        Ø Aktivitäten $\pm$ SD\tnote{1}   & 13,4 $\pm$ 2,6 & 11,6 $\pm$ 4,2 & 5 $\pm$ 0 \\
+        Ø Aktivitäten (kritisch) $\pm$ SD & 8,6 $\pm$ 3,6 & 6,6 $\pm$ 1,9 & 2,6 $\pm$ 1,5 \\
+        Ø Datenobjekte $\pm$ SD           & 1,4 $\pm$ 1,9 & 3,6 $\pm$ 2,1 & 0 $\pm$ 0 \\
+        Ø Datenassoziationen $\pm$ SD     & 2,4 $\pm$ 3,3 & 7 $\pm$ 4 & 0 $\pm$ 0 \\
+        Ø Ereignisse $\pm$ SD             & 21 $\pm$ 13,8 & 8,2 $\pm$ 2,8 & 2 $\pm$ 0 \\
+        Ø Gateways $\pm$ SD               & 13 $\pm$ 7,6 & 1,8 $\pm$ 1,5 & 0 $\pm$ 0 \\
+        Ø Pools $\pm$ SD                  & 3,4 $\pm$ 1,1 & 3 $\pm$ 1 & 0 $\pm$ 0 \\
+        Ø Lanes $\pm$ SD\tnote{2}         & 3 $\pm$ 1 & 4 $\pm$ 0,7 & 0 $\pm$ 0 \\
+        Ø Nachrichtenflüsse $\pm$ SD      & 9,4 $\pm$ 5,3 & 5,2 $\pm$ 0,8 & 0 $\pm$ 0 \\
+        Ø Annotationen $\pm$ SD           & 1 $\pm$ 1,7 & 0 $\pm$ 0 & 0 $\pm$ 0 \\
+        \bottomrule
+    \end{tabular}
+    \begin{tablenotes}
+        \item[1] SD = Standardabweichung $s$ der jeweiligen Anzahl pro Testfall.
+        \item[2] Blackbox-Pools ohne Lanes wurden nicht mitgezählt, daher kann der Durchschnittswert der Lanes geringer ausfallen als der, der Pools.
+    \end{tablenotes}
+    \end{threeparttable}
+\end{table}
+
+\textcolor{orange}{// TODO Hier noch einen Abschnitt wo ich ein paar besondere Testfälle hervorhebe, z.B. mit speziellen Datenassoziationen, oder reicht der Überblick mit den Eckdaten? Spätestens in den Fallstudien der Ergebnisse werde ich ja nochmal auf einzelne Testfälle eingehen.}
