@@ -14,6 +14,8 @@ import {LlmPropsOverride} from "@/models/dto/MultiEvaluationRequest";
 import LlmBaseUrlDatalist from "@/components/datalist/llm-base-url-datalist";
 import LlmModelNameDatalist from "@/components/datalist/llm-model-name-datalist";
 import LlmApiKeyPlaceholderDatalist from "@/components/datalist/llm-api-key-placeholder-datalist";
+import {GenerateRandomInput} from "@/components/ui/input-generate-random";
+import {safeFloatOrNull} from "@/lib/evaluation-config-utils";
 
 interface AnalysisToolCardProps {
     bpmnXml: string;
@@ -26,7 +28,9 @@ export default function AnalysisToolCard({ bpmnXml, analysisResult, setAnalysisR
     const [llmBaseUrl, setLlmBaseUrl] = useState<string>("")
     const [modelName, setModelName] = useState<string>("")
     const [apiKey, setApiKey] = useState<string>("")
-    const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false);
+    const [seed, setSeed] = useState<number | null>(null)
+    const [temperature, setTemperature] = useState<number | null>(null)
+    const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false)
 
     function handleAnalyzeClick() {
         setAnalysisResult(null);
@@ -39,7 +43,9 @@ export default function AnalysisToolCard({ bpmnXml, analysisResult, setAnalysisR
         const llmProps = {
             baseUrl: llmBaseUrl || null,
             modelName: modelName || null,
-            apiKey: apiKey || null
+            apiKey: apiKey || null,
+            seed: seed || null,
+            temperature: temperature || null,
         } as LlmPropsOverride
         const jsonBlob = new Blob([JSON.stringify(llmProps)], { type: "application/json" });
         formData.append("llmProps", jsonBlob);
@@ -83,8 +89,8 @@ export default function AnalysisToolCard({ bpmnXml, analysisResult, setAnalysisR
             <CardTitle className="text-lg font-semibold">GRIPL Analysis Tool</CardTitle>
             <CardDescription>Analyze the given BPMN diagram for GDPR compliance using the specified LLM. Critical elements will be highlighted in the diagram.</CardDescription>
         </CardHeader>
-        <CardContent className="flex flex-col space-y-4">
-            <div className="space-y-2">
+        <CardContent className="flex flex-col space-y-2">
+            <div className="space-y-1">
                 <Label>LLM Base URL</Label>
                 <Input
                     type="text"
@@ -96,7 +102,7 @@ export default function AnalysisToolCard({ bpmnXml, analysisResult, setAnalysisR
                 />
                 <LlmBaseUrlDatalist id="llm-base-urls"/>
             </div>
-            <div className="space-y-2">
+            <div className="space-y-1">
                 <Label>Model Name</Label>
                 <Input
                     type="text"
@@ -106,9 +112,9 @@ export default function AnalysisToolCard({ bpmnXml, analysisResult, setAnalysisR
                     onChange={(e) => setModelName(e.target.value)}
                     list="llm-model-names"
                 />
-                <LlmModelNameDatalist id="llm-model-names" />
+                <LlmModelNameDatalist id="llm-model-names"/>
             </div>
-            <div className="space-y-2">
+            <div className="space-y-1">
                 <Label>API Key</Label>
                 <PasswordInput
                     className="w-full"
@@ -117,28 +123,44 @@ export default function AnalysisToolCard({ bpmnXml, analysisResult, setAnalysisR
                     onChange={(e) => setApiKey(e.target.value)}
                     list="llm-api-key-placeholders"
                 />
-                <LlmApiKeyPlaceholderDatalist id="llm-api-key-placeholders" />
+                <LlmApiKeyPlaceholderDatalist id="llm-api-key-placeholders"/>
             </div>
-            <Separator />
+            <div className="space-y-1">
+                <Label>Seed</Label>
+                <GenerateRandomInput id="seed" placeholder="Seed for reproducibility"
+                                     length={8}
+                                     value={seed || ""}
+                                     alphabet={"0123456789"}
+                                     onChange={(e) => setSeed(parseInt(e.target.value))}
+                                     className="w-full"/>
+            </div>
+            <div className="space-y-2">
+                <Label>Temperature</Label>
+                <Input type="number" placeholder="1.0" value={temperature ?? ""}
+                       onChange={(e) => setTemperature(safeFloatOrNull(e.target.value))}/>
+            </div>
+            <div className="py-2">
+                <Separator/>
+            </div>
             <Button
                 onClick={handleAnalyzeClick}
                 variant="default"
                 disabled={isAnalyzing || !bpmnXml}
             >
-                { isAnalyzing ? <>
-                    <Spinner className="text-white mr-2 h-4 w-4" />
+                <>{isAnalyzing ? <>
+                    <Spinner className="text-white mr-2 h-4 w-4"/>
                     <span>Analyzing...</span>
                 </> : <>
-                    <FileText className="mr-2 h-4 w-4" />
+                    <FileText className="mr-2 h-4 w-4"/>
                     Analyze for GDPR
-                </> }
+                </>}</>
             </Button>
             <Button
                 onClick={handleDownloadResultClick}
                 variant="outline"
                 disabled={!analysisResult || analysisResult.criticalElements.length === 0 || isAnalyzing}
             >
-                <Download className="mr-2 h-4 w-4" />
+                <Download className="mr-2 h-4 w-4"/>
                 Download Report (Json)
             </Button>
             <Button
@@ -146,7 +168,7 @@ export default function AnalysisToolCard({ bpmnXml, analysisResult, setAnalysisR
                 variant="outline"
                 disabled={!analysisResult || analysisResult.criticalElements.length === 0 || isAnalyzing}
             >
-                <RefreshCw className="mr-2 h-4 w-4" />
+                <RefreshCw className="mr-2 h-4 w-4"/>
                 Clear Analysis Results
             </Button>
         </CardContent>

@@ -56,7 +56,7 @@ export default function EvaluationConfigDefaultSettings(props: EvaluationConfigD
                     </Select>
                 </div>
 
-                {defaultEndpointChoice === "preset" && (
+                <>{defaultEndpointChoice === "preset" && (
                     <div className="space-y-2">
                         <Label>Preset Endpoint</Label>
                         <Select value={defaultPresetEndpoint} onValueChange={setDefaultPresetEndpoint}>
@@ -64,24 +64,24 @@ export default function EvaluationConfigDefaultSettings(props: EvaluationConfigD
                                 <SelectValue placeholder="Select preset endpoint"/>
                             </SelectTrigger>
                             <SelectContent>
-                                {availableEvaluationEndpoints.map((ep) => (
+                                <>{availableEvaluationEndpoints.map((ep) => (
                                     <SelectItem key={ep.endpoint} value={ep.endpoint}>
                                         {ep.name}
                                     </SelectItem>
-                                ))}
+                                ))}</>
                             </SelectContent>
                         </Select>
                     </div>
-                )}
+                )}</>
 
-                {defaultEndpointChoice === "custom" && (
+                <>{defaultEndpointChoice === "custom" && (
                     <div className="space-y-2">
                         <Label>Custom Endpoint</Label>
                         <Input type="text" placeholder="https://example.com/analysis/v1"
                                value={defaultCustomEndpoint}
                                onChange={(e) => setDefaultCustomEndpoint(e.target.value)}/>
                     </div>
-                )}
+                )}</>
 
                 <div className="space-y-2">
                     <Label>Max Concurrent LLM Requests</Label>

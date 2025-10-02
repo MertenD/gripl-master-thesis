@@ -9,7 +9,7 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/c
 import {Separator} from "@/components/ui/separator";
 import {Copy, Trash2} from "lucide-react";
 import {EndpointChoice, ModelRowState} from "@/models/evaluation/Config";
-import {emptyToNull, safeIntOrNull} from "@/lib/evaluation-config-utils";
+import {emptyToNull, safeFloatOrNull, safeIntOrNull} from "@/lib/evaluation-config-utils";
 import LlmBaseUrlDatalist from "@/components/datalist/llm-base-url-datalist";
 import LlmModelNameDatalist from "@/components/datalist/llm-model-name-datalist";
 import LlmApiKeyPlaceholderDatalist from "@/components/datalist/llm-api-key-placeholder-datalist";
@@ -83,11 +83,13 @@ export default function EvaluationConfigModelRow({model, index, canRemove, effec
                                     <SelectValue placeholder="Select preset endpoint" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    {availableEvaluationEndpoints.map((ep) => (
-                                        <SelectItem key={ep.endpoint} value={ep.endpoint}>
-                                            {ep.name}
-                                        </SelectItem>
-                                    ))}
+                                    <>
+                                        {availableEvaluationEndpoints.map((ep) => (
+                                            <SelectItem key={ep.endpoint} value={ep.endpoint}>
+                                                {ep.name}
+                                            </SelectItem>
+                                        ))}
+                                    </>
                                 </SelectContent>
                             </Select>
                         </div>
@@ -129,12 +131,13 @@ export default function EvaluationConfigModelRow({model, index, canRemove, effec
                             onChange={(e) => updateModel(model.id, "modelName", emptyToNull(e.target.value))}
                             list="llm-model-name-datalist"
                         />
-                        <LlmModelNameDatalist id="llm-model-name-datalist" />
+                        <LlmModelNameDatalist id="llm-model-name-datalist"/>
                     </div>
 
                     <div className="space-y-2">
                         <Label>LLM Response Timeout (seconds)</Label>
-                        <Input type="number" placeholder="240" value={model.timeoutSeconds ?? ""} onChange={(e) => updateModel(model.id, "timeoutSeconds", safeIntOrNull(e.target.value))} />
+                        <Input type="number" placeholder="240" value={model.timeoutSeconds ?? ""}
+                               onChange={(e) => updateModel(model.id, "timeoutSeconds", safeIntOrNull(e.target.value))}/>
                     </div>
 
                     <div className="space-y-2">
@@ -145,7 +148,13 @@ export default function EvaluationConfigModelRow({model, index, canRemove, effec
                             onChange={(e) => updateModel(model.id, "apiKey", emptyToNull(e.target.value))}
                             list="llm-api-key-placeholder-datalist"
                         />
-                        <LlmApiKeyPlaceholderDatalist id="llm-api-key-placeholder-datalist" />
+                        <LlmApiKeyPlaceholderDatalist id="llm-api-key-placeholder-datalist"/>
+                    </div>
+
+                    <div className="space-y-2">
+                        <Label>Temperature</Label>
+                        <Input type="number" placeholder="1.0" value={model.temperature ?? ""}
+                               onChange={(e) => updateModel(model.id, "temperature", safeFloatOrNull(e.target.value))}/>
                     </div>
                 </div>
             </div>

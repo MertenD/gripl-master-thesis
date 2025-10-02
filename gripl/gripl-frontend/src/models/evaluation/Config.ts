@@ -15,4 +15,5 @@ export interface ModelRowState {
     modelName: string | null;
     apiKey: string | null;
     timeoutSeconds: number | null;
+    temperature: number | null;
 }

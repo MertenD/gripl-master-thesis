@@ -17,6 +17,7 @@ export function newModelRow(index: number): ModelRowState {
         baseUrl: null,
         modelName: null,
         apiKey: null,
+        temperature: null,
         timeoutSeconds: null,
     };
 }
@@ -67,6 +68,7 @@ export function useEvaluationConfig(
                     baseUrl: normalize(model.baseUrl),
                     modelName: normalize(model.modelName),
                     apiKey: normalize(model.apiKey),
+                    temperature: model.temperature ?? null,
                     timeoutSeconds: model.timeoutSeconds ?? null,
                 },
             };

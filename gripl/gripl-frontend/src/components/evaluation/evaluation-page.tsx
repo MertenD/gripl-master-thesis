@@ -298,14 +298,14 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
                 <h2 className="text-2xl font-semibold mb-2">Results by Model</h2>
                 <Tabs className="w-full">
                     <TabsList className="w-full h-12 sticky top-0 z-10 mb-4">
-                        {metadata?.modelLabels.map((label) => (
+                        {metadata?.modelLabels.map?.((label) => (
                                 <TabsTrigger value={label} key={`${label}-trigger`}>
                                     {label}
                                 </TabsTrigger>
                             ))}
                     </TabsList>
 
-                    {metadata?.modelLabels.map((label) => {
+                    {metadata?.modelLabels.map?.((label) => {
                         const modelSummary = summary?.get(label);
 
                         return (

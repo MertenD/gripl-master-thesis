@@ -37,6 +37,13 @@ export function safeIntOrNull(input: string): number | null {
     return Number.isFinite(n) ? n : null;
 }
 
+export function safeFloatOrNull(input: string): number | null {
+    const t = input.trim();
+    if (t === "") return null;
+    const n = parseFloat(t);
+    return Number.isFinite(n) ? n : null;
+}
+
 export function findPreset(endpoint: string, presets: AnalysisEndpoint[]) {
     return presets.find((p) => p.endpoint === endpoint);
 }

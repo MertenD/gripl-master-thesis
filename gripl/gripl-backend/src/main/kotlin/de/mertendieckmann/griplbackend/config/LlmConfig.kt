@@ -35,6 +35,7 @@ class LlmConfig(private val defaultProps: LlmProps) {
             .logRequests(true)
             .logResponses(true)
             .listeners(listOf(usageListener))
+            .temperature(props.temperature)
             .seed(props.seed)
             .build()
     }
@@ -49,6 +50,7 @@ class LlmConfig(private val defaultProps: LlmProps) {
             var baseUrl: String? = "https://api.openai.com/v1",
             var apiKey: String? = null,
             var timeoutSeconds: Long = 240L,
+            var temperature: Double? = null,
             var seed: Int? = null
         )
 
@@ -57,6 +59,7 @@ class LlmConfig(private val defaultProps: LlmProps) {
             var modelName: String? = null,
             var apiKey: String? = null,
             var timeoutSeconds: Long? = null,
+            var temperature: Double? = null,
             var seed: Int? = null
         )
 
@@ -66,6 +69,7 @@ class LlmConfig(private val defaultProps: LlmProps) {
                 baseUrl        = override.baseUrl?.takeIf { it.isNotBlank() } ?: baseUrl,
                 apiKey         = override.apiKey?.takeIf { it.isNotBlank() } ?: apiKey,
                 timeoutSeconds = override.timeoutSeconds ?: timeoutSeconds,
+                temperature     = override.temperature ?: temperature,
                 seed           = override.seed ?: seed
             )
 
