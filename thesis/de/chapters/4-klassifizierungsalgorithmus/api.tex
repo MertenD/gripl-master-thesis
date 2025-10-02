@@ -10,14 +10,14 @@ Dieses Kapitel beschreibt das API-Design der Klassifizierungspipeline, die zur E
 
 \subsection*{HTTP-Endpunkt}
 
-Die Klassifizierungspipeline ist über einen HTTP-Endpunkt nutzbar. Der \texttt{POST}-Endpunkt akzeptiert \texttt{multipart/form-data} mit den folgenden Teilen:
+Die Klassifizierungspipeline ist über einen HTTP-Endpunkt nutzbar, der im Folgenden definiert wird. Der \texttt{POST}-Endpunkt akzeptiert \texttt{multipart/form-data} mit den folgenden Teilen:
 
 \begin{description}
     \item[\texttt{bpmnFile} (Pflicht)] Eine BPMN-2.0-XML-Datei (\texttt{.bpmn} oder \texttt{text/xml}), die den zu analysierenden Prozess beinhaltet.
     \item[\texttt{llmProps} (Optional)] Ein JSON-Objekt zur Überschreibung von \ac{LLM}-Eigenschaften zur Laufzeit. Siehe Listing \ref{lst:api-request-schema} für das JSON-Schema. Wird nichts angegeben, nutzt die Pipeline Standardwerte.
 \end{description}
 
-Die \texttt{llmProps} erlauben es, verschiedene \acp{LLM} und deren Konfigurationen flexibel zu für die Klassifizierung zu nutzen, ohne die Anwendung neu starten zu müssen. Dies ist besonders nützlich im Evaluationsframework, um verschiedene Modelle zu vergleichen.
+Die \texttt{llmProps} erlauben es, verschiedene \acp{LLM} und deren Konfigurationen flexibel für die Klassifizierung zu nutzen, ohne die Anwendung neu starten zu müssen. Dies ist besonders nützlich im Evaluationsframework, um verschiedene Modelle zu vergleichen.
 
 \begin{lstlisting}[caption={JSON-Schema der \texttt{llmProps}.},label={lst:api-request-schema}]
 {
