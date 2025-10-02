@@ -1,18 +1,39 @@
 \section{Qualitätsziele}\label{sec:qualitatsziele}
 
-Die Domäne der datenschutzrechtlichen Klassifikation von Prozessen ist risikosensitiv. Übersehene kritische Aktivitäten, auch \acp{FN} genannt, können zu Compliance-Risiken und hohen Strafen nach \ac{DSGVO} führen. Daher ist das \textbf{Hauptziel}:
+Die Aufgabe der datenschutzrechtlichen Klassifikation von Prozessen ist risikosensitiv. Übersehene kritische Aktivitäten, auch \acp{FN} genannt, bergen erhebliche Compliance-Risiken und können zu hohen Strafen nach der \ac{DSGVO} führen. Beispielsweise erhielt Meta Platforms Ireland Limited (Meta IE) 2023 aufgrund von rechtswidriger Übermittlung von \ac{EU} Nutzerdaten in die USA eine Geldbuße von 1,2 Milliarden Euro \cite{edpb-meta-fine}. Auch Amazon wurde 2025 nach einem langjährigen Rechtsstreit wegen Datenschutzvertsößen mit 746 Millionen Euro bestraft \cite{datenschutzticker-amazon-fine, reuters-amazon-fine}. Um derartige Strafen zu vermieden, müssen kritische Aktivitäten zuverlässig identifiziert werden. Daher ist das \textbf{Hauptziel} der Klassifikation:
 
 \begin{quote}
     \textbf{Maximaler Recall} bei \emph{minimalen \acp{FN}} und zugleich \emph{akzeptabler Precision}, damit der manuelle Prüfaufwand durch \acp{FP} begrenzt bleibt.
 \end{quote}
 
-\textcolor{orange}{// TODO Klären ob ich für die Akronyme von FN, FP, TP, TN den Plural nehme oder nicht. Hier nutze ich aktuell den Plural. In späteren Kapiteln ist es meist der Singular.}
+\subsection*{Konfusionsmatrix und Metriken}
 
-\subsection*{Metriken}
+Zur Bewertung des Hauptziels wird eine Konfusionsmatrix verwendet. Im vorliegenden binären Kontext entspricht die positive Klasse \ac{DSGVO}-kritischen Aktivitäten. Die vier Felder der Konfusionsmatrix haben folgende Bedeutung \cite{sokolova2009measureclassification}:
 
-Relevante Metriken für eine aussagekräftige Evaluierung sind \emph{Accuracy}, \emph{Precision}, \emph{Recall}, \emph{F1-Score} sowie die Konfusionsmatrix-Zahlen (\acp{TP}, \acp{FP}, \acp{TN}, \acp{FN}) und die Anzahl korrekt/inkorrekt klassifizierter Testfälle. Technische Fehler (z.\,B. Parsing-Fehler oder überschrittene Token Limits) werden separat ausgewiesen.
+\begin{description}
+    \item [\acp{TP}] sind korrekt als kritisch erkannte Aktivitäten. Sie bilden den unmittelbaren \emph{Nutzen} der Klassifikation.
+    \item [\acp{FP}] sind fälschlich als kritisch markierte Aktivitäten. Sie erhöhen den manuellen Prüfaufwand, verursachen aber \emph{keine} unmittelbaren Compliance-Risiken.
+    \item[\acp{TN}] sind korrekt als unkritisch eingestufte Aktivitäten und reduzieren den Gesamtaufwand.
+    \item[\acp{FN}] sind übersehene kritische Aktivitäten. Sie sind besonders problematisch \cite{nake2023towards}, da sie zu ausbleibender Risikobehandlung und potenziellen Bußgeldern führen können.
+\end{description}
+
+Aus diesen Größen leiten sich die Evaluationsmetriken ab. Relevante Metriken für eine aussagekräftige Evaluierung sind \emph{Accuracy}, \emph{Precision}, \emph{Recall}, \emph{F1-Score} sowie die Konfusionsmatrix-Zahlen (\acp{TP}, \acp{FP}, \acp{TN}, \acp{FN}) und die Anzahl korrekt/inkorrekt klassifizierter Testfälle. Technische Fehler (z.\,B. Parsing-Fehler oder überschrittene Token Limits) werden separat ausgewiesen.
+
+Diese Metriken sind in Information Retrieval und Maschinellem Lernen seit langem etabliert und bilden den De-facto-Standard zur Bewertung von Klassifikatoren \cite{manning2008ir, sokolova2009measureclassification, nake2023towards}. Für das hier betrachtete binäre Problem gelten:
+
+\[
+    \mathrm{Accuracy}=\frac{\mathrm{TP}+\mathrm{TN}}{\mathrm{TP}+\mathrm{FP}+\mathrm{TN}+\mathrm{FN}},\quad
+    \mathrm{Precision}=\frac{\mathrm{TP}}{\mathrm{TP}+\mathrm{FP}},\quad
+\]
+\vspace{0.5em}
+\[
+    \mathrm{Recall}=\frac{\mathrm{TP}}{\mathrm{TP}+\mathrm{FN}},\quad
+    \mathrm{F1\mathchar`-Score}=2\cdot\frac{\mathrm{Precision}\cdot \mathrm{Recall}}{\mathrm{Precision}+\mathrm{Recall}}.
+\]
 
 \subsection*{Zielwerte}
+
+Vor dem Hintergrund der oben definierten Metriken und dem Hauptziel werden im Folgenden mithilfe von vergleichbarer Literatur realistische Zielkorridore abgeleitet.
 
 Ähnliche Arbeiten, wie von Nake et al. \cite{nake2023towards}, zeigen Referenzwerte von einem maximalen \emph{Recall} $\approx 0{,}83$ und \emph{F1-Score} $\approx 0{,}81$ bei der Identifikation \ac{DSGVO}-kritischer Aufgaben in Prozessbeschreibungen. Jüngere \ac{DSGVO}-nahe \ac{LLM}-Studien berichten von \emph{Precision/Recall} im hohen 0{,}8x bis 0{,}9x-Bereich \cite{hooda2024policylr} und F1-Scores von $\approx 0{,}68$~bis zu $\approx 0{,}79$~\cite{schwerin2024systematic}.
 
@@ -22,11 +43,13 @@ Basierend darauf werden folgende Zielkorridore als \emph{pragmatische Abnahmekri
     \item \textbf{Recall} soll ein Mindestniveau von $\geq 0{,}80$ erreichen und ein \emph{angestrebter} Bereich ist $\geq 0{,}85$.
     \item \textbf{Precision} soll $\geq 0{,}75$ als Untergrenze zur Begrenzung des Prüfaufwands erreichen.
     \item \textbf{F1-Score} soll $\geq 0{,}80$  erreichen.
-    \item \textbf{False Positives je Prozess} sollen im Mittel $\leq 1{,}5$ betragen.
+    \item \textbf{\acp{FP} je Prozess} sollen im Mittel $\leq 1{,}5$ betragen.
 \end{itemize}
 
 Nake~et~al.\ \cite{nake2023towards} zeigen, dass selbst ein \emph{Recall} von $0{,}83$ für kritische Aufgaben ohne menschliche Nachkontrolle nicht ausreicht, da die Strafen für Nichteinhaltung der \ac{DSGVO} sehr hoch sind. Viel mehr eignet sich ein System mit diesem Recall-Wert für \emph{assistierte} Prüfungen, bei denen die Ergebnisse durch qualifizierte Experten validiert werden. Für ein Screening von Geschäftsprozessen, wie es in dieser Arbeit angestrebt wird, sind die genannten Zielwerte daher als realistisch und praxisrelevant einzuschätzen.
 
+Zusammenfassend fixieren die Zielwerte die angestrebte Performance. Im nächsten Abschnitt wird dargelegt, dass aufgrund der nicht-deterministischen Natur von \acp{LLM} die Ergebnisstabilität über wiederholte Läufe berücksichtigt werden muss.
+
 \subsection*{Stabilität über Wiederholungen}
 
-Da \acp{LLM} nicht-deterministisch sind, ist das Berichten eines einzelnen Leistungswertes nicht ausreichend für den Vergleich von Modellen. Studien wie von Reimers et al. \cite{reimers2017reporting} zeigen, dass die Abhängigkeit vom Seed-Wert der \acp{LLM} zu statistisch signifikanten Unterschieden in der Performance führen kann. Diese Varianz kann dazu führen, dass ein modernes, leistungsfähiges Modell von sehr gut bis mittelmäßig abschneidet. Stattdessen wird vorgschlagen, Score-Verteilungen zu vergleichen, die auf mehreren Durchläufen basieren. Dadurch wird das Risiko reduziert, dass ein Modell nur aufgrund eines günstigen Seeds gut oder aufgrund eines ungünstigen Seeds schlecht abschneidet. In dieser Arbeit werden daher die Ergebnisse auf Basis von Widerholungen berichtet. Er wird der Mittelwert $\pm$ Standardabweichung ($\sigma$) je Metrik angegeben, da die Standardabweichung die Stabilität eines Modells über verschiedene Läufe hinweg darstellt. Modellvergleiche basieren am Ende auf diesen Verteilungen (nicht auf Einzelfällen), um eine fundierte Bewertung zu ermöglichen.
+Da \acp{LLM} nicht-deterministisch sind, ist das Berichten eines einzelnen Leistungswertes nicht ausreichend für den Vergleich von Modellen. Studien wie von Reimers et al. \cite{reimers2017reporting} zeigen, dass die Abhängigkeit vom Seed-Wert der \acp{LLM} zu statistisch signifikanten Unterschieden in der Performance führen kann. Diese Varianz kann dazu führen, dass ein modernes, leistungsfähiges Modell von sehr gut bis mittelmäßig abschneidet. Stattdessen wird vorgschlagen, Score-Verteilungen zu vergleichen, die auf mehreren Durchläufen basieren. Dadurch wird das Risiko reduziert, dass ein Modell nur aufgrund eines günstigen Seeds gut oder aufgrund eines ungünstigen Seeds schlecht abschneidet. In dieser Arbeit werden daher die Ergebnisse auf Basis von Widerholungen berichtet. Es wird der Mittelwert $\pm$ Standardabweichung ($\sigma$) je Metrik angegeben, da die Standardabweichung die Stabilität eines Modells über verschiedene Läufe hinweg darstellt. Modellvergleiche basieren am Ende auf diesen Verteilungen und nicht auf Einzelfällen, um eine fundierte Bewertung zu ermöglichen.

@@ -9,7 +9,7 @@ Die folgenden Punkte definieren den Geltungsbereich der Arbeit:
 \begin{itemize}
     \item Klassifiziert werden ausschließlich Aktivitäten. Dafür wird sinvoller Kontext (z.\,B. Prozessname, Pool/Lane, Datenobjekte) berücksichtigt.
     \item Labels und Artefakte liegen in Deutsch und Englisch vor.
-    \item Es handelt sich um ein Screening und nicht um eine Rechtsprüfung. Die Rechtmäßigkeit wird nicht bewertet. Die Lösung dient als \emph{Screening}, das potenziell kritische Aktivitäten markiert, die dann juristisch geprüft werden.
+    \item Es handelt sich um ein \emph{Screening}, nicht um eine Rechtsprüfung. Kritisch klassifizierte Aktivitäten sind anschließend juristisch zu prüfen.
 \end{itemize}
 
 \subsection*{Annahmen und Risiken}
@@ -18,6 +18,8 @@ Die folgenden Annahmen und potenziellen Risiken sind für die Interpretation der
 
 \begin{itemize}
     \item Bei fehlenden Datenobjekten oder mehrdeutigen Labels kann sich die Einschätzung verschlechtern. Das ist ein bekanntes Problem in ähnlichen Studien \cite{nake2023towards}.
-    \item Optional generierte \ac{LLM}-Begründungen sind als \emph{Hilfetexte} zu verstehen, um die Entscheidung des \ac{LLM} besser einordnen zu können, bilden aber nicht zwingend die tatsächlichen Entscheidungsgründe des Modells ab.
+    \item Optional generierte \ac{LLM}-Begründungen sind als \emph{Hilfetexte} zu verstehen, um die Entscheidung des \acp{LLM} besser einordnen zu können, bilden aber nicht zwingend die tatsächlichen Entscheidungsgründe des Modells ab.
     \item Ungültiges \ac{BPMN}-XML oder Laufzeitfehler werden als \enquote{technischer Fehler} erfasst und nicht in die Metrikzählung eingerechnet. Sie werden separat berichtet.
 \end{itemize}
+
+Dieses Kapitel definierte die binäre Klassifikation von \ac{BPMN}-Aktivitäten als kritisch/unkritisch mit Fokus auf maximalen Recall bei akzeptabler Precision als Aufgabe. Es legte Qualitätsziele, Metriken, Geltungsbereich und Annahmen fest. Darauf aufbauend geht es im nächsten Kapitel um das Design und die Implementierung der Klassifizierungspipeline, die diese Anforderungen umsetzt.

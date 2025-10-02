@@ -4,10 +4,11 @@ Ziel der Arbeit ist eine \emph{binäre Klassifikation} auf Ebene einzelner \ac{B
 
 \begin{itemize}
     \item \textbf{Eingabe} ist ein valides \ac{BPMN}-XML mit stabilen \texttt{id}-Attributen je Aktivität \cite{omgbpmn}.
-    \item \textbf{Ausgabe} ist eine Menge von Aktivitäts-\texttt{ids}, die als \emph{kritisch} klassifiziert worden sind. Optional kann zusätzlich eine natürlichsprachige Begründung für einzelne Entscheidungen ausgegeben werden. Im Fall der Klassifizierungspipeline dieser Arbeit werden die Begründungen vom \ac{LLM} generiert. Die Erklärungen dienen ausschlißelich der Nachvollziehbarkeit der gewählten Klassifizierungen, werden allerdings nicht in der Evaluation berücksichtigt.
+    \item \textbf{Ausgabe} ist eine Menge von Aktivitäts-\texttt{ids}, die als \emph{kritisch} klassifiziert wurden. Optional werden zusätzlich eine natürlichsprachige Begründung für einzelne Entscheidungen ausgegeben. Im Fall der Klassifizierungspipeline dieser Arbeit werden die Begründungen vom \ac{LLM} generiert. Die Erklärungen dienen ausschließlich der Nachvollziehbarkeit der gewählten Klassifizierungen, werden allerdings nicht in der Evaluation berücksichtigt.
 \end{itemize}
 
 \subsection*{Begriffsbestimmung \enquote{kritisch}}
 
-Eine Aktivität gilt in dieser Arbeit als \emph{kritisch}, wenn sie \emph{personenbezogene Daten} verarbeitet. Nach Art.~4~Abs.~1 \ac{DSGVO} sind personenbezogene Daten alle Informationen, die sich auf eine identifizierte oder identifizierbare natürliche Person beziehen, und \emph{Verarbeitung} umfasst gemäß Art-~4~Abs.~2 jede mit personenbezogenen Daten vorgenommene Operation (u.\,a. Erheben, Speichern, Abrufen, Verwenden, Übermitteln, Löschen) \cite{GDPR2016}. Dies schließt auch die \emph{Nutzung bereits vorhandener Daten} (z.\,B. Lesen/Abgleichen) ein.
-Die Aufgabenstellung reiht sich damit in verwandte Arbeiten ein, die kritische/unkritische Tätigkeiten in Prozessartefakten kennzeichnen (z.\,B. für textuelle Prozessbeschreibungen) \cite{nake2023towards}.
+Eine Aktivität gilt in dieser Arbeit als \emph{kritisch}, wenn sie \emph{personenbezogene Daten} verarbeitet. Personenbezogene Daten sind, nach Art.~4~Abs.~1 \ac{DSGVO} \cite{GDPR2016}, alle Informationen, die sich auf eine identifizierte oder identifizierbare natürliche Person beziehen. Gemäß Art.~4~Abs.~2 \ac{DSGVO} \cite{GDPR2016} umfasst Verarbeitung jede mit personenbezogenen Daten vorgenommene Operation, wie z.\,B. Erheben, Speichern, Abrufen, Verwenden, Übermitteln und Löschen. Dies schließt auch die \emph{Nutzung bereits vorhandener Daten} (z.\,B. Lesen/Abgleichen) ein.
+
+Diese Aufgabenstellung reiht sich in Arbeiten zur Kennzeichnung kritischer/unkritischer Tätigkeiten in Prozessartefakten ein und bildet die Referenz für die Qualitätsziele im nächsten Abschnitt. \cite{nake2023towards}
