@@ -1,6 +1,27 @@
 \section{Labeling-Guide}\label{sec:labeling-guide}
 
-\begin{itemize}
-    \item Eine Aktivität ist als kritisch gelabelt, wenn sie personenbezogene Daten erhebt, nutzt, speichert, übermittelt oder löscht oder anderweitig explizit eine DSGVO-Pflicht auslöst (Auskunft, Löschung) (Hier auch die Kriterien von der originalen DSGVO einbinden und daran ableiten, wie man labeln soll)
-    \item Beispiele einbauen, was als kritisch gelabelt wurde und Gegenbeispiele aufzeigen, damit Grenzfälle klar definiert sind
-\end{itemize}
+Die Aktivitäten in den Testfällen sollen mit dem Label \enquote{kritisch} versehen werden, wenn sie potenziell personenbezogene Daten verarbeiten und somit im Sinne der \ac{DSGVO} relevant sein könnten. Die wichtigsten Begriffe der \ac{DSGVO} wurden bereits in Abschnitt \ref{sec:dsgvo} definiert.
+
+Beim Labeln einer Aktivität können Grenzfälle auftreten, insbesondere wenn kein Datenobjekt vorhanden ist, der Name einer Aktivität aber auf Datenverarbeitung hinweist, wie z.\,B. \enquote{Verträge archivieren}. Dabei kann es sich sowohl um personenbezogene Verträge, wie Arbeitsverträge, als auch um rein geschäftliche Verträge zwischen Unternehmen handeln. In einem solchen Fall wird zuerst geschaut, ob der Kontext der Aktivität Hinweise auf personenbezogene Daten gibt (z.\,B. Pool/Lane oder andere Aktivitäten im Prozess). Wenn keine eindeutigen Hinweise vorliegen, wird die Aktivität als unkritisch gelabelt. Wenn jedoch der Kontext auf die Verarbeitung personenbezogener Daten hinweist (z.\,B. ein Prozessname wie \enquote{Mitarbeiterverwaltung} oder vorherigere Aktivitäten wie \enquote{Mitarbeiterdaten erfassen}), wird die Aktivität als kritisch gelabelt. Im Zweifel wird die Aktivität als kritisch gelabelt, um eine höhere Sensitivität zu gewährleisten.
+
+Tabelle \ref{tab:labeling-examples} listet beispielhaft einige Aktivitäten mit ihrer Klassifikation und einer Begründung auf.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Beispielhafte Aktivitäten und Label}
+    \begin{tabularx}{\textwidth}{p{0.4\textwidth} c p{0.4\textwidth}}
+        \toprule
+        Aktivität & Kritisch? & Kommentar \\
+        \midrule
+        Lieferadresse eingeben & Ja & Name, Anschrift des Kunden werden aufgenommen. \\
+        Rückfrage an Kunden senden & Ja & Kontaktinformationen werden verwendet. \\
+        Fall anlegen & Ja & Aktivität befindet sich im Kundenservice-Kontext, personenbezogene Daten wahrscheinlich. \\
+        Sprache zu Text verarbeiten & Ja & Im Kontext eines Sprachassistenten werden biometrische Daten des nutzers verarbeitet. \\
+        Produkt versenden & Nein^* & Logistik und Sachvorgänge sind nicht per se Datenschutzkritisch, solange keine neue Datenverarbeitung, wie ein Labeldruck stattfindet. \\
+        Systemprotokoll auslesen & Ja & Im Kontext einer technischen Wartung können personenbezogene Daten (z.\,B. Nutzer-\texttt{ids}) enthalten sein. \\
+        Logdaten archivieren (anonym) & Nein & Keine personenbezogenen Daten enthalten. \\
+        Gerät kalibrieren & Nein & Im Kontext einer technischen Wartung werden keine personenbezogenen Daten verarbeitet. \\
+        \bottomrule
+    \end{tabularx}
+    \label{tab:labeling-examples}
+\end{table}
