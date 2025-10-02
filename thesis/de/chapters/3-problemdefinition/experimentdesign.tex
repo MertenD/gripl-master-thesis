@@ -1,0 +1,34 @@
+\section{Experimentdesign}\label{sec:experimentdesign}
+
+Das gesamte Kapitel definierte die binäre Klassifikation von \ac{BPMN}-Aktivitäten als kritisch/unkritisch mit Fokus auf maximalen Recall bei akzeptabler Precision und legte Qualitätsziele, Metriken, Geltungsbereich sowie Annahmen fest. Darauf aufbauend beschreibt dieser Abschnitt das Experimentdesign, mit dem \acp{LLM} fair und reproduzierbar verglichen werden, um die Forschungsfrage \textbf{FF1} sowie die Unterfragen \textbf{UF1}–\textbf{UF4} zu beantworten. Die konkrete Ausgestaltung und Durchführung der Experimente werden in Kapitel \ref{ch:versuchsaufbau} \emph{Versuchsaufbau} erläutert.
+
+\textcolor{orange}{// TODO Kapitel Versuchsaufbau und Durchführung können durch die Existenz von diesem Kapitel wahrscheinlich auch gut zusammengefasst werden in einem Kapitel, so wie ich es auch in dem Absatz hier drüber geschrieben habe.}
+
+\subsection*{Ziel}
+
+Ziel ist ein transparenter Vergleich mehrerer \acp{LLM}, die alle dieselbe Klassifizierungspipeline durchlaufen. Sie wird in Kapitel \ref{ch:klassifizierungsalgorithmus-(design-und-implementierung)} daher so entworfen, dass sich das \ac{LLM} austauschen lässt. Damit das Evaluationsframework, das in Kapitel \ref{ch:evaluationsframework} beschrieben wird, verschiedene Modelle unmittelbar gegeneinander ausführen kann, erfolgt der Wechsel der \acp{LLM} zur Laufzeit über übergebene Parameter, die das Modell definieren.
+
+\subsection*{Vergleichsgegenstand}
+
+Die Experimente werden über eine deklarative Konfiguration definiert, siehe Kapitel~\ref{sec:konfiguration-einer-evaluierung}. Sie legt fest, welche Modelle, Datensätze und weitere Parameter zum Einsatz kommen. Je nach Auswahl werden mehrere Modelle und Modellvarianten parallel im Evaluationsframework ausgeführt, darunter Open-Source- und kommerzielle Modelle. Die deklarative Konfiguration sorgt für Portabilität und Wiederholbarkeit.
+
+\subsection*{Datenbasis}
+
+Als Datenbasis dienen die im Labeling-Tool erzeugten, gelabelten Testdatensätze, siehe Kapitel \ref{ch:labeling-und-datensatze}. Ein Testdatensatz enthält mehrere gelabelte Testfälle. Ein Testfall umfasst ein \ac{BPMN}-Prozessmodell mit Labeln, die als \ac{DSGVO}-kritischen Aktivitäten markieren. Die Auswahl der Datensätze für ein Experiment erfolgt in der Evaluierungskonfiguration, das Laden der Testfälle während der Laufzeit. Die Datensätze sollten idealerweise unterschiedliche Eigenschaften abdecken, damit die Forschungsfrage und die Unterfragen möglichst umfassend beantwortet werden.
+
+\subsection*{Metriken und Erfolgskriterium}
+
+Ausgewertet werden die in Abschnitt~\ref{sec:qualitatsziele} beschriebenen Metriken: Accuracy, Precision, Recall und F1. Zusätzlich werden die Kennzahlen der Konfusionsmatrix betrachtet: \ac{TP}, \ac{FP}, \ac{TN}, \ac{FN}. Ein Testfall gilt als \emph{bestanden}, wenn die vom Modell als kritisch ausgegebenen Aktivitäten exakt den gelabelten kritischen Aktivitäten entsprechen. Technische Fehler werden separat ausgewiesen.
+
+\subsection*{Ablauf eines Experiments}
+
+Ein Experiment verläuft in folgenden Schritten:
+
+\begin{enumerate}
+    \item \textbf{Konfiguration laden}. Die Konfiguration mit Modellen, Datensätzen und optionalem \texttt{seed} wird geladen.
+    \item \textbf{Ausführung}. Für jedes Modell werden alle ausgewählten Testfälle durch die Klassifizierungspipeline verarbeitet. Pro Testfall werden \ac{TP}, \ac{FP}, \ac{FN}, \ac{TN} sowie der Status \enquote{bestanden} oder \enquote{nicht bestanden} berechnet.
+    \item \textbf{Stabilität}. Die Läufe erfolgen mit \texttt{temperature} gleich 0\footnote{Die \texttt{temperature} steuert die Zufälligkeit der Textgenerierung bei \acp{LLM}. Niedrige Werte liefern stabilere Antworten, hohe Werte vielfältigere, jedoch weniger verlässliche.} und festem \texttt{seed}, sofern das jeweilige \ac{LLM} dies unterstützt. Um die Nicht-Deterministik moderner \acp{LLM} abzubilden, werden die Experimente mehrfach mit unterschiedlichen Seeds wiederholt. Die Ergebnisse werden über die Läufe gemittelt.
+    \item \textbf{Bericht}. Aggregierte Kennzahlen pro Modell, wie Konfusionsmatrix, die genannten Metriken sowie die Bestehensraten werden ausgegeben. Metadaten wie verwendete Modelle, Datensätze und Seeds werden dokumentiert.
+\end{enumerate}
+
+Dieses Kapitel definiert, \emph{was} verglichen wird: Modelle, Datensätze und Metriken. Es beschreibt zudem, \emph{wie} der Vergleich erfolgt. Kapitel~\ref{ch:versuchsaufbau} dokumentiert später die praktische Umsetzung mit konkreten Modellen, exakten Parameterwerten, Seeds sowie den vollständigen genutzten Konfigurationen. Im nächsten Kapitel folgt das Design und die Implementierung der Klassifizierungspipeline, die für den Vergleich der \acp{LLM} verwendet wird.
