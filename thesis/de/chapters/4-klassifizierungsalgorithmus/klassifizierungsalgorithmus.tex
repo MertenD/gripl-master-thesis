@@ -1,5 +1,7 @@
 \chapter{Design und Implementierung der Klassifizierungspipeline}\label{ch:klassifizierungsalgorithmus-(design-und-implementierung)}
 
+\textcolor{orange}{// TODO Architekturdiagramm oder Prozessdiagramm der Pipeline erstellen und hier referenzieren.}
+
 Dieses Kapitel beschreibt die Pipeline zur Klassifikation \ac{DSGVO}-kritischer Aktivitäten in \ac{BPMN}-Prozessen. Ausgehend von der in Kapitel \ref{sec:aufgabenstellung} formulierten Aufgabenstellung wird der gesamte Weg von der Eingabe eines \emph{BPMN-XML} über die Vorverarbeitung, das Prompt Engineering bis hin zur strukturierten, schema-konformen Ausgabe aufgezeigt. Außerdem wird ein HTTP-basiertes API-Design vorgestellt, das die Einbindung in weitere Werkzeuge und das Evaluationsframework ermöglicht.
 
 Die Klassifizierungspipeline soll eine binäre Entscheidung auf Ebene einzelner BPMN-Aktivitäten treffen: Für jede Aktivität eines Eingabemodells wird bestimmt, ob sie \emph{kritisch} im Sinne der \ac{DSGVO} ist. Die Pipeline ist so konzipiert, dass sie mit Modellen aus gängigen Modellierungswerkzeugen kompatibel ist.
