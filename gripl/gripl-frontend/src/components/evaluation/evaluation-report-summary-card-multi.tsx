@@ -17,7 +17,7 @@ export default function EvaluationReportSummaryCardMulti({
                     <table>
                         <tbody>
                             <tr><td>Models:</td><td className="pl-4">{metadata.modelLabels.join(", ")}</td></tr>
-                            <tr><td>Temperatures:</td><td className="pl-4">{metadata.modelTemperatures.map(t => t !== undefined ? t : "default").join(", ")}</td></tr>
+                            <tr><td>Temperatures:</td><td className="pl-4">{metadata.modelTemperatures.map(t => t || "default").join(", ")}</td></tr>
                             <tr><td>Datasets:</td><td className="pl-4">{metadata.datasets.map(d => d.name).join(", ")}</td></tr>
                             <tr><td>Total Test Cases:</td><td className="pl-4">{metadata.totalTestCases}</td></tr>
                             <tr><td>Default Evaluation Endpoint:</td><td className="pl-4">{metadata.defaultEvaluationEndpoint}</td></tr>

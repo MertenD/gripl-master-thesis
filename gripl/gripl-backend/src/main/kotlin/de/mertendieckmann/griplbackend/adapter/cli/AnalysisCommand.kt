@@ -37,7 +37,7 @@ class AnalysisCommand(
         log.info { "Running analysis on BPMN file: $bpmnFilePath with output format: $outputFormat" }
         val bpmnXml = Files.readString(bpmnFilePath)
 
-        val llm = LlmConfig.buildWithOverride(LlmPropsOverride(
+        val llm = LlmConfig.buildStrictJsonModelWithOverride(LlmPropsOverride(
             baseUrl = baseUrl,
             modelName = modelName,
             apiKey = apiKey,

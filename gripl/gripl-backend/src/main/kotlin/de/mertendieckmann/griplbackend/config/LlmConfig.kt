@@ -5,6 +5,7 @@ import dev.langchain4j.model.chat.ChatModel
 import dev.langchain4j.model.chat.listener.ChatModelListener
 import dev.langchain4j.model.chat.listener.ChatModelRequestContext
 import dev.langchain4j.model.chat.listener.ChatModelResponseContext
+import dev.langchain4j.model.chat.request.ResponseFormat
 import dev.langchain4j.model.openai.OpenAiChatModel
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.boot.context.properties.ConfigurationProperties
@@ -15,10 +16,10 @@ import java.time.Duration
 @Configuration
 class LlmConfig(private val defaultProps: LlmProps) {
 
-    fun buildWithOverride(override: LlmPropsOverride?): ChatModel =
-        getOpenAiChatModel(defaultProps.withOverride(override))
+    fun buildStrictJsonModelWithOverride(override: LlmPropsOverride?): ChatModel =
+        getStrictJsonOpenAiChatModel(defaultProps.withOverride(override))
 
-    fun getOpenAiChatModel(props: LlmProps): ChatModel {
+    fun getStrictJsonOpenAiChatModel(props: LlmProps): ChatModel {
         val httpClientBuilder = JdkHttpClient.builder()
             .httpClientBuilder(
                 HttpClient.newBuilder()
@@ -37,6 +38,7 @@ class LlmConfig(private val defaultProps: LlmProps) {
             .listeners(listOf(usageListener))
             .temperature(props.temperature)
             .seed(props.seed)
+            .responseFormat(ResponseFormat.JSON.toString())
             .build()
     }
 

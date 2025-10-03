@@ -63,7 +63,7 @@ class AnalysisController(
 
         return bpmnXmlMono.flatMap { bpmnXml ->
             Mono.fromCallable {
-                val llm = llmConfig.buildWithOverride(resolvedLlmPropsOverride)
+                val llm = llmConfig.buildStrictJsonModelWithOverride(resolvedLlmPropsOverride)
                 val analyzer = analyzerFactory.createPromptEngineeringAnalyzer(llm)
                 analyzer.analyzeBpmnForGdpr(bpmnXml)
             }.subscribeOn(Schedulers.boundedElastic())
@@ -90,7 +90,7 @@ class AnalysisController(
 
         return bpmnXmlMono.flatMap { bpmnXml ->
             Mono.fromCallable {
-                val llm = llmConfig.buildWithOverride(resolvedLlmPropsOverride)
+                val llm = llmConfig.buildStrictJsonModelWithOverride(resolvedLlmPropsOverride)
                 val analyzer = analyzerFactory.createBaselineAnalyzer(llm)
                 analyzer.analyzeBpmnForGdpr(bpmnXml)
             }.subscribeOn(Schedulers.boundedElastic())

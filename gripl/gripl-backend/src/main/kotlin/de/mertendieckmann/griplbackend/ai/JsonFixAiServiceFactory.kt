@@ -1,14 +1,16 @@
 package de.mertendieckmann.griplbackend.ai
 
+import dev.langchain4j.memory.chat.ChatMemoryProvider
 import dev.langchain4j.model.chat.ChatModel
 import dev.langchain4j.service.AiServices
 
 object JsonFixAiServiceFactory {
 
-    fun create(llm: ChatModel): JsonFixAiService {
+    fun create(llm: ChatModel, memoryProvider: ChatMemoryProvider): JsonFixAiService {
         return AiServices
             .builder(JsonFixAiService::class.java)
             .chatModel(llm)
+            .chatMemoryProvider(memoryProvider)
             .systemMessageProvider { getPrompt() }
             .build()
     }
