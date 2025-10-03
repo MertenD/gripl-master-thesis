@@ -67,9 +67,16 @@ data class TestCaseReport(
             |## Test Case $testCaseId${if (testCaseName != null) " - $testCaseName" else ""}
             |<img src="$imageSrc" alt="Test Case BPMN XML" />
             |
+            |- Amount of Correct Activities: ${correctActivityIds.size}
+            |- Amount of False Positives: ${falsePositiveIds.size}
+            |- Amount of False Negatives: ${falseNegativeIds.size}
+            |
             |- **Expected:** ${expectedNamesWithIds.joinToString(", ")}
             |- **Actual:** ${actualNamesWithIds.joinToString(", ")}
             |- **Result:** ${if (isSuccessful) "✅ Passed" else "❌ Failed"}
+            |
+            |- **False Positives:** ${if (falsePositiveIds.isEmpty()) "None" else falsePositiveIds.joinToString(", ") { id -> actualNamesWithIds.find { it.contains(id) } ?: id }}
+            |- **False Negatives:** ${if (falseNegativeIds.isEmpty()) "None" else falseNegativeIds.joinToString(", ") { id -> expectedNamesWithIds.find { it.contains(id) } ?: id }}
             |
             |<details>
             |<summary><h3>Reasoning of the LLM</h3></summary>
