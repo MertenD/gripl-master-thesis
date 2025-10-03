@@ -146,6 +146,11 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
             sections.push(metadata.markdown);
         }
 
+        for (const [modelLabel, modelSummary] of summary.entries()) {
+            sections.push(`# Summary (${modelLabel})`);
+            sections.push(modelSummary.markdown);
+        }
+
         const byModel = groupBy(testCases, (x) => x.modelLabel);
 
         Object.keys(byModel).forEach((label) => {
@@ -153,11 +158,6 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
             const cases = byModel[label];
             sections.push(...cases.map((c) => c.markdown));
         });
-
-        for (const [modelLabel, modelSummary] of summary.entries()) {
-            sections.push(`# Summary (${modelLabel})`);
-            sections.push(modelSummary.markdown);
-        }
 
         const blob = new Blob([sections.join("\n\n")], { type: "text/markdown" });
         const url = URL.createObjectURL(blob);
