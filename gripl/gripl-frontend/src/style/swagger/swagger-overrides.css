@@ -36,9 +36,21 @@
 .swagger-ui .try-out__btn {
     display: none !important;
 }
+.swagger-ui #operations-bpmn-controller-extractBpmnElements .try-out__btn {
+    display: inline-block !important;
+}
 .swagger-ui .opblock-get .try-out__btn {
     display: inline-block !important;
 }
-.swagger-ui #operations-analysis-controller-analyzeBpmnForGdpr .try-out__btn {
+.swagger-ui #operations-analysis-controller-analyzeBpmnForGdprPromptEngineering .try-out__btn {
+    display: inline-block !important;
+}
+.swagger-ui #operations-analysis-controller-analyzeBpmnForGdprBaseline .try-out__btn {
+    display: inline-block !important;
+}
+.swagger-ui #operations-evaluation-controller-evaluateStream .try-out__btn {
+    display: inline-block !important;
+}
+.swagger-ui #operations-evaluation-controller-evaluate .try-out__btn {
     display: inline-block !important;
 }
