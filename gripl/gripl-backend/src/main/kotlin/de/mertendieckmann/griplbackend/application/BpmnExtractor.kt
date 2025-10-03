@@ -3,6 +3,7 @@ package de.mertendieckmann.griplbackend.application
 import de.mertendieckmann.griplbackend.model.BpmnElement
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.camunda.bpm.model.bpmn.Bpmn
+import org.camunda.bpm.model.bpmn.impl.instance.ProcessImpl
 import org.camunda.bpm.model.bpmn.instance.*
 import org.camunda.bpm.model.xml.ModelParseException
 import org.camunda.bpm.model.xml.ModelValidationException
@@ -11,8 +12,6 @@ import org.springframework.web.server.ResponseStatusException
 
 class BpmnExtractor {
     private val log = KotlinLogging.logger { }
-
-    // TODO Maybe in the future i need to parse pools and lanes as well for information about who is executing which task
 
     fun extractBpmnElements(bpmnXml: String): Set<BpmnElement> {
 
@@ -31,18 +30,22 @@ class BpmnExtractor {
                         id = element.id,
                         name = element.name,
                         documentation = element.documentations.joinToString { it.rawTextContent },
+                        poolName = bpmnModel.getModelElementsByType(Participant::class.java).find { it.getAttributeValue("processRef") == (element.parentElement as ProcessImpl).id }?.name,
+                        laneName = element.parentElement
+                            .getChildElementsByType(LaneSet::class.java)
+                            .flatMap { it.getChildElementsByType(Lane::class.java) }
+                            .firstOrNull { lane -> lane.flowNodeRefs.any { it.id == element.id } }
+                            ?.name,
                         incomingFlowElementIds = element.incoming.mapNotNull {
                             bpmnModel.getModelElementById<SequenceFlow>(it.id).getAttributeValue("sourceRef")
                         },
                         outgoingFlowElementIds = element.outgoing.mapNotNull {
                             bpmnModel.getModelElementById<SequenceFlow>(it.id).getAttributeValue("targetRef")
                         },
-                        incomingDataFromElementIds = element.dataInputAssociations.flatMap { association ->
-                            bpmnModel.getModelElementById<DataInputAssociation>(association.id).sources.mapNotNull { source -> source.id }
-                        },
-                        outgoingDataToElementIds = element.dataOutputAssociations.map { association ->
-                            bpmnModel.getModelElementById<DataOutputAssociation>(association.id).getAttributeValue("targetRef")
-                        },
+                        outgoingMessageFlowsToElementIds = bpmnModel.getModelElementsByType(MessageFlow::class.java).filter { it.source.id == element.id }.map { it.target.id },
+                        incomingMessageFlowsFromElementIds = bpmnModel.getModelElementsByType(MessageFlow::class.java).filter { it.target.id == element.id }.map { it.source.id },
+                        incomingDataFromElementIds = element.dataInputAssociations.flatMap { it.sources.mapNotNull { source -> source.id } },
+                        outgoingDataToElementIds = element.dataOutputAssociations.map { it.target.id },
                         associatedElementIds = bpmnModel.getModelElementsByType(Association::class.java)
                             .filter { it.getAttributeValue("sourceRef") == element.id }.mapNotNull {
                                 it.getAttributeValue("targetRef")
@@ -56,6 +59,13 @@ class BpmnExtractor {
                         type = element.elementType.typeName,
                         id = element.id,
                         name = element.name,
+                        documentation = element.documentations.joinToString { it.rawTextContent },
+                        poolName = bpmnModel.getModelElementsByType(Participant::class.java).find { it.getAttributeValue("processRef") == (element.parentElement as ProcessImpl).id }?.name,
+                        laneName = element.parentElement
+                            .getChildElementsByType(LaneSet::class.java)
+                            .flatMap { it.getChildElementsByType(Lane::class.java) }
+                            .firstOrNull { lane -> lane.flowNodeRefs.any { it.id == element.id } }
+                            ?.name,
                         incomingFlowElementIds = element.incoming.mapNotNull {
                             bpmnModel.getModelElementById<SequenceFlow>(
                                 it.id
@@ -66,6 +76,8 @@ class BpmnExtractor {
                                 it.id
                             ).getAttributeValue("targetRef")
                         },
+                        outgoingMessageFlowsToElementIds = bpmnModel.getModelElementsByType(MessageFlow::class.java).filter { it.source.id == element.id }.map { it.target.id },
+                        incomingMessageFlowsFromElementIds = bpmnModel.getModelElementsByType(MessageFlow::class.java).filter { it.target.id == element.id }.map { it.source.id },
                         associatedElementIds = bpmnModel.getModelElementsByType(Association::class.java)
                             .filter { it.getAttributeValue("sourceRef") == element.id }
                             .mapNotNull { it.getAttributeValue("targetRef") }
