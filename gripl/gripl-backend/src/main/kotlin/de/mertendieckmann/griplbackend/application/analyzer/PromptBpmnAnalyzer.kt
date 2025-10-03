@@ -20,7 +20,7 @@ class PromptBpmnAnalyzer(
 
         val result = safetyNet.safeGuardAnalysisResultParsing(maxRetries = 2) {
             bpmnAnalysisAiService.analyze(bpmnElements)
-        }.filterForValidActivities(bpmnElements)
+        }.resolveActivities(bpmnElements)
 
         log.info { "BPMN Analysis Result: $result" }
 

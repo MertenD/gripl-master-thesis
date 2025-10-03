@@ -22,18 +22,36 @@ data class BpmnAnalysisResult(
         val isRelevant: Boolean = true
     )
 
-    fun filterForValidActivities(bpmnElements: Set<BpmnElement>): BpmnAnalysisResult {
-        val existingActivityIds = bpmnElements
+    /**
+     * Resolves (possibly) incomplete activity IDs to existing full IDs from the provided BPMN elements.
+     * Also removes duplicates after resolution and removes elements that do not exist in the provided BPMN elements.
+     */
+    fun resolveActivities(actualBpmnElements: Set<BpmnElement>): BpmnAnalysisResult {
+        val existingActivityIds = actualBpmnElements
             .filter { it.type.lowercase().contains("task") }
             .map { it.id }.toSet()
-        return BpmnAnalysisResult(
-            elements = elements.filter { it.id in existingActivityIds }
-        )
+
+        val resolvedDistinct = elements.mapNotNull { element ->
+            val resolvedId = resolveActivityIdUniquely(element.id, existingActivityIds)
+            resolvedId?.let { if (it == element.id) element else element.copy(id = it) }
+        }.distinctBy { it.id }
+
+        return BpmnAnalysisResult(elements = resolvedDistinct)
     }
 
-    fun filterForValidActivities(bpmnXml: String): BpmnAnalysisResult {
-        return BpmnAnalysisResult(
-            elements = elements.filter { bpmnXml.contains(it.id) }
-        )
+    /**
+     * Attempts to uniquely map a potentially incomplete ID to an existing full ID.
+     * First, prefix match (startsWith)
+     * If no matches: substring match (contains)
+     * Only unique matches will be completed, otherwise null
+     */
+    private fun resolveActivityIdUniquely(partialId: String, existingActivityIds: Set<String>): String? {
+        if (partialId in existingActivityIds) return partialId
+
+        val prefixMatches = existingActivityIds.filter { it.startsWith(partialId) }
+        prefixMatches.singleOrNull()?.let { return it }
+
+        val substringMatches = existingActivityIds.filter { it.contains(partialId) }
+        return substringMatches.singleOrNull()
     }
 }

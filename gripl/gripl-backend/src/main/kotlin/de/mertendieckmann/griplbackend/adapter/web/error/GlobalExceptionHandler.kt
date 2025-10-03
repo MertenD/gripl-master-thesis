@@ -79,7 +79,7 @@ class GlobalExceptionHandler {
     fun handleOutputParsingException(ex: OutputParsingException): ResponseEntity<ApiError> =
         ResponseEntity
             .status(HttpStatus.INTERNAL_SERVER_ERROR)
-            .body(ApiError(code = "OUTPUT_PARSING_ERROR", message = "There was an error parsing the output from the AI service."))
+            .body(ApiError(code = "OUTPUT_PARSING_ERROR", message = "There was an error parsing the output from the AI service: ${ex.localizedMessage}"))
             .also { ex.printStackTrace() }
 
     data class ApiError(val code: String, val message: String?)

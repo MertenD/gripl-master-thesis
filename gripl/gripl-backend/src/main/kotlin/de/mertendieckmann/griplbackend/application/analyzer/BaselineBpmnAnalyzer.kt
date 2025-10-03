@@ -1,6 +1,7 @@
 package de.mertendieckmann.griplbackend.application.analyzer
 
 import de.mertendieckmann.griplbackend.ai.BaselineBpmnAnalysisAiServiceFactory
+import de.mertendieckmann.griplbackend.application.BpmnExtractor
 import de.mertendieckmann.griplbackend.application.SafetyNet
 import de.mertendieckmann.griplbackend.model.dto.AnalysisResponse
 import dev.langchain4j.model.chat.ChatModel
@@ -15,10 +16,12 @@ class BaselineBpmnAnalyzer(
     private val safetyNet = SafetyNet(llm)
 
     override fun analyzeBpmnForGdpr(bpmnXml: String): AnalysisResponse {
+        val extractor = BpmnExtractor()
+        val bpmnElements = extractor.extractBpmnElements(bpmnXml)
 
         val result = safetyNet.safeGuardAnalysisResultParsing(maxRetries = 2) {
             bpmnAnalysisAiService.analyze(bpmnXml)
-        }.filterForValidActivities(bpmnXml)
+        }.resolveActivities(bpmnElements)
         log.info { "BPMN Analysis Result: $result" }
 
         return AnalysisResponse.fromBpmnAnalysisResult(result, bpmnXml)
