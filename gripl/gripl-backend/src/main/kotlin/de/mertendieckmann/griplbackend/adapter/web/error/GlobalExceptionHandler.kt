@@ -1,5 +1,6 @@
 package de.mertendieckmann.griplbackend.adapter.web.error
 
+import dev.langchain4j.service.output.OutputParsingException
 import org.camunda.bpm.model.xml.ModelParseException
 import org.camunda.bpm.model.xml.ModelValidationException
 import org.springframework.http.HttpStatus
@@ -72,6 +73,13 @@ class GlobalExceptionHandler {
         ResponseEntity
             .status(HttpStatus.TOO_MANY_REQUESTS)
             .body(ApiError(code = "RATE_LIMIT_EXCEEDED", message = ex.message))
+            .also { ex.printStackTrace() }
+
+    @ExceptionHandler(OutputParsingException::class)
+    fun handleOutputParsingException(ex: OutputParsingException): ResponseEntity<ApiError> =
+        ResponseEntity
+            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(ApiError(code = "OUTPUT_PARSING_ERROR", message = "There was an error parsing the output from the AI service."))
             .also { ex.printStackTrace() }
 
     data class ApiError(val code: String, val message: String?)
