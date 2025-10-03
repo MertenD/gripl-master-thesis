@@ -25,6 +25,7 @@ class SafetyNet(
                 try {
                     return jsonFixAiService.fixAnalysisResultJson(lastError.stackTraceToString())
                 } catch (fixError: Throwable) {
+                    // If the initial error was due to parsing an empty response, we should not retry, because there is no content to fix.
                     if (fixError.stackTraceToString().startsWith("dev.langchain4j.service.output.OutputParsingException: Failed to parse \"\" into")) {
                         throw fixError
                     }
