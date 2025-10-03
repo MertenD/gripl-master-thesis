@@ -1,6 +1,7 @@
 export interface EvaluationMetadataReport {
     type: "metadata";
     modelLabels: string[],
+    modelTemperatures: (number | undefined)[];
     datasets: { id: number; name: string }[];
     timestamp: string;
     totalTestCases: number;

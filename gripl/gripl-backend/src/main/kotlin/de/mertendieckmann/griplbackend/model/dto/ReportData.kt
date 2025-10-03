@@ -23,6 +23,7 @@ sealed class EvaluationReport{
 
 data class EvaluationMetadataReport(
     val modelLabels: List<String>,
+    val modelTemperatures: List<Double?>,
     val datasets: List<DatasetInfo>,
     val timestamp: Timestamp = Timestamp(System.currentTimeMillis()),
     val totalTestCases: Int,
@@ -33,6 +34,7 @@ data class EvaluationMetadataReport(
         return """
             |## Evaluation Metadata
             |- **Models:** ${modelLabels.joinToString(", ")}
+            |- **Temperatures:** ${modelTemperatures.joinToString(", ") { it?.toString() ?: "default" }}
             |- **Datasets:** ${datasets.joinToString(", ")}
             |- **Total Test Cases:** $totalTestCases
             |${if (seed != null) "- **Seed:** $seed" else ""}

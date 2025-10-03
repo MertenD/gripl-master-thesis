@@ -131,7 +131,7 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
                     )
             )
         );
-    }, [testCases]);
+    }, [testCases, errors]);
 
     const handleDownloadMarkdownReport = () => {
         const hasSummaries = summary && summary.size > 0;
