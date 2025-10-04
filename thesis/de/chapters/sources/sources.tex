@@ -2,7 +2,7 @@
 
 In diesem Anhang sind mehrere Quellcode-Ausschnitte aufgeführt.
 
-\begin{lstlisting}[caption={System-Prompt für die DSGVO-Klassifikation von BPMN-Aktivitäten},label={lst:system-prompt}]
+\begin{lstlisting}[caption={System-Prompt fuer die DSGVO-Klassifikation von BPMN-Aktivitäten},label={lst:system-prompt}]
 You are an expert in analysing Business Process Model and Notation (BPMN) diagrams for GDPR compliance. Your task is to identify and return a list of the IDs of all Activity (Task) elements that process personal data. Ignore all other element types. Always consider every activity in the process; do not omit any activity from your assessment.
 
 Use all available context for each activity - including the activity's name, description, annotations, associated data objects, and message or data associations - to determine whether the activity processes personal data. Under Article 4 of the GDPR, personal data is any information relating to an identified or identifiable natural person, including names, addresses, email addresses, phone numbers, identification numbers, payment or bank details, employment records, academic records, location data, IP addresses, online identifiers, images, audio/video recordings, biometric identifiers, health data or other information that can be linked to a specific person. "Processing" includes any operation performed on personal data, such as collecting, recording, organising, structuring, storing, retrieving, consulting, using, analysing, transmitting, printing, disseminating, aligning, combining, altering, restricting, erasing or destroying the data.
@@ -27,7 +27,7 @@ Do **not** classify an activity as GDPR-relevant when it only performs administr
 In your output, return only the IDs of activities you classify as GDPR-relevant. For each, provide a clear explanation using the activity's name and description to justify why it processes personal data. Do not reference element IDs in your explanation; use the activity names instead. Exclude from your result any activities that do not process personal data and any elements that are not activity/task elements.
 \end{lstlisting}
 
-\begin{lstlisting}[language=Kotlin,caption={Antworttyp für die Klassifizierung},label={lst:bpmn-analysis-result}]
+\begin{lstlisting}[language=Kotlin,caption={Antworttyp fuer die Klassifizierung},label={lst:bpmn-analysis-result}]
 data class BpmnAnalysisResult(
     @Description("List of Activity Elements that are classified as relevant for GDPR compliance")
     var elements: List<Element>
@@ -47,7 +47,7 @@ data class BpmnAnalysisResult(
         val isRelevant: Boolean = true
     )
 
-    /* Some other methods are not included */
+    /* Andere Methoden dieser Klasse sind weggelassen */
 }
 \end{lstlisting}
 
@@ -110,4 +110,54 @@ data class BpmnAnalysisResult(
         }
     }
 }
+\end{lstlisting}
+
+\begin{lstlisting}[caption={Zusammengefasster Logauszug zum Retry-Mechanismus}, label={lst:retry-log}]
+2025-10-03T19:11:51.152+02:00  INFO  BpmnExtractor  : Extracting BPMN elements from XML
+
+# 1) Erste Anfrage an das LLM (gekuerzt: Prompt/Headers/Body)
+2025-10-03T19:11:51.156+02:00  INFO  LoggingHttpClient  : HTTP POST https://openrouter.ai/api/v1/chat/completions
+  model: openai/gpt-oss-20b
+  messages: [system: (System-Prompt), user: (User-Prompt mit BpmnElement-Liste und Format-Anweisung)]
+
+# 2) Antwort des LLM mit fehlerhaftem JSON (verkuerzt)
+2025-10-03T19:11:56.671+02:00  INFO  LoggingHttpClient  : HTTP 200
+assistant:
+{
+  "elements": [
+    { "id": "Activity_09ehuii", "reason": "...", "isRelevant": true },
+    { "id": "Activity_1la5hsp", "reason": "...", "isRelevant":  }   <-- fehlender Bool-Wert
+    { "id": "Activity_0rfgrlm", "reason": "...", "isRelevant": true }
+  ]
+}
+
+# 3) Parser-Fehler + Retry-Ankuendigung (gekuerzt)
+2025-10-03T19:11:56.691+02:00  WARN  SafetyNet  : Parsing failed. Attempting to fix JSON and retry... (Attempt 1 of 2)
+dev.langchain4j.service.output.OutputParsingException:
+  Caused by: com.fasterxml.jackson.core.JsonParseException:
+  Unexpected character ('}') ... at elements[1].isRelevant
+
+# 4) Zweite Anfrage zum beheben des JSON mit Chat-Verlauf und Fehlermeldung (n-mal wiederholt, bis erfolgreich)
+2025-10-03T19:11:56.721+02:00  INFO  LoggingHttpClient  : HTTP POST https://openrouter.ai/api/v1/chat/completions
+  messages: [
+    system: (System-Prompt),
+    user: (User-Prompt mit BpmnElement-Liste und Format-Anweisung),
+    assistant: (Fehlerhafte JSON-Antwort),
+    system: (Fix-JSON System-Prompt),
+    user: (Fehlermeldung)
+  ]
+
+# 5) Korrigierte JSON-Antwort des LLM
+2025-10-03T19:12:01.519+02:00  INFO  LoggingHttpClient  : HTTP 200
+assistant:
+{
+  "elements": [
+    { "id": "Activity_09ehuii", "reason": "...", "isRelevant": true },
+    { "id": "Activity_1la5hsp", "reason": "...", "isRelevant": true }, <-- jetzt mit Bool-Wert
+    { "id": "Activity_0rfgrlm", "reason": "...", "isRelevant": true }
+  ]
+}
+
+# 6) Erfolgreiches Parsing und Weiterverarbeitung
+2025-10-03T19:12:01.519+02:00  INFO  PromptBpmnAnalyzer : BPMN Analysis Result: elements=[... isRelevant=true ...]
 \end{lstlisting}
