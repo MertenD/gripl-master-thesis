@@ -101,7 +101,7 @@
         <bpmn:targetRef>DataObjectReference_1w19jrd</bpmn:targetRef>
       </bpmn:dataOutputAssociation>
     </bpmn:task>
-    <bpmn:exclusiveGateway id="Gateway_10op5od" name="Schon n-mal wiederholt?">
+    <bpmn:exclusiveGateway id="Gateway_10op5od" name="Schon 3-mal wiederholt?">
       <bpmn:incoming>Flow_0lva5kc</bpmn:incoming>
       <bpmn:outgoing>Flow_0d2t21m</bpmn:outgoing>
       <bpmn:outgoing>Flow_0gn94ng</bpmn:outgoing>
