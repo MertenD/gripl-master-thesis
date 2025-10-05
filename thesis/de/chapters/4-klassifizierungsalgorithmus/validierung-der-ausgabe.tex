@@ -1,9 +1,39 @@
 \section{Validierung der Ausgabe}\label{sec:validierung-der-ausgabe}
 
-Zusätzlich zu den in Kapitel \ref{sec:prompt-engineering} beschriebenen Maßnahmen zur Sicherstellung strukturierter Ausgaben wird die Antwort des \ac{LLM} durch LangChain4j validiert. Wenn das erwartete Schema vom \ac{LLM} nicht eingehalten wird, wirft Langchain4j eine \texttt{OutputParsingException}.
+Zusätzlich zu den in Kapitel \ref{sec:prompt-engineering} beschriebenen Maßnahmen stellt die Pipeline mehrere Validierungs- und Korrekturschritte bereit, die in Abbildung \ref{fig:architecture-diagram} direkt auf \enquote{Antwort JSON deserialisieren} folgen. Diese Schritte dienen dazu, die Qualität und Korrektheit der Ausgabe des \ac{LLM} zu gewährleisten. Im Folgenden werden die einzelnen Validierungsmechanismen erläutert.
 
-\textcolor{orange}{// TODO Eventuell noch Retry Mechanismus wenn am Ende noch Zeit ist mit Nachrichtenverlauf und Parsing Fehlermeldung. Das muss aber auch erst einmal implementiert werden. Aktuell gibt es nur den Parsing Error.}
+\subsection*{Schema-Parsing und Retry-Mechanismus}
 
-Ein weiterer Mechanismus zur Validierung der Ausgabe ist die Überprüfung der ausgegebenen \texttt{ids}. Da das \ac{LLM} theoretisch jede beliebige \texttt{id} ausgeben könnte, werden die ausgegebenen \texttt{ids} mit den tatsächlichen \texttt{ids} der Aktivitäten aus dem Prozess abgeglichen. Falls eine ausgegebene Aktivität nicht im Prozess existiert, wird diese aus der Antwort der Klassifizierung entfernt. Dadurch wird sichergestellt, dass nur gültige \texttt{ids} in der finalen Ausgabe enthalten sind.
+Die vom \ac{LLM} zurückgelieferte Antwort wird zunächst von Langchain4j zu einem \texttt{BpmnAnalysisResult} deserialisiert. Entspricht die Struktur dabei nicht dem erwarteten JSON-Schema, löst Langchain4j eine \texttt{OutputParsingException} aus. In diesem Fall greift der in Abbildung \ref{fig:architecture-diagram} ab dem Boundary-Error-Event \enquote{OutputParsingError} dargestellte Retry-Mechanismus. Dabei wird bis zu dreimal die ursprüngliche Anfrage erneut gesendet, ergänzt um die Parser-Fehlermeldung sowie eine explizite Anweisung, die Ausgabe exakt gemäß Schema zu formatieren. So bleiben sowohl der Kontext der ursprünglichen Anfrage als auch die Information über den aufgetretenen Fehler erhalten, damit das \ac{LLM} die Ausgabe entsprechend anpassen kann. Schlagen alle drei Versuche fehl, wird der Fehler an die aufrufende Schnittstelle zurückgegeben und die Klassifizierung gilt als fehlgeschlagen.
 
-Nachdem es nun möglich ist, \ac{BPMN}-Prozesse vorzuverarbeiten, zu klassifizieren und die Ausgabe zu validieren, folgt als nächster Schritt die Definition einer Schnittstelle zum Aufruf der Pipeline. Das nächste Kapitel beschreibt dafür das API-Design.
+Ein zusammenfassender Log-Auszug des Retry-Mechanismus findet sich in Listing \ref{lst:retry-log}. Er zeigt exemplarisch, dass zunächst der boolesche Wert \texttt{isRelevant} fehlt und im zweiten Versuch korrekt ergänzt wird.
+
+\subsection*{Relevanz-Filterung}
+
+Nach erfolgreichem Parsing werden alle Elemente mit \texttt{isRelevant = false} entfernt. Dieser Schritt geschieht bereits im Konstruktor der Datenklasse\break\texttt{BpmnAnalysisResult} automatisch. Dieser Mechanismus adressiert modellseitige \emph{Überklassifizierungen}, bei denen das \ac{LLM} fälschlicherweise \texttt{ids} von Aktivitäten ausgibt, obwohl sie nicht \ac{DSGVO}-kritisch sind. Es wird sichergestellt, dass nur Aktivitäten, die als kritisch klassifiziert wurden, in der finalen Ausgabe verbleiben.
+
+Ohne das \texttt{isRelevant}-Flag hat das \ac{LLM} in der Praxis des Öfteren Aktivitäten als kritisch ausgegeben, deren Begründung jedoch ausdrücklich darlegte, \emph{warum} sie \emph{nicht} kritisch seien. Das Modell erkannte die Unkritikalität also korrekt, hielt sich aber nicht strikt an die Vorgabe, ausschließlich \texttt{ids} kritischer Aktivitäten in die Antwort aufzunehmen. Als pragmatische Absicherung wurde daher das boolesche \texttt{isRelevant}-Flag eingeführt. Das \ac{LLM} muss zusätzlich neben der Ausgabe der \texttt{ids} auch explizit angeben, ob die jeweilige Aktivität kritisch ist oder nicht. In der Summe reduziert diese Filterung die Anzahl widersprüchlicher Ausgaben.
+
+\texttt{isRelevant} dient ausschließlich einer internen Validierung und wird in der finalen Ausgabe der Klassifizierungs-Pipeline nicht berücksichtigt.
+
+\subsection*{\texttt{id}-Validierung und -Vervollständigung}
+
+In der Praxis liefert das \ac{LLM} mitunter unvollständige oder fehlerhafte \texttt{id}-Werte, die im Prozess nicht existieren. Zur Erhöhung der Robustheit werden die vom \ac{LLM} ausgegebenen \texttt{id}s daher gegen die tatsächlich im Prozess vorhandenen Aktivitäts-\texttt{id}s geprüft und – wenn möglich – automatisch vervollständigt. Der Ablauf ist:
+
+\begin{enumerate}
+    \item Ermittlung der Grundmenge aller gültigen Aktivitäts-\texttt{id}s aus der \texttt{BpmnElement}-Liste, die beim Preprocessing erstellt wurde.
+    \item Für jede vom \ac{LLM} gelieferte \texttt{id} wird ein Präfix-Match gegen die gültigen \texttt{id}s durchgeführt. Ist die ausgegebene \texttt{id} Präfix \emph{genau einer} gültigen \texttt{id}, wird sie durch diese vollständige \texttt{id} ersetzt.
+    \item Bleibt das Präfix-Match ohne eindeutiges Ergebnis, folgt ein Substring-Match: Ist die ausgegebene \texttt{id} Teilstring \emph{genau einer} gültigen \texttt{id}, wird entsprechend vervollständigt.
+    \item Liefert weder Präfix- noch Substring-Match eine eindeutige Übereinstimmung, gilt die ausgegebene \texttt{id} als ungültig und wird aus der finalen Ausgabe entfernt.
+    \item Abschließend werden Duplikate entfernt, sodass jede kritische Aktivität höchstens einmal in der Ausgabe erscheint.
+\end{enumerate}
+
+Gibt das \ac{LLM} beispielsweise die \texttt{id} \texttt{Activity\_1} aus, existiert im Prozess jedoch nur \texttt{Activity\_12345}, wird die Ausgabe automatisch auf die korrekte \texttt{id} vervollständigt. Existieren hingegen sowohl \texttt{Activity\_123} als auch \texttt{Activity\_124} im Prozess, bleibt die Ausgabe unvollständig und wird entfernt, da keine eindeutige Zuordnung möglich ist.
+
+Dieser Schritt fängt typische \ac{LLM}-Ausgabefehler ab – etwa Halluzinationen oder abgeschnittene Bezeichner – und stellt die Konsistenz mit dem Eingabemodell sicher. Im Diagramm \ref{fig:architecture-diagram} ist er als \enquote{\texttt{ids} validieren und vervollständigen} markiert. Ein fokussierter Code-Auszug findet sich in Listing \ref{lst:activity-id-resolution}.
+
+\subsection*{Zusammenfassung}
+
+Nach der Validierung besteht \texttt{BpmnAnalysisResult} nur noch aus Aktivitäten, die vom \ac{LLM} als kritisch eingestuft wurden (\texttt{isRelevant = true}) und deren \texttt{ids} im Prozess existieren.
+
+Da es nun möglich ist, \ac{BPMN}-Prozesse vorzuverarbeiten, zu klassifizieren und die Ausgabe zu validieren und zu beheben, folgt als nächster Schritt die Definition einer Schnittstelle zum Aufruf der Pipeline. Das nächste Kapitel beschreibt dafür das API-Design.
