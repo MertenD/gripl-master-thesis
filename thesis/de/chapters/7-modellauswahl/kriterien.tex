@@ -1,22 +1,45 @@
 \section{Kriterien}\label{sec:kriterien}
 
+Dieser Abschnitt legt die Auswahlkriterien der \acp{LLM} offen. Ziel ist es, die Auswahl nachvollziehbar zu machen und eine Grundlage für zukünftige Arbeiten zu schaffen, die ähnliche Modelle evaluieren möchten.
+
+\subsection*{Einordnung als \ac{EU}-Modell vs. internationales}
+
+Als \enquote{\ac{EU}‑Modell} gelten Modelle, deren Anbieter ihren Hauptsitz in der \ac{EU} haben, deren Veröffentlichung in der \ac{EU} erfolgt oder die schwerpunktmäßig in der \ac{EU} entwickelt oder verfeinert wurden. Alle anderen Modelle werden als \enquote{international} eingeordnet. Diese Klassifizierung hilft, europäische von nicht‑europäischen Modelle zu unterscheiden.
+
+\subsection*{Definition von Open-Source im Kontext}
+
+Im strengen Sinn definiert die \ac{OSI} Open‑Source‑Lizenzen über die \emph{Open Source Definition} \cite{OSI_OSD}. Viele aktuelle \acp{LLM} werden als \emph{open weights} veröffentlicht. Das beudetet, dass die Gewichte frei beziehbar sind, die Lizenz jedoch restriktive Klauseln enthalten kann (z.\,B. Meta Llama\,3 Community License mit Nutzungs‑ und Output‑Beschränkungen \cite{Llama3_License}). Für diese Arbeit gilt ein Modell als \emph{offen} bzw.\ \emph{Open‑Source‑nah}, wenn:
+
 \begin{itemize}
-    \item Ab wann gilt ein Modell als EU-Modell, entsprechend umgekehrt: Ab wann ist ein Modell international
-    \begin{itemize}
-        \item Sitz in EU
-        \item Training/Fine-Tuning in EU
-        \item Veröffentlicht in EU
-    \end{itemize}
-    \item Was bedeutet Open Source
-    \begin{itemize}
-        \item Frei verfügbare Gewichte
-        \item Permissive Lizenz
-    \end{itemize}
-    \item Größenklassen (Bspw. $<$8B, 8--20B, \ldots)
-    \item Herkunftsland, Hosting-Land
-    \item Letztes Update
-    \item Downloads
-    \item Lizenz
-    \item Kontext (Wichtig auch für die Größe der Prozesse, die damit verarbeitet werden können. Irgendwo muss ich das auch nochmal thematisieren)
-    \item Ich brauche noch irgendwo den Stand/das Datum nach dem ich nicht mehr nach neuen Modellen gesucht habe
+    \item die Gewichte frei zugänglich sind und
+    \item eine \emph{permissive} Lizenz (z.\,B. Apache‑2.0 oder MIT) eine breite kommerzielle Nutzung erlaubt (z.\,B. Mistral 7B \cite{HF_Mistral7B_2025}, GPT‑OSS \cite{OpenAI_GPTOSS_ModelCard_2025, OpenAI_GPTOSS_Blog_2025} oder DeepSeek R1 \cite{HF_DeepSeekR1_2025}).
 \end{itemize}
+
+Modelle mit \emph{Community}- oder \emph{Eigennutzer}-Lizenzen (z.\,B. Qwen 2.5 72B unter Qwen-Lizenz \cite{Qwen72B_License,Qwen_Blog_2024}) oder Forschungslizenzen (z.\,B. Mistral Large 2.1 unter Mistral Research License \cite{MRL_Research_License}) werden rechtlich \emph{nicht} als \ac{OSI}‑Open‑Source gewertet, können aber technisch als Vergleich herangezogen werden.
+
+\subsection*{Größenklassen}
+
+Die Modellgröße wird in \emph{Anzahl der Parameter} angegeben. Meist in \emph{Milliarden} (Billionen, engl. \emph{Billion}) Parametern (B, engl. \emph{Billion}). 1\,B = \(10^9\) Parameter. Diese Zahl korreliert mit dem Ressourcenbedarf für Training und Inferenz sowie der Leistungsfähigkeit \cite{webdev-llm-sizes}. Für die Einordnung werden hier folgende Klassen verwendet:
+
+\begin{itemize}
+    \item \textbf{Klein} (\(\leq\)\,\textasciitilde{}25\,B Parameter): z.\,B. Mistral\,7B Instruct (\textasciitilde{}7.3\,B) \cite{HF_Mistral7B_2025}.
+    \item \textbf{Groß} (\(>\)\,\textasciitilde{}25\,B Parameter): z.\,B. GPT‑OSS\,120B (\textasciitilde{}117\,B) \cite{OpenAI_GPTOSS_ModelCard_2025}.
+\end{itemize}
+
+Die Klassifikation dient als methodische Abgrenzung für die Experimente. Kleinere Modelle lassen sich häufig lokal ausführen, größere erfordern typischerweise mehrere GPUs. Parameterzahl ist dabei ein nützlicher, wenn auch unvollständiger Indikator für Ressourcenbedarf und erwartete Leistung. Dies ermöglicht konsistente Entscheidungen zu Deployment und Kosten.
+
+\subsection*{Kontextfenster}
+
+Das Kontextfenster gibt an, wie viele Token ein Modell gleichzeitig verarbeiten kann. Ein Token ist dabei eine Grundeinheit von Text, die ein Wort, einen Teil eines Wortes oder sogar ein einzelnes Zeichen darstellen kann. Die Größe des Kontextfensters beeinflusst maßgeblich, wie gut ein Modell längere Texte verstehen und darauf reagieren kann \cite{ibm-llm-context}.
+
+\subsection*{Weitere Kriterien}
+
+Zusätzlich zu den oben genannten Hauptkriterien werden folgende Merkmale erfasst, um die Modelle umfassend zu charakterisieren:
+
+\begin{itemize}
+    \item Das \textbf{Herkunftsland} des Anbieters,
+    \item das \textbf{letzte Update} des Modells, um einordnen zu können, wie aktuell das Modell ist und
+    \item wie viele \textbf{Downloads} das Modell hat, sofern verfügbar, um die Popularität abzuschätzen
+\end{itemize}
+
+Im nächsten Abschnitt werden auf Basis dieser Kriterien die ausgewählten Modelle vorgestellt.

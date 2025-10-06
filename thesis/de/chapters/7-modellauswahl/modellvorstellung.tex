@@ -1,6 +1,99 @@
 \section{Modellvorstellung}\label{sec:modellvorstellung}
 
-\begin{itemize}
-    \item Tabellarische Auflistung der Modelle
-    \item Begründung warum genau die Modelle ausgewählt worden sind
-\end{itemize}
+Im Folgenden werden die in dieser Arbeit evaluierten \acp{LLM} vorgestellt. Der Stichtag der Modellauswahl war der 30.\,September\,2025. Zuerst werden die technischen Kenndaten der Modelle in Tabellen \ref{tab:models-tech}, \ref{tab:models-other} und \ref{tab:models-updates} dargestellt.
+
+\textcolor{orange}{// TODO EIne Beschreibung der gewählten Modelle, welche durch die Tabellen ergänzt wird. Außerdem noch Begründung, warum diese Modelle ausgewählt wurden.}
+
+\begin{table}[htbp]
+    \centering
+    \begin{threeparttable}
+    \caption{Technische Eckdaten (Parametrisierung, Kontextfenster).}
+    \label{tab:models-tech}
+    \begin{tabular}{lrr}
+        \toprule
+        \textbf{Modell} & \textbf{Parameter (B)} & \textbf{Kontext (Tokens)} \\
+        \midrule
+        Mistral-7B-Instruct-v0.3 & 7.24 & 32{,}000 \cite{HF_Mistral7B_2025} \\
+        Mixtral-8x7B-Instruct-v0.1 & 46.7 total / 12.9 aktiv\tnote{1} & 32{,}000 \cite{HF_Mixtral8x7B_2025,Mixtral_Blog} \\
+        Mistral-Large-Instruct-2411 & 123 & 128{,}000 \cite{HF_MistralLargeInstruct_2025} \\
+        \midrule
+        Gemma-3-12B-it & 12.2 & 128{,}000 \cite{HF_Gemma3_12B_2025} \\
+        Gemma-3-27B-it & 27.4 & 128{,}000 \cite{HF_Gemma3_27B_2025} \\
+        \midrule
+        GPT-OSS-20B & 20.91 total / 3.61 aktiv & 131{,}072 \cite{OpenAI_GPTOSS_ModelCard_2025} \\
+        GPT-OSS-120B & 116.83 total / 5.13 aktiv & 131{,}072 \cite{OpenAI_GPTOSS_ModelCard_2025} \\
+        \midrule
+        DeepSeek-R1 & 685 total / 37 aktiv & 128{,}000 \cite{HF_DeepSeekR1_2025} \\
+        \midrule
+        Qwen2.5-7B-Instruct & 7.62 & 131{,}072 \cite{HF_Qwen7B_2025} \\
+        Qwen2.5-72B-Instruct & 72.7 & 131{,}072 \cite{HF_Qwen72B_2025} \\
+        \midrule
+        GPT-4o (2024-11-20) & n.v. & 128{,}000 \cite{openai-hello-gpt-4o} \\
+        \bottomrule
+    \end{tabular}
+    \begin{tablenotes}
+        \item[1] Mixtral nutzt eine Mixture-of-Experts-Architektur mit 8 Experten. Die Gesamtparameterzahl bezieht sich auf alle Experten, die aktive Parameterzahl auf den jeweils genutzten Expertenanteil pro Inferenzdurchlauf \cite{Mixtral_Blog}.
+    \end{tablenotes}
+    \end{threeparttable}
+\end{table}
+
+\begin{table}[htbp]
+    \centering
+    \begin{threeparttable}
+    \caption{Weitere Merkmale (Herkunftsland, Lizenz).}
+    \label{tab:models-other}
+    \begin{tabular}{l r r}
+        \toprule
+        \textbf{Modell} & \textbf{Herkunftsland} & \textbf{Lizenz} \\
+        \midrule
+        Mistral-7B-Instruct-v0.3 & Frankreich & Apache-2.0 \cite{HF_Mistral7B_2025} \\
+        Mixtral-8x7B-Instruct-v0.1 & Frankreich & Apache-2.0 \cite{HF_Mixtral8x7B_2025} \\
+        Mistral-Large-Instruct-2411 & Frankreich & Mistral Research License \cite{HF_MistralLargeInstruct_2025, MRL_Research_License} \\
+        \midrule
+        Gemma-3-12B-it & Großbritannien\tnote{1} & Gemma \cite{HF_Gemma3_12B_2025, Gemma3_License} \\
+        Gemma-3-27B-it & Großbritannien & Gemma \cite{HF_Gemma3_27B_2025, Gemma3_License} \\
+        \midrule
+        GPT-OSS-20B & USA & Apache-2.0 \cite{OpenAI_GPTOSS_ModelCard_2025} \\
+        GPT-OSS-120B & USA & Apache-2.0 \cite{OpenAI_GPTOSS_ModelCard_2025} \\
+        \midrule
+        DeepSeek-R1 & China & MIT \cite{HF_DeepSeekR1_2025} \\
+        \midrule
+        Qwen2.5-7B-Instruct & China & Apache-2.0 \cite{HF_Qwen7B_2025} \\
+        Qwen2.5-72B-Instruct & China & Qwen \cite{HF_Qwen72B_2025, Qwen72B_License_blame} \\
+        \midrule
+        GPT-4o (2024-11-20) & USA & Proprietär \cite{openai-hello-gpt-4o} \\
+        \bottomrule
+    \end{tabular}
+    \begin{tablenotes}
+        \item[1] Google Deepmind hat seinen Hauptsitz in London, gehört jedoch zu Alphabet mit Sitz in den USA. Wo genau trainiert wurde is unklar.
+    \end{tablenotes}
+    \end{threeparttable}
+\end{table}
+
+\begin{table}[htbp]
+    \centering
+    \caption{Weitere Merkmale (Letztes Update, Downloads).}
+    \label{tab:models-updates}
+    \begin{tabular}{l r r}
+        \toprule
+        \textbf{Modell} & \textbf{Letztes Update} & \textbf{Downloads (Stand 30.09.2025)} \\
+        \midrule
+        Mistral-7B-Instruct-v0.3 & 24.07.2025 & 687{,}000 \cite{HF_Mistral7B_2025} \\
+        Mixtral-8x7B-Instruct-v0.1 & 24.07.2025 & 43{,}500 \cite{HF_Mixtral8x7B_2025} \\
+        Mistral-Large-Instruct-2411 & 28.07.2025 & 4{,}200 \cite{HF_MistralLargeInstruct_2025} \\
+        \midrule
+        Gemma-3-12B-it & 21.03.2025 & 523{,}000 \cite{HF_Gemma3_12B_2025} \\
+        Gemma-3-27B-it & 21.03.2025 & 1{,}180{,}000 \cite{HF_Gemma3_27B_2025} \\
+        \midrule
+        GPT-OSS-20B & 26.08.2025 & 6{,}450{,}000 \cite{OpenAI_GPTOSS_ModelCard_2025} \\
+        GPT-OSS-120B & 26.08.2025 & 3{,}600{,}000 \cite{OpenAI_GPTOSS_ModelCard_2025} \\
+        \midrule
+        DeepSeek-R1 & 27.03.2025 & 544{,}000 \cite{HF_DeepSeekR1_2025} \\
+        \midrule
+        Qwen2.5-7B-Instruct & 12.01.2025 & 5{,}100{,}000 \cite{HF_Qwen7B_2025} \\
+        Qwen2.5-72B-Instruct & 12.01.2025 & 213{,}000 \cite{HF_Qwen72B_2025} \\
+        \midrule
+        GPT-4o (2024-11-20) & 20.11.2024 & n.v. \cite{openai-hello-gpt-4o} \\
+        \bottomrule
+    \end{tabular}
+\end{table}
