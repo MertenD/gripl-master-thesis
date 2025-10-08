@@ -5,6 +5,7 @@ export interface MultiEvaluationRequest {
     defaultEvaluationEndpoint: string;
     seed?: number;
     maxConcurrent: number | null;
+    repetitions?: number;
 }
 
 export interface ModelRunConfig {

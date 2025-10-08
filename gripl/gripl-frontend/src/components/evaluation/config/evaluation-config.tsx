@@ -28,11 +28,13 @@ export default function EvaluationConfig({ className, children, datasets, onMult
         selectedDatasets: config.selectedDatasets,
         seed: config.seed,
         maxConcurrent: config.maxConcurrent,
+        repetitions: config.repetitions,
         setDefaultEndpointChoice: (v) => config.setDefaultEndpointChoice(v),
         setDefaultPresetEndpoint: config.setDefaultPresetEndpoint,
         setDefaultCustomEndpoint: config.setDefaultCustomEndpoint,
         setSeed: config.setSeed,
         setMaxConcurrent: config.setMaxConcurrent,
+        setRepetitions: config.setRepetitions,
         setSelectedDatasets: config.setSelectedDatasets,
         setModels: config.setModels,
     });
@@ -65,11 +67,13 @@ export default function EvaluationConfig({ className, children, datasets, onMult
                         defaultCustomEndpoint={config.defaultCustomEndpoint}
                         seed={config.seed}
                         maxConcurrent={config.maxConcurrent}
+                        repetitions={config.repetitions}
                         setDefaultEndpointChoice={config.setDefaultEndpointChoice}
                         setDefaultPresetEndpoint={config.setDefaultPresetEndpoint}
                         setDefaultCustomEndpoint={config.setDefaultCustomEndpoint}
                         setSeed={config.setSeed}
                         onMaxConcurrentChange={(v) => config.setMaxConcurrent(v)}
+                        onRepetitionsChange={(v) => config.setRepetitions(v)}
                     />
 
                     <EvaluationConfigDatasetSettings

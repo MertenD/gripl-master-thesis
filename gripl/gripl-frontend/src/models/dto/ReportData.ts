@@ -7,6 +7,7 @@ export interface EvaluationMetadataReport {
     totalTestCases: number;
     defaultEvaluationEndpoint: string;
     seed: number;
+    totalRepetitions?: number;
     markdown: string;
 }
 

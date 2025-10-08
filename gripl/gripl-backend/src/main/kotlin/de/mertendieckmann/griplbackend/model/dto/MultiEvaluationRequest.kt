@@ -8,6 +8,7 @@ data class MultiEvaluationRequest(
     val models: List<ModelRunConfig>,
     val seed: Int?,
     val datasets: List<Int>,
+    val repetitions: Int = 1,
 )
 
 data class ModelRunConfig(

@@ -25,6 +25,7 @@ import {FileText, Play} from "lucide-react";
 type ModelReportEnvelope = {
     modelLabel: string;
     report: EvaluationReport;
+    runNumber: number;
 };
 
 interface EvaluationPageProps {
@@ -35,25 +36,27 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
     const [evaluationRequest, setEvaluationRequest] = useState<MultiEvaluationRequest | null>(null);
 
     const [metadata, setMetadata] = useState<EvaluationMetadataReport | null>(null);
-    const [testCases, setTestCases] = useState<(TestCaseReport & { modelLabel: string })[]>([]);
-    const [summary, setSummary] = useState<Map<string, EvaluationReportSummary>>(new Map());
-    const [currentStepInfos, setCurrentStepInfos] = useState<(EvaluationReportStepInfo & { modelLabel: string })[]>([]);
-    const [errors, setErrors] = useState<(EvaluationReportError & { modelLabel: string })[]>([]);
+    const [testCasesByRun, setTestCasesByRun] = useState<Map<number, (TestCaseReport & { modelLabel: string })[]>>(new Map());
+    const [summaryByRun, setSummaryByRun] = useState<Map<number, Map<string, EvaluationReportSummary>>>(new Map());
+    const [currentStepInfos, setCurrentStepInfos] = useState<(EvaluationReportStepInfo & { modelLabel: string, runNumber: number })[]>([]);
+    const [errorsByRun, setErrorsByRun] = useState<Map<number, (EvaluationReportError & { modelLabel: string })[]>>(new Map());
     const [isLoading, setIsLoading] = useState(false);
     const [isFinished, setIsFinished] = useState(false);
 
     const [selectedDataset, setSelectedDataset] = useState<string | undefined>(undefined);
+    const [selectedRun, setSelectedRun] = useState<number>(1);
 
     const handleEvaluationStart = async () => {
         if (!evaluationRequest) return;
 
         setMetadata(null);
-        setTestCases([]);
-        setSummary(new Map());
+        setTestCasesByRun(new Map());
+        setSummaryByRun(new Map());
         setCurrentStepInfos([]);
-        setErrors([]);
+        setErrorsByRun(new Map());
         setIsLoading(true);
         setIsFinished(false);
+        setSelectedRun(1);
 
         console.log("Sending request", evaluationRequest)
 
@@ -86,24 +89,36 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
 
                 try {
                     const env = JSON.parse(line) as ModelReportEnvelope;
-                    const { modelLabel, report } = env;
+                    const { modelLabel, report, runNumber } = env;
 
-                    console.log(`Received report for model: ${modelLabel}`, report);
+                    console.log(`Received report for model: ${modelLabel}, run: ${runNumber}`, report);
 
                     if (report.type === "metadata") {
                         setMetadata(report);
                     } else if (report.type === "testCase") {
-                        setTestCases((prev) => [...prev, { ...(report as TestCaseReport), modelLabel }]);
-                    } else if (report.type === "summary") {
-                        setSummary((prev) => {
+                        setTestCasesByRun((prev) => {
                             const next = new Map(prev);
-                            next.set(modelLabel, report as EvaluationReportSummary);
+                            const runCases = next.get(runNumber) || [];
+                            next.set(runNumber, [...runCases, { ...(report as TestCaseReport), modelLabel }]);
+                            return next;
+                        });
+                    } else if (report.type === "summary") {
+                        setSummaryByRun((prev) => {
+                            const next = new Map(prev);
+                            const runSummaries = next.get(runNumber) || new Map();
+                            runSummaries.set(modelLabel, report as EvaluationReportSummary);
+                            next.set(runNumber, runSummaries);
                             return next;
                         });
                     } else if (report.type === "stepInfo") {
-                        setCurrentStepInfos((prev) => [...prev, { ...(report as EvaluationReportStepInfo), modelLabel }]);
+                        setCurrentStepInfos((prev) => [...prev, { ...(report as EvaluationReportStepInfo), modelLabel, runNumber }]);
                     } else if (report.type === "error") {
-                        setErrors((prev) => [...prev, { ...(report as EvaluationReportError), modelLabel }]);
+                        setErrorsByRun((prev) => {
+                            const next = new Map(prev);
+                            const runErrors = next.get(runNumber) || [];
+                            next.set(runNumber, [...runErrors, { ...(report as EvaluationReportError), modelLabel }]);
+                            return next;
+                        });
                     } else {
                         console.warn("Unknown report type:", report);
                     }
@@ -121,23 +136,88 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
 
     useEffect(() => {
         setCurrentStepInfos((infos) =>
-            infos.filter((info) =>
-                !testCases.some(
+            infos.filter((info) => {
+                const runTestCases = testCasesByRun.get(info.runNumber) || [];
+                const runErrors = errorsByRun.get(info.runNumber) || [];
+                return !runTestCases.some(
                     (testCase) =>
                         testCase.modelLabel === info.modelLabel &&
                         testCase.testCaseId === info.currentTestCaseId
-                ) && !errors.some(
+                ) && !runErrors.some(
                     (error) =>
                         error.modelLabel === info.modelLabel &&
                         error.testCaseId === info.currentTestCaseId
-                    )
-            )
+                );
+            })
         );
-    }, [testCases, errors]);
+    }, [testCasesByRun, errorsByRun]);
+
+    // Helper to get data for selected run
+    const testCases = testCasesByRun.get(selectedRun) || [];
+    const summary = summaryByRun.get(selectedRun) || new Map();
+    const errors = errorsByRun.get(selectedRun) || [];
+
+    // Compute aggregate statistics across all runs
+    const aggregateStats = useMemo(() => {
+        if (summaryByRun.size === 0 || !metadata?.modelLabels) return null;
+
+        const stats = new Map<string, {
+            avgPrecision: number;
+            stdPrecision: number;
+            avgRecall: number;
+            stdRecall: number;
+            avgF1Score: number;
+            stdF1Score: number;
+            avgAccuracy: number;
+            stdAccuracy: number;
+        }>();
+
+        for (const modelLabel of metadata.modelLabels) {
+            const precisions: number[] = [];
+            const recalls: number[] = [];
+            const f1Scores: number[] = [];
+            const accuracies: number[] = [];
+
+            for (const [runNum, runSummaries] of summaryByRun.entries()) {
+                const modelSummary = runSummaries.get(modelLabel);
+                if (modelSummary) {
+                    precisions.push(modelSummary.precision);
+                    recalls.push(modelSummary.recall);
+                    f1Scores.push(modelSummary.f1Score);
+                    accuracies.push(modelSummary.accuracy);
+                }
+            }
+
+            if (precisions.length > 0) {
+                const avgPrecision = precisions.reduce((a, b) => a + b, 0) / precisions.length;
+                const avgRecall = recalls.reduce((a, b) => a + b, 0) / recalls.length;
+                const avgF1Score = f1Scores.reduce((a, b) => a + b, 0) / f1Scores.length;
+                const avgAccuracy = accuracies.reduce((a, b) => a + b, 0) / accuracies.length;
+
+                const stdPrecision = Math.sqrt(precisions.reduce((sum, val) => sum + Math.pow(val - avgPrecision, 2), 0) / precisions.length);
+                const stdRecall = Math.sqrt(recalls.reduce((sum, val) => sum + Math.pow(val - avgRecall, 2), 0) / recalls.length);
+                const stdF1Score = Math.sqrt(f1Scores.reduce((sum, val) => sum + Math.pow(val - avgF1Score, 2), 0) / f1Scores.length);
+                const stdAccuracy = Math.sqrt(accuracies.reduce((sum, val) => sum + Math.pow(val - avgAccuracy, 2), 0) / accuracies.length);
+
+                stats.set(modelLabel, {
+                    avgPrecision,
+                    stdPrecision,
+                    avgRecall,
+                    stdRecall,
+                    avgF1Score,
+                    stdF1Score,
+                    avgAccuracy,
+                    stdAccuracy,
+                });
+            }
+        }
+
+        return stats;
+    }, [summaryByRun, metadata]);
 
     const handleDownloadMarkdownReport = () => {
-        const hasSummaries = summary && summary.size > 0;
-        if (!testCases.length && !hasSummaries) {
+        const hasSummaries = summaryByRun.size > 0;
+        if (testCasesByRun.size === 0 && !hasSummaries) {
             alert("No results yet.");
             return;
         }
@@ -148,18 +228,35 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
             sections.push(metadata.markdown);
         }
 
-        for (const [modelLabel, modelSummary] of summary.entries()) {
-            sections.push(`# Summary (${modelLabel})`);
-            sections.push(modelSummary.markdown);
+        // Include aggregate stats if multiple runs
+        if (aggregateStats && summaryByRun.size > 1) {
+            sections.push("# Aggregate Statistics Across All Runs");
+            for (const [modelLabel, stats] of aggregateStats.entries()) {
+                sections.push(`## Model: ${modelLabel}`);
+                sections.push(`- Precision: ${stats.avgPrecision.toFixed(3)} ± ${stats.stdPrecision.toFixed(3)}`);
+                sections.push(`- Recall: ${stats.avgRecall.toFixed(3)} ± ${stats.stdRecall.toFixed(3)}`);
+                sections.push(`- F1-Score: ${stats.avgF1Score.toFixed(3)} ± ${stats.stdF1Score.toFixed(3)}`);
+                sections.push(`- Accuracy: ${stats.avgAccuracy.toFixed(3)} ± ${stats.stdAccuracy.toFixed(3)}`);
+            }
         }
 
-        const byModel = groupBy(testCases, (x) => x.modelLabel);
+        // Include results for each run
+        for (const [runNum, runSummaries] of summaryByRun.entries()) {
+            sections.push(`# Run ${runNum}`);
+            for (const [modelLabel, modelSummary] of runSummaries.entries()) {
+                sections.push(`## Summary (${modelLabel})`);
+                sections.push(modelSummary.markdown);
+            }
 
-        Object.keys(byModel).forEach((label) => {
-            sections.push(`# Model: ${label}`);
-            const cases = byModel[label];
-            sections.push(...cases.map((c) => c.markdown));
-        });
+            const runTestCases = testCasesByRun.get(runNum) || [];
+            const byModel = groupBy(runTestCases, (x) => x.modelLabel);
+
+            Object.keys(byModel).forEach((label) => {
+                sections.push(`## Model: ${label}`);
+                const cases = byModel[label];
+                sections.push(...cases.map((c) => c.markdown));
+            });
+        }
 
         const blob = new Blob([sections.join("\n\n")], { type: "text/markdown" });
         const url = URL.createObjectURL(blob);
@@ -173,16 +270,34 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
     };
 
     const handleDownloadJsonReport = () => {
-        const hasSummaries = summary && summary.size > 0;
-        if (!testCases.length && !hasSummaries) {
+        const hasSummaries = summaryByRun.size > 0;
+        if (testCasesByRun.size === 0 && !hasSummaries) {
             alert("No results yet.");
             return;
         }
+
+        // Convert Maps to serializable format
+        const testCasesByRunObj: Record<number, any[]> = {};
+        for (const [runNum, cases] of testCasesByRun.entries()) {
+            testCasesByRunObj[runNum] = cases;
+        }
+
+        const summariesByRunObj: Record<number, any[]> = {};
+        for (const [runNum, runSummaries] of summaryByRun.entries()) {
+            summariesByRunObj[runNum] = Array.from(runSummaries.entries()).map(([label, s]) => ({ label, summary: s }));
+        }
+
+        const errorsByRunObj: Record<number, any[]> = {};
+        for (const [runNum, errs] of errorsByRun.entries()) {
+            errorsByRunObj[runNum] = errs;
+        }
+
         const report = {
             metadata,
-            testCases,
-            summaries: Array.from(summary.entries()).map(([label, s]) => ({ label, summary: s })),
-            errors
+            testCasesByRun: testCasesByRunObj,
+            summariesByRun: summariesByRunObj,
+            errorsByRun: errorsByRunObj,
+            aggregateStats: aggregateStats ? Object.fromEntries(aggregateStats.entries()) : null
         };
 
         const blob = new Blob([JSON.stringify(report, null, 2)], { type: "application/json" });
@@ -207,16 +322,53 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
                 if (typeof text !== "string") throw new Error("File content is not a string");
 
                 const parsed = JSON.parse(text);
-                if (!parsed.testCases || !parsed.summaries) throw new Error("Invalid report format");
 
                 setMetadata(parsed.metadata || null);
-                setTestCases(parsed.testCases);
-                const summaryMap = new Map<string, EvaluationReportSummary>();
-                parsed.summaries.forEach((s: { label: string; summary: EvaluationReportSummary }) => {
-                    summaryMap.set(s.label, s.summary);
-                });
-                setSummary(summaryMap);
-                setErrors(parsed.errors || []);
+
+                // Handle both old and new formats
+                if (parsed.testCasesByRun) {
+                    // New multi-run format
+                    const tcMap = new Map<number, (TestCaseReport & { modelLabel: string })[]>();
+                    for (const [runNum, cases] of Object.entries(parsed.testCasesByRun)) {
+                        tcMap.set(parseInt(runNum), cases as any);
+                    }
+                    setTestCasesByRun(tcMap);
+
+                    const summaryMap = new Map<number, Map<string, EvaluationReportSummary>>();
+                    for (const [runNum, summaries] of Object.entries(parsed.summariesByRun)) {
+                        const runSummaryMap = new Map<string, EvaluationReportSummary>();
+                        (summaries as any[]).forEach((s: { label: string; summary: EvaluationReportSummary }) => {
+                            runSummaryMap.set(s.label, s.summary);
+                        });
+                        summaryMap.set(parseInt(runNum), runSummaryMap);
+                    }
+                    setSummaryByRun(summaryMap);
+
+                    const errorsMap = new Map<number, (EvaluationReportError & { modelLabel: string })[]>();
+                    for (const [runNum, errs] of Object.entries(parsed.errorsByRun || {})) {
+                        errorsMap.set(parseInt(runNum), errs as any);
+                    }
+                    setErrorsByRun(errorsMap);
+                } else {
+                    // Old single-run format - convert to run 1
+                    if (!parsed.testCases || !parsed.summaries) throw new Error("Invalid report format");
+
+                    const tcMap = new Map<number, (TestCaseReport & { modelLabel: string })[]>();
+                    tcMap.set(1, parsed.testCases);
+                    setTestCasesByRun(tcMap);
+
+                    const summaryMap = new Map<number, Map<string, EvaluationReportSummary>>();
+                    const runSummaryMap = new Map<string, EvaluationReportSummary>();
+                    parsed.summaries.forEach((s: { label: string; summary: EvaluationReportSummary }) => {
+                        runSummaryMap.set(s.label, s.summary);
+                    });
+                    summaryMap.set(1, runSummaryMap);
+                    setSummaryByRun(summaryMap);
+
+                    const errorsMap = new Map<number, (EvaluationReportError & { modelLabel: string })[]>();
+                    errorsMap.set(1, parsed.errors || []);
+                    setErrorsByRun(errorsMap);
+                }
             } catch (err) {
                 console.error("Failed to load report:", err);
                 alert("Failed to load report: " + (err as Error).message);
@@ -270,13 +422,13 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
                                         <div className="flex flex-row items-center space-x-4">
                                             <div className="flex flex-col justify-start overflow-y-auto">
                                                 {currentStepInfos.map((info, idx) => (
-                                                    <span key={`${info.modelLabel}-stepinfo-${idx}`}
+                                                    <span key={`${info.modelLabel}-${info.runNumber}-stepinfo-${idx}`}
                                                           className="whitespace-nowrap">
-                                                    [{info.modelLabel}] Evaluating {info.currentTestCaseName}...
+                                                    [Run {info.runNumber}] [{info.modelLabel}] Evaluating {info.currentTestCaseName}...
                                                 </span>
                                                 ))}
                                             </div>
-                                            <p>({testCases.length + errors.length} / {currentStepInfos[0].totalTestCases * (evaluationRequest?.models.length || 1)})</p>
+                                            <p>({Array.from(testCasesByRun.values()).reduce((sum, cases) => sum + cases.length, 0) + Array.from(errorsByRun.values()).reduce((sum, errs) => sum + errs.length, 0)} / {currentStepInfos[0]?.totalTestCases * (evaluationRequest?.models.length || 1) * (metadata?.totalRepetitions || 1)})</p>
                                         </div>
                                     )}
                                 </div>
@@ -292,12 +444,60 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
                     <div className="space-y-6 mb-8">
                         <EvaluationReportSummaryCard reportSummaries={summariesByModel} metadata={metadata}/>
                         <MetricsCharts reportSummaries={summariesByModel}/>
+
+                        {/* Aggregate Statistics across all runs */}
+                        {aggregateStats && metadata && metadata.totalRepetitions && metadata.totalRepetitions > 1 && (
+                            <Card className="p-6">
+                                <h3 className="text-xl font-semibold mb-4">Aggregate Statistics Across {metadata.totalRepetitions} Runs</h3>
+                                <div className="space-y-4">
+                                    {Array.from(aggregateStats.entries()).map(([modelLabel, stats]) => (
+                                        <div key={modelLabel} className="border-b pb-4 last:border-b-0">
+                                            <h4 className="font-semibold mb-2">{modelLabel}</h4>
+                                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                                <div>
+                                                    <p className="text-sm text-muted-foreground">Precision</p>
+                                                    <p className="font-mono">{stats.avgPrecision.toFixed(3)} ± {stats.stdPrecision.toFixed(3)}</p>
+                                                </div>
+                                                <div>
+                                                    <p className="text-sm text-muted-foreground">Recall</p>
+                                                    <p className="font-mono">{stats.avgRecall.toFixed(3)} ± {stats.stdRecall.toFixed(3)}</p>
+                                                </div>
+                                                <div>
+                                                    <p className="text-sm text-muted-foreground">F1-Score</p>
+                                                    <p className="font-mono">{stats.avgF1Score.toFixed(3)} ± {stats.stdF1Score.toFixed(3)}</p>
+                                                </div>
+                                                <div>
+                                                    <p className="text-sm text-muted-foreground">Accuracy</p>
+                                                    <p className="font-mono">{stats.avgAccuracy.toFixed(3)} ± {stats.stdAccuracy.toFixed(3)}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </Card>
+                        )}
                     </div>
                 </> : <Card className="p-4 mb-4">
                     <p className="text-muted-foreground">No results yet. Start an evaluation to see results here.</p>
                 </Card>}
 
-                <h2 className="text-2xl font-semibold mb-2">Results by Model</h2>
+                {/* Run selection tabs (only show if multiple runs) */}
+                {metadata && metadata.totalRepetitions && metadata.totalRepetitions > 1 && (
+                    <>
+                        <h2 className="text-2xl font-semibold mb-2">Select Run</h2>
+                        <Tabs value={selectedRun.toString()} onValueChange={(v) => setSelectedRun(parseInt(v))} className="w-full mb-6">
+                            <TabsList className="w-full h-12 sticky top-0 z-20 mb-4">
+                                {Array.from({ length: metadata.totalRepetitions }, (_, i) => i + 1).map((runNum) => (
+                                    <TabsTrigger value={runNum.toString()} key={`run-${runNum}-trigger`}>
+                                        Run {runNum}
+                                    </TabsTrigger>
+                                ))}
+                            </TabsList>
+                        </Tabs>
+                    </>
+                )}
+
+                <h2 className="text-2xl font-semibold mb-2">Results by Model{metadata && metadata.totalRepetitions && metadata.totalRepetitions > 1 ? ` (Run ${selectedRun})` : ""}</h2>
                 <Tabs className="w-full">
                     <TabsList className="w-full h-12 sticky top-0 z-10 mb-4">
                         {metadata?.modelLabels.map?.((label) => (

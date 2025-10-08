@@ -28,7 +28,8 @@ data class EvaluationMetadataReport(
     val timestamp: Timestamp = Timestamp(System.currentTimeMillis()),
     val totalTestCases: Int,
     val defaultEvaluationEndpoint: String,
-    val seed: Int? = null
+    val seed: Int? = null,
+    val totalRepetitions: Int = 1
 ): EvaluationReport() {
     override fun toMarkdown(): String {
         return """
@@ -37,6 +38,7 @@ data class EvaluationMetadataReport(
             |- **Temperatures:** ${modelTemperatures.joinToString(", ") { it?.toString() ?: "default" }}
             |- **Datasets:** ${datasets.joinToString(", ")}
             |- **Total Test Cases:** $totalTestCases
+            |${if (totalRepetitions > 1) "- **Repetitions:** $totalRepetitions" else ""}
             |${if (seed != null) "- **Seed:** $seed" else ""}
             |- **Timestamp:** $timestamp
             |- **Default Evaluation Endpoint:** $defaultEvaluationEndpoint

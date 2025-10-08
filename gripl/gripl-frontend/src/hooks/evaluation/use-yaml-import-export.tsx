@@ -13,11 +13,13 @@ export function useYamlImportExport(props: {
     selectedDatasets: number[];
     seed: number | null;
     maxConcurrent: number;
+    repetitions: number;
     setDefaultEndpointChoice: (v: "preset" | "custom") => void;
     setDefaultPresetEndpoint: (v: string) => void;
     setDefaultCustomEndpoint: (v: string) => void;
     setSeed: (v: number) => void;
     setMaxConcurrent: (v: number) => void;
+    setRepetitions: (v: number) => void;
     setSelectedDatasets: (v: number[]) => void;
     setModels: (v: ModelRowState[]) => void;
 }) {
@@ -28,11 +30,13 @@ export function useYamlImportExport(props: {
         selectedDatasets,
         seed,
         maxConcurrent,
+        repetitions,
         setDefaultEndpointChoice,
         setDefaultPresetEndpoint,
         setDefaultCustomEndpoint,
         setSeed,
         setMaxConcurrent,
+        setRepetitions,
         setSelectedDatasets,
         setModels,
     } = props;
@@ -62,6 +66,7 @@ export function useYamlImportExport(props: {
         const defaultEvaluationEndpoint: string | undefined = cfg?.defaultEvaluationEndpoint;
         const seedString = cfg?.seed;
         const maxConc: number | undefined = cfg?.maxConcurrent ?? cfg?.maxConcurrency;
+        const reps: number | undefined = cfg?.repetitions;
         const modelItems: any[] = Array.isArray(cfg?.models) ? cfg.models : [];
         const datasets: number[] = Array.isArray(cfg?.datasets) ? cfg.datasets.map((d: any) => parseInt(d)) : [];
 
@@ -84,6 +89,10 @@ export function useYamlImportExport(props: {
 
         if (typeof maxConc === "number" && Number.isFinite(maxConc) && maxConc > 0) {
             setMaxConcurrent(maxConc);
+        }
+
+        if (typeof reps === "number" && Number.isFinite(reps) && reps > 0) {
+            setRepetitions(reps);
         }
 
         if (modelItems.length > 0) {
@@ -159,6 +168,7 @@ export function useYamlImportExport(props: {
             defaultEvaluationEndpoint: effectiveDefaultEndpoint,
             seed: seed || undefined,
             maxConcurrent: maxConcurrent || 1,
+            repetitions: repetitions || 1,
             models: dtoModels,
             datasets: selectedDatasets,
         };

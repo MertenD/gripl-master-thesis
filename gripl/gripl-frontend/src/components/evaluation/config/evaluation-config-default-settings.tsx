@@ -14,11 +14,13 @@ interface EvaluationConfigDefaultSettingsProps {
     defaultCustomEndpoint: string;
     seed: number | null;
     maxConcurrent: number;
+    repetitions: number;
     setDefaultEndpointChoice: (endpoint: EndpointChoice) => void;
     setDefaultPresetEndpoint: (endpoint: string) => void;
     setDefaultCustomEndpoint: (endpoint: string) => void;
     setSeed: (seed: number | null) => void;
     onMaxConcurrentChange: (v: number) => void;
+    onRepetitionsChange: (v: number) => void;
 }
 
 export default function EvaluationConfigDefaultSettings(props: EvaluationConfigDefaultSettingsProps) {
@@ -29,11 +31,13 @@ export default function EvaluationConfigDefaultSettings(props: EvaluationConfigD
         defaultCustomEndpoint,
         seed,
         maxConcurrent,
+        repetitions,
         setDefaultEndpointChoice,
         setDefaultPresetEndpoint,
         setDefaultCustomEndpoint,
         setSeed,
         onMaxConcurrentChange,
+        onRepetitionsChange,
     } = props;
 
     return (
@@ -89,6 +93,14 @@ export default function EvaluationConfigDefaultSettings(props: EvaluationConfigD
                            value={Number.isFinite(maxConcurrent) ? maxConcurrent : ""}
                            onChange={(e) => onMaxConcurrentChange(parseInt(e.target.value, 10) || 1)}
                            className="w-full"/>
+                </div>
+                <div className="space-y-2">
+                    <Label>Number of Repetitions</Label>
+                    <Input id="repetitions" type="number" min={1} placeholder="1"
+                           value={Number.isFinite(repetitions) ? repetitions : 1}
+                           onChange={(e) => onRepetitionsChange(parseInt(e.target.value, 10) || 1)}
+                           className="w-full"/>
+                    <p className="text-sm text-muted-foreground">The evaluation will be repeated n times to gather statistics.</p>
                 </div>
                 <div className="space-y-2">
                     <Label>Seed</Label>

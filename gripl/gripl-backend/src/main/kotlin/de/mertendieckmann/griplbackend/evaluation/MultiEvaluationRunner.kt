@@ -23,28 +23,33 @@ class MultiEvaluationRunner(
         require(request.models.isNotEmpty()) { "models must not be empty" }
 
         val seed = request.seed ?: (System.currentTimeMillis() * (Math.random() * 10) % Int.MAX_VALUE).toInt()
-        emit(ModelReportEnvelope("", createMetadata(request, seed)))
+        val repetitions = request.repetitions.coerceAtLeast(1)
+        emit(ModelReportEnvelope("", createMetadata(request, seed, repetitions), 1))
 
-        for ((index, model) in request.models.withIndex()) {
-            val effectiveEndpoint = model.evaluationEndpoint ?: request.defaultEvaluationEndpoint
-            log.info { "Starting model ${index + 1}/${request.models.size}: '${model.label}' @ $effectiveEndpoint" }
+        for (runNumber in 1..repetitions) {
+            log.info { "Starting evaluation run $runNumber/$repetitions" }
 
-            val singleRequest = EvaluationRequest(
-                evaluationEndpoint = effectiveEndpoint,
-                llmProps = model.llmProps?.copy(seed = seed),
-                maxConcurrent = request.maxConcurrent,
-                datasets = request.datasets
-            )
+            for ((index, model) in request.models.withIndex()) {
+                val effectiveEndpoint = model.evaluationEndpoint ?: request.defaultEvaluationEndpoint
+                log.info { "Run $runNumber - Starting model ${index + 1}/${request.models.size}: '${model.label}' @ $effectiveEndpoint" }
 
-            singleRunner.run(singleRequest)
-                .map { event -> ModelReportEnvelope(model.label, event) }
-                .collect { wrapped -> emit(wrapped) }
+                val singleRequest = EvaluationRequest(
+                    evaluationEndpoint = effectiveEndpoint,
+                    llmProps = model.llmProps?.copy(seed = seed),
+                    maxConcurrent = request.maxConcurrent,
+                    datasets = request.datasets
+                )
 
-            log.info { "Finished model '${model.label}'" }
+                singleRunner.run(singleRequest)
+                    .map { event -> ModelReportEnvelope(model.label, event, runNumber) }
+                    .collect { wrapped -> emit(wrapped) }
+
+                log.info { "Run $runNumber - Finished model '${model.label}'" }
+            }
         }
     }
 
-    private fun createMetadata(request: MultiEvaluationRequest, seed: Int): EvaluationMetadataReport {
+    private fun createMetadata(request: MultiEvaluationRequest, seed: Int, repetitions: Int): EvaluationMetadataReport {
         val datasets = datasetRepository.getDatasetsByIds(request.datasets.map { it.toLong() })
         val totalTestCases = evaluationDataRepository.countEvaluationDataForDatasets(request.datasets.map { it.toLong() })
 
@@ -54,7 +59,8 @@ class MultiEvaluationRunner(
             datasets = datasets.map { EvaluationMetadataReport.DatasetInfo(it.id, it.name) },
             totalTestCases = totalTestCases,
             seed = seed,
-            defaultEvaluationEndpoint = request.defaultEvaluationEndpoint
+            defaultEvaluationEndpoint = request.defaultEvaluationEndpoint,
+            totalRepetitions = repetitions
         )
     }
 }

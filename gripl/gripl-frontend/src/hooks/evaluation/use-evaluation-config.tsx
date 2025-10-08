@@ -34,6 +34,7 @@ export function useEvaluationConfig(
     const [seed, setSeed] = useState<number | null>(null);
 
     const [maxConcurrent, setMaxConcurrent] = useState<number>(4);
+    const [repetitions, setRepetitions] = useState<number>(1);
     const [models, setModels] = useState<ModelRowState[]>(() => [newModelRow(1)]);
     const [selectedDatasets, setSelectedDatasets] = useState<number[]>([]);
 
@@ -80,10 +81,11 @@ export function useEvaluationConfig(
             defaultEvaluationEndpoint: effectiveDefaultEndpoint,
             seed: seed || undefined,
             maxConcurrent: maxConcurrent,
+            repetitions: repetitions,
         };
 
         onMultiConfigChanged(multi);
-    }, [models, selectedDatasets, effectiveDefaultEndpoint, seed, maxConcurrent, onMultiConfigChanged]);
+    }, [models, selectedDatasets, effectiveDefaultEndpoint, seed, maxConcurrent, repetitions, onMultiConfigChanged]);
 
     function addModel() {
         setModels((prev) => [...prev, newModelRow(prev.length + 1)]);
@@ -120,6 +122,7 @@ export function useEvaluationConfig(
         defaultCustomEndpoint,
         seed,
         maxConcurrent,
+        repetitions,
         models,
         selectedDatasets,
         effectiveDefaultEndpoint,
@@ -128,6 +131,7 @@ export function useEvaluationConfig(
         setDefaultCustomEndpoint,
         setSeed,
         setMaxConcurrent,
+        setRepetitions,
         setSelectedDatasets,
         setModels,
         addModel,
