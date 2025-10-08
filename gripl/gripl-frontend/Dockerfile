@@ -18,13 +18,11 @@ WORKDIR /app
 ARG API_BASE_URL
 
 COPY package*.json ./
-RUN npm ci --force
+RUN npm i --force
 
 COPY . .
 
 ENV NEXT_PUBLIC_API_BASE_URL=$API_BASE_URL
-RUN npm run build
-
 RUN npm run build
 
 FROM node:18-alpine AS runner
@@ -45,7 +43,7 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm ci --only=production --force
+RUN npm i --only=production --force
 
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
