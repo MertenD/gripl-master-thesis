@@ -44,7 +44,7 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
     const [isFinished, setIsFinished] = useState(false);
 
     const [selectedRun, setSelectedRun] = useState<number>(1);
-    const [selectedModel, setSelectedModel] = useState<string | undefined>(null);
+    const [selectedModel, setSelectedModel] = useState<string | undefined>(undefined);
     const [selectedDataset, setSelectedDataset] = useState<string | undefined>(undefined);
 
     const handleEvaluationStart = async () => {
