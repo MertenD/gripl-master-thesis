@@ -17,7 +17,7 @@ import {Spinner} from "@/components/ui/spinner";
 import {MultiEvaluationRequest} from "@/models/dto/MultiEvaluationRequest";
 import TestCaseErrorCard from "@/components/evaluation/test-case-report/test-case-error-card";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
-import {Card} from "@/components/ui/card";
+import {Card, CardContent, CardDescription, CardHeader} from "@/components/ui/card";
 import EvaluationConfig from "@/components/evaluation/config/evaluation-config";
 import {Dataset} from "@/models/dto/Dataset";
 import {FileText, Play} from "lucide-react";
@@ -43,8 +43,9 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
     const [isLoading, setIsLoading] = useState(false);
     const [isFinished, setIsFinished] = useState(false);
 
-    const [selectedDataset, setSelectedDataset] = useState<string | undefined>(undefined);
     const [selectedRun, setSelectedRun] = useState<number>(1);
+    const [selectedModel, setSelectedModel] = useState<string | undefined>(null);
+    const [selectedDataset, setSelectedDataset] = useState<string | undefined>(undefined);
 
     const handleEvaluationStart = async () => {
         if (!evaluationRequest) return;
@@ -152,12 +153,10 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
         );
     }, [testCasesByRun, errorsByRun]);
 
-    // Helper to get data for selected run
     const testCases = testCasesByRun.get(selectedRun) || [];
     const summary = summaryByRun.get(selectedRun) || new Map();
     const errors = errorsByRun.get(selectedRun) || [];
 
-    // Compute aggregate statistics across all runs
     const aggregateStats = useMemo(() => {
         if (summaryByRun.size === 0 || !metadata?.modelLabels) return null;
 
@@ -228,7 +227,6 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
             sections.push(metadata.markdown);
         }
 
-        // Include aggregate stats if multiple runs
         if (aggregateStats && summaryByRun.size > 1) {
             sections.push("# Aggregate Statistics Across All Runs");
             for (const [modelLabel, stats] of aggregateStats.entries()) {
@@ -240,7 +238,6 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
             }
         }
 
-        // Include results for each run
         for (const [runNum, runSummaries] of summaryByRun.entries()) {
             sections.push(`# Run ${runNum}`);
             for (const [modelLabel, modelSummary] of runSummaries.entries()) {
@@ -325,50 +322,27 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
 
                 setMetadata(parsed.metadata || null);
 
-                // Handle both old and new formats
-                if (parsed.testCasesByRun) {
-                    // New multi-run format
-                    const tcMap = new Map<number, (TestCaseReport & { modelLabel: string })[]>();
-                    for (const [runNum, cases] of Object.entries(parsed.testCasesByRun)) {
-                        tcMap.set(parseInt(runNum), cases as any);
-                    }
-                    setTestCasesByRun(tcMap);
+                const tcMap = new Map<number, (TestCaseReport & { modelLabel: string })[]>();
+                for (const [runNum, cases] of Object.entries(parsed.testCasesByRun)) {
+                    tcMap.set(parseInt(runNum), cases as any);
+                }
+                setTestCasesByRun(tcMap);
 
-                    const summaryMap = new Map<number, Map<string, EvaluationReportSummary>>();
-                    for (const [runNum, summaries] of Object.entries(parsed.summariesByRun)) {
-                        const runSummaryMap = new Map<string, EvaluationReportSummary>();
-                        (summaries as any[]).forEach((s: { label: string; summary: EvaluationReportSummary }) => {
-                            runSummaryMap.set(s.label, s.summary);
-                        });
-                        summaryMap.set(parseInt(runNum), runSummaryMap);
-                    }
-                    setSummaryByRun(summaryMap);
-
-                    const errorsMap = new Map<number, (EvaluationReportError & { modelLabel: string })[]>();
-                    for (const [runNum, errs] of Object.entries(parsed.errorsByRun || {})) {
-                        errorsMap.set(parseInt(runNum), errs as any);
-                    }
-                    setErrorsByRun(errorsMap);
-                } else {
-                    // Old single-run format - convert to run 1
-                    if (!parsed.testCases || !parsed.summaries) throw new Error("Invalid report format");
-
-                    const tcMap = new Map<number, (TestCaseReport & { modelLabel: string })[]>();
-                    tcMap.set(1, parsed.testCases);
-                    setTestCasesByRun(tcMap);
-
-                    const summaryMap = new Map<number, Map<string, EvaluationReportSummary>>();
+                const summaryMap = new Map<number, Map<string, EvaluationReportSummary>>();
+                for (const [runNum, summaries] of Object.entries(parsed.summariesByRun)) {
                     const runSummaryMap = new Map<string, EvaluationReportSummary>();
-                    parsed.summaries.forEach((s: { label: string; summary: EvaluationReportSummary }) => {
+                    (summaries as any[]).forEach((s: { label: string; summary: EvaluationReportSummary }) => {
                         runSummaryMap.set(s.label, s.summary);
                     });
-                    summaryMap.set(1, runSummaryMap);
-                    setSummaryByRun(summaryMap);
-
-                    const errorsMap = new Map<number, (EvaluationReportError & { modelLabel: string })[]>();
-                    errorsMap.set(1, parsed.errors || []);
-                    setErrorsByRun(errorsMap);
+                    summaryMap.set(parseInt(runNum), runSummaryMap);
                 }
+                setSummaryByRun(summaryMap);
+
+                const errorsMap = new Map<number, (EvaluationReportError & { modelLabel: string })[]>();
+                for (const [runNum, errs] of Object.entries(parsed.errorsByRun || {})) {
+                    errorsMap.set(parseInt(runNum), errs as any);
+                }
+                setErrorsByRun(errorsMap);
             } catch (err) {
                 console.error("Failed to load report:", err);
                 alert("Failed to load report: " + (err as Error).message);
@@ -441,15 +415,33 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
             <section className="px-6 container mx-auto">
                 <h2 className="text-2xl font-semibold mb-2">Complete Result Overview</h2>
                 {summariesByModel.length > 0 || metadata ? <>
+                    <Card className="mb-6">
+                        <CardHeader>
+                            <h3 className="text-xl font-semibold">Evaluation Metadata</h3>
+                        </CardHeader>
+                        <CardContent>
+                            <>{ metadata && <CardDescription>
+                                <table>
+                                    <tbody>
+                                    <tr><td>Models:</td><td className="pl-4">{metadata.modelLabels.join(", ")}</td></tr>
+                                    <tr><td>Temperatures:</td><td className="pl-4">{metadata.modelTemperatures.map(t => t || "default").join(", ")}</td></tr>
+                                    <tr><td>Datasets:</td><td className="pl-4">{metadata.datasets.map(d => d.name).join(", ")}</td></tr>
+                                    <tr><td>Total Test Cases:</td><td className="pl-4">{metadata.totalTestCases}</td></tr>
+                                    <tr><td>Default Evaluation Endpoint:</td><td className="pl-4">{metadata.defaultEvaluationEndpoint}</td></tr>
+                                    {metadata.totalRepetitions && metadata.totalRepetitions > 1 && <tr><td>Total Runs:</td><td className="pl-4">{metadata.totalRepetitions}</td></tr>}
+                                    <tr><td>Seed:</td><td className="pl-4">{metadata.seed}</td></tr>
+                                    <tr><td>Timestamp:</td><td className="pl-4">{new Date(metadata.timestamp).toLocaleString()}</td></tr>
+                                    </tbody>
+                                </table>
+                            </CardDescription> }</>
+                        </CardContent>
+                    </Card>
                     <div className="space-y-6 mb-8">
-                        <EvaluationReportSummaryCard reportSummaries={summariesByModel} metadata={metadata}/>
-                        <MetricsCharts reportSummaries={summariesByModel}/>
-
                         {/* Aggregate Statistics across all runs */}
                         {aggregateStats && metadata && metadata.totalRepetitions && metadata.totalRepetitions > 1 && (
-                            <Card className="p-6">
-                                <h3 className="text-xl font-semibold mb-4">Aggregate Statistics Across {metadata.totalRepetitions} Runs</h3>
-                                <div className="space-y-4">
+                            <Card>
+                                <CardHeader><h3 className="text-xl font-semibold">Aggregate Statistics Across {metadata.totalRepetitions} Runs</h3></CardHeader>
+                                <CardContent className="space-y-4">
                                     {Array.from(aggregateStats.entries()).map(([modelLabel, stats]) => (
                                         <div key={modelLabel} className="border-b pb-4 last:border-b-0">
                                             <h4 className="font-semibold mb-2">{modelLabel}</h4>
@@ -473,7 +465,7 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
                                             </div>
                                         </div>
                                     ))}
-                                </div>
+                                </CardContent>
                             </Card>
                         )}
                     </div>
@@ -484,7 +476,7 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
                 {/* Run selection tabs (only show if multiple runs) */}
                 {metadata && metadata.totalRepetitions && metadata.totalRepetitions > 1 && (
                     <>
-                        <h2 className="text-2xl font-semibold mb-2">Select Run</h2>
+                        <h2 className="text-2xl font-semibold mb-2">Results by Run</h2>
                         <Tabs value={selectedRun.toString()} onValueChange={(v) => setSelectedRun(parseInt(v))} className="w-full mb-6">
                             <TabsList className="w-full h-12 sticky top-0 z-20 mb-4">
                                 {Array.from({ length: metadata.totalRepetitions }, (_, i) => i + 1).map((runNum) => (
@@ -493,78 +485,111 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
                                     </TabsTrigger>
                                 ))}
                             </TabsList>
+
+                            {Array.from({ length: metadata.totalRepetitions }, (_, i) => i + 1).map((runNum) => (
+                                <TabsContent value={runNum.toString()} key={`run-${runNum}-content`}>
+                                    {!summaryByRun.get(runNum) && !testCasesByRun.get(runNum) && !errorsByRun.get(runNum) && (
+                                        <Card className="p-4 text-muted-foreground">
+                                            No results yet for Run {runNum}. Start an evaluation to see results here.
+                                        </Card>
+                                    )}
+
+                                    {summaryByRun.get(runNum) && (
+                                        <div className="space-y-6 mb-6">
+                                            <EvaluationReportSummaryCard
+                                                reportSummaries={Array.from((summaryByRun.get(runNum) || new Map()).entries()).map(([label, s]) => ({
+                                                    label,
+                                                    summary: s
+                                                }))} metadata={metadata}/>
+                                            <MetricsCharts
+                                                reportSummaries={Array.from((summaryByRun.get(runNum) || new Map()).entries()).map(([label, s]) => ({
+                                                    label,
+                                                    summary: s
+                                                }))}/>
+                                        </div>
+                                    )}
+
+                                    <h2 className="text-2xl font-semibold mb-2">Results by
+                                        Model{metadata && metadata.totalRepetitions && metadata.totalRepetitions > 1 ? ` (Run ${selectedRun})` : ""}</h2>
+                                    <Tabs className="w-full" value={selectedModel || metadata?.modelLabels?.[0]} onValueChange={setSelectedModel}>
+                                        <TabsList className="w-full h-12 sticky top-12 z-10 mb-4">
+                                            {metadata?.modelLabels.map?.((label) => (
+                                                <TabsTrigger value={label} key={`${label}-trigger`}>
+                                                    {label}
+                                                </TabsTrigger>
+                                            ))}
+                                        </TabsList>
+
+                                        {metadata?.modelLabels.map?.((label) => {
+                                            const modelSummary = summary?.get(label);
+
+                                            return (
+                                                <TabsContent value={label} key={`${label}-content`}>
+                                                    {!modelSummary && !testCases.some((tc) => tc.modelLabel === label) && !errors.some((e) => e.modelLabel === label) && (
+                                                        <Card className="p-4 text-muted-foreground">
+                                                            No results yet for model <strong>{label}</strong>. Start an
+                                                            evaluation to see results here.
+                                                        </Card>
+                                                    )}
+
+                                                    {modelSummary && (
+                                                        <div className="space-y-6 mb-6">
+                                                            <EvaluationReportSummaryCard reportSummary={modelSummary}/>
+                                                            <MetricsCharts reportSummary={modelSummary}/>
+                                                        </div>
+                                                    )}
+
+                                                    <h2 className="text-2xl font-semibold mb-2">Test Case Results for {label}</h2>
+                                                    <Tabs className="w-full" value={selectedDataset || (metadata?.datasets?.[0] ? `dataset-${metadata.datasets[0].id}` : undefined)}
+                                                          onValueChange={setSelectedDataset}>
+                                                        <TabsList className="w-full h-12 sticky top-24 z-30 mb-4">
+                                                            {metadata?.datasets.map?.((dataset) => (
+                                                                <TabsTrigger value={`dataset-${dataset.id}`}
+                                                                             key={`dataset-${dataset.id}-trigger`}>
+                                                                    {dataset.name}
+                                                                </TabsTrigger>
+                                                            ))}
+                                                        </TabsList>
+
+                                                        {metadata?.datasets.map?.((dataset) => (
+                                                            <TabsContent value={`dataset-${dataset.id}`}
+                                                                         key={`dataset-${dataset.id}-content`}>
+                                                                <div className="flex flex-col space-y-4 pb-6">
+                                                                    {testCases
+                                                                        .filter((testCase) => testCase.modelLabel === label && testCase.datasetId === dataset.id)
+                                                                        .sort((a, b) => a.testCaseId - b.testCaseId)
+                                                                        .map((report) => (
+                                                                            <div
+                                                                                key={`${report.modelLabel}-${report.testCaseId}`}>
+                                                                                <TestCaseReportCard report={report}/>
+                                                                            </div>
+                                                                        ))}
+                                                                </div>
+
+                                                                {errors.filter((error) => error.modelLabel === label && error.datasetId === dataset.id).length > 0 && (
+                                                                    <div className="flex flex-col space-y-4 pb-4">
+                                                                        {errors
+                                                                            .filter((error) => error.modelLabel === label && error.datasetId === dataset.id)
+                                                                            .map((e, idx) => (
+                                                                                <div
+                                                                                    key={`${e.modelLabel}-${e.testCaseId}-${idx}`}>
+                                                                                    <TestCaseErrorCard error={e}/>
+                                                                                </div>
+                                                                            ))}
+                                                                    </div>
+                                                                )}
+                                                            </TabsContent>
+                                                        ))}
+                                                    </Tabs>
+                                                </TabsContent>
+                                            );
+                                        })}
+                                    </Tabs>
+                                </TabsContent>
+                            ))}
                         </Tabs>
                     </>
                 )}
-
-                <h2 className="text-2xl font-semibold mb-2">Results by Model{metadata && metadata.totalRepetitions && metadata.totalRepetitions > 1 ? ` (Run ${selectedRun})` : ""}</h2>
-                <Tabs className="w-full">
-                    <TabsList className="w-full h-12 sticky top-0 z-10 mb-4">
-                        {metadata?.modelLabels.map?.((label) => (
-                                <TabsTrigger value={label} key={`${label}-trigger`}>
-                                    {label}
-                                </TabsTrigger>
-                            ))}
-                    </TabsList>
-
-                    {metadata?.modelLabels.map?.((label) => {
-                        const modelSummary = summary?.get(label);
-
-                        return (
-                            <TabsContent value={label} key={`${label}-content`}>
-                                { !modelSummary && !testCases.some((tc) => tc.modelLabel === label) && !errors.some((e) => e.modelLabel === label) && (
-                                    <Card className="p-4 text-muted-foreground">
-                                        No results yet for model <strong>{label}</strong>. Start an evaluation to see results here.
-                                    </Card>
-                                )}
-
-                                {modelSummary && (
-                                    <div className="space-y-6 mb-6">
-                                        <EvaluationReportSummaryCard reportSummary={modelSummary}/>
-                                        <MetricsCharts reportSummary={modelSummary}/>
-                                    </div>
-                                )}
-
-                                <Tabs className="w-full" value={selectedDataset} onValueChange={setSelectedDataset}>
-                                    <TabsList className="w-full h-12 sticky top-12 z-30 mb-4">
-                                        { metadata?.datasets.map?.((dataset) => (
-                                            <TabsTrigger value={`dataset-${dataset.id}`} key={`dataset-${dataset.id}-trigger`}>
-                                                {dataset.name}
-                                            </TabsTrigger>
-                                        ))}
-                                    </TabsList>
-
-                                    { metadata?.datasets.map?.((dataset) => (
-                                        <TabsContent value={`dataset-${dataset.id}`} key={`dataset-${dataset.id}-content`}>
-                                            <div className="flex flex-col space-y-4 pb-6">
-                                                {testCases
-                                                    .filter((testCase) => testCase.modelLabel === label && testCase.datasetId === dataset.id)
-                                                    .sort((a, b) => a.testCaseId - b.testCaseId)
-                                                    .map((report) => (
-                                                        <div key={`${report.modelLabel}-${report.testCaseId}`}>
-                                                            <TestCaseReportCard report={report}/>
-                                                        </div>
-                                                    ))}
-                                            </div>
-
-                                            {errors.filter((error) => error.modelLabel === label && error.datasetId === dataset.id).length > 0 && (
-                                                <div className="flex flex-col space-y-4 pb-4">
-                                                    {errors
-                                                        .filter((error) => error.modelLabel === label && error.datasetId === dataset.id)
-                                                        .map((e, idx) => (
-                                                            <div key={`${e.modelLabel}-${e.testCaseId}-${idx}`}>
-                                                                <TestCaseErrorCard error={e}/>
-                                                            </div>
-                                                        ))}
-                                                </div>
-                                            )}
-                                        </TabsContent>
-                                    )) }
-                                </Tabs>
-                            </TabsContent>
-                        );
-                    })}
-                </Tabs>
             </section>
         </div>
     );
