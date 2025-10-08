@@ -169,6 +169,20 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
             stdF1Score: number;
             avgAccuracy: number;
             stdAccuracy: number;
+            avgPassed: number;
+            stdPassed: number;
+            avgFailed: number;
+            stdFailed: number;
+            avgErrors: number;
+            stdErrors: number;
+            avgTruePositives: number;
+            stdTruePositives: number;
+            avgFalsePositives: number;
+            stdFalsePositives: number;
+            avgFalseNegatives: number;
+            stdFalseNegatives: number;
+            avgTrueNegatives: number;
+            stdTrueNegatives: number;
         }>();
 
         for (const modelLabel of metadata.modelLabels) {
@@ -176,6 +190,13 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
             const recalls: number[] = [];
             const f1Scores: number[] = [];
             const accuracies: number[] = [];
+            const passedCounts: number[] = [];
+            const failedCounts: number[] = [];
+            const errorCounts: number[] = [];
+            const truePositives: number[] = [];
+            const falsePositives: number[] = [];
+            const falseNegatives: number[] = [];
+            const trueNegatives: number[] = [];
 
             for (const [runNum, runSummaries] of summaryByRun.entries()) {
                 const modelSummary = runSummaries.get(modelLabel);
@@ -184,6 +205,13 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
                     recalls.push(modelSummary.recall);
                     f1Scores.push(modelSummary.f1Score);
                     accuracies.push(modelSummary.accuracy);
+                    passedCounts.push(modelSummary.passed);
+                    failedCounts.push(modelSummary.failed);
+                    errorCounts.push(modelSummary.error);
+                    truePositives.push(modelSummary.totalTruePositives);
+                    falsePositives.push(modelSummary.totalFalsePositives);
+                    falseNegatives.push(modelSummary.totalFalseNegatives);
+                    trueNegatives.push(modelSummary.totalTrueNegatives);
                 }
             }
 
@@ -198,6 +226,22 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
                 const stdF1Score = Math.sqrt(f1Scores.reduce((sum, val) => sum + Math.pow(val - avgF1Score, 2), 0) / f1Scores.length);
                 const stdAccuracy = Math.sqrt(accuracies.reduce((sum, val) => sum + Math.pow(val - avgAccuracy, 2), 0) / accuracies.length);
 
+                const avgPassed = passedCounts.reduce((a, b) => a + b, 0) / passedCounts.length;
+                const stdPassed = Math.sqrt(passedCounts.reduce((sum, val) => sum + Math.pow(val - avgPassed, 2), 0) / passedCounts.length);
+                const avgFailed = failedCounts.reduce((a, b) => a + b, 0) / failedCounts.length;
+                const stdFailed = Math.sqrt(failedCounts.reduce((sum, val) => sum + Math.pow(val - avgFailed, 2), 0) / failedCounts.length);
+                const avgErrors = errorCounts.reduce((a, b) => a + b, 0) / errorCounts.length;
+                const stdErrors = Math.sqrt(errorCounts.reduce((sum, val) => sum + Math.pow(val - avgErrors, 2), 0) / errorCounts.length);
+
+                const avgTruePositives = truePositives.reduce((a, b) => a + b, 0) / truePositives.length;
+                const avgFalsePositives = falsePositives.reduce((a, b) => a + b, 0) / falsePositives.length;
+                const avgFalseNegatives = falseNegatives.reduce((a, b) => a + b, 0) / falseNegatives.length;
+                const avgTrueNegatives = trueNegatives.reduce((a, b) => a + b, 0) / trueNegatives.length;
+                const stdTruePositives = Math.sqrt(truePositives.reduce((sum, val) => sum + Math.pow(val - avgTruePositives, 2), 0) / truePositives.length);
+                const stdFalsePositives = Math.sqrt(falsePositives.reduce((sum, val) => sum + Math.pow(val - avgFalsePositives, 2), 0) / falsePositives.length);
+                const stdFalseNegatives = Math.sqrt(falseNegatives.reduce((sum, val) => sum + Math.pow(val - avgFalseNegatives, 2), 0) / falseNegatives.length);
+                const stdTrueNegatives = Math.sqrt(trueNegatives.reduce((sum, val) => sum + Math.pow(val - avgTrueNegatives, 2), 0) / trueNegatives.length);
+
                 stats.set(modelLabel, {
                     avgPrecision,
                     stdPrecision,
@@ -207,6 +251,20 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
                     stdF1Score,
                     avgAccuracy,
                     stdAccuracy,
+                    avgPassed,
+                    stdPassed,
+                    avgFailed,
+                    stdFailed,
+                    avgErrors,
+                    stdErrors,
+                    avgTruePositives,
+                    stdTruePositives,
+                    avgFalsePositives,
+                    stdFalsePositives,
+                    avgFalseNegatives,
+                    stdFalseNegatives,
+                    avgTrueNegatives,
+                    stdTrueNegatives
                 });
             }
         }
@@ -461,6 +519,34 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
                                                 <div>
                                                     <p className="text-sm text-muted-foreground">Accuracy</p>
                                                     <p className="font-mono">{stats.avgAccuracy.toFixed(3)} ± {stats.stdAccuracy.toFixed(3)}</p>
+                                                </div>
+                                                <div>
+                                                    <p className="text-sm text-muted-foreground">True Positives</p>
+                                                    <p className="font-mono">{stats.avgTruePositives.toFixed(3)} ± {stats.stdTruePositives.toFixed(3)}</p>
+                                                </div>
+                                                <div>
+                                                    <p className="text-sm text-muted-foreground">False Positives</p>
+                                                    <p className="font-mono">{stats.avgFalsePositives.toFixed(3)} ± {stats.stdFalsePositives.toFixed(3)}</p>
+                                                </div>
+                                                <div>
+                                                    <p className="text-sm text-muted-foreground">False Negatives</p>
+                                                    <p className="font-mono">{stats.avgFalseNegatives.toFixed(3)} ± {stats.stdFalseNegatives.toFixed(3)}</p>
+                                                </div>
+                                                <div>
+                                                    <p className="text-sm text-muted-foreground">True Negatives</p>
+                                                    <p className="font-mono">{stats.avgTrueNegatives.toFixed(3)} ± {stats.stdTrueNegatives.toFixed(3)}</p>
+                                                </div>
+                                                <div>
+                                                    <p className="text-sm text-muted-foreground">Passed</p>
+                                                    <p className="font-mono">{stats.avgPassed.toFixed(3)} ± {stats.stdPassed.toFixed(3)} / {metadata.totalTestCases}</p>
+                                                </div>
+                                                <div>
+                                                    <p className="text-sm text-muted-foreground">Failed</p>
+                                                    <p className="font-mono">{stats.avgFailed.toFixed(3)} ± {stats.stdFailed.toFixed(3)} / {metadata.totalTestCases}</p>
+                                                </div>
+                                                <div>
+                                                    <p className="text-sm text-muted-foreground">Errors</p>
+                                                    <p className="font-mono">{stats.avgErrors.toFixed(3)} ± {stats.stdErrors.toFixed(3)} / {metadata.totalTestCases}</p>
                                                 </div>
                                             </div>
                                         </div>
