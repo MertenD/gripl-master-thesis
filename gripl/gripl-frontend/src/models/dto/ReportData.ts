@@ -13,6 +13,7 @@ export interface EvaluationMetadataReport {
 export interface TestCaseReport {
     type: "testCase";
     testCaseId: number;
+    datasetId: number;
     testCaseName?: string;
     imageSrc: string;
     correctActivityIds: string[];

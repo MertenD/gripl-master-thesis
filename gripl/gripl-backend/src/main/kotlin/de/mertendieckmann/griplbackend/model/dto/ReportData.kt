@@ -52,6 +52,7 @@ data class EvaluationMetadataReport(
 data class TestCaseReport(
     val testCaseId: Long,
     val testCaseName: String? = null,
+    val datasetId: Long? = null,
     val imageSrc: String,
     val correctActivityIds: List<String>,
     val falsePositiveIds: List<String>,
@@ -143,6 +144,7 @@ data class EvaluationReportStepInfo(
 
 data class EvaluationReportError(
     val testCaseId: Long,
+    val datasetId: Long?,
     val testCaseName: String? = null,
     val errorMessage: String
 ): EvaluationReport() {

@@ -82,6 +82,7 @@ class EvaluationRunner(
         val testCaseReport = TestCaseReport(
             testCaseId = entry.id,
             testCaseName = entry.name,
+            datasetId = entry.datasetId,
             imageSrc = buildPreviewUrl(
                 testCaseId = entry.id,
                 correctActivityIds = classification.truePositiveIds,
@@ -103,6 +104,7 @@ class EvaluationRunner(
         EvaluationOutcome.Error(
             EvaluationReportError(
                 testCaseId = entry.id,
+                datasetId = entry.datasetId,
                 testCaseName = entry.name ?: "Test Case ${entry.id}",
                 errorMessage = e.message ?: "Unbekannter Fehler aufgetreten"
             )

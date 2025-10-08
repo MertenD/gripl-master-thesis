@@ -42,6 +42,8 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
     const [isLoading, setIsLoading] = useState(false);
     const [isFinished, setIsFinished] = useState(false);
 
+    const [selectedDataset, setSelectedDataset] = useState<string | undefined>(undefined);
+
     const handleEvaluationStart = async () => {
         if (!evaluationRequest) return;
 
@@ -323,28 +325,42 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
                                     </div>
                                 )}
 
-                                <div className="flex flex-col space-y-4 pb-6">
-                                    {testCases
-                                        .filter((testCase) => testCase.modelLabel === label)
-                                        .sort((a, b) => a.testCaseId - b.testCaseId)
-                                        .map((report) => (
-                                            <div key={`${report.modelLabel}-${report.testCaseId}`}>
-                                                <TestCaseReportCard report={report}/>
-                                            </div>
+                                <Tabs className="w-full" value={selectedDataset} onValueChange={setSelectedDataset}>
+                                    <TabsList className="w-full h-12 sticky top-12 z-30 mb-4">
+                                        { metadata?.datasets.map?.((dataset) => (
+                                            <TabsTrigger value={`dataset-${dataset.id}`} key={`dataset-${dataset.id}-trigger`}>
+                                                {dataset.name}
+                                            </TabsTrigger>
                                         ))}
-                                </div>
+                                    </TabsList>
 
-                                {errors.filter((error) => error.modelLabel === label).length > 0 && (
-                                    <div className="flex flex-col space-y-4 pb-4">
-                                        {errors
-                                            .filter((error) => error.modelLabel === label)
-                                            .map((e, idx) => (
-                                                <div key={`${e.modelLabel}-${e.testCaseId}-${idx}`}>
-                                                    <TestCaseErrorCard error={e}/>
+                                    { metadata?.datasets.map?.((dataset) => (
+                                        <TabsContent value={`dataset-${dataset.id}`} key={`dataset-${dataset.id}-content`}>
+                                            <div className="flex flex-col space-y-4 pb-6">
+                                                {testCases
+                                                    .filter((testCase) => testCase.modelLabel === label && testCase.datasetId === dataset.id)
+                                                    .sort((a, b) => a.testCaseId - b.testCaseId)
+                                                    .map((report) => (
+                                                        <div key={`${report.modelLabel}-${report.testCaseId}`}>
+                                                            <TestCaseReportCard report={report}/>
+                                                        </div>
+                                                    ))}
+                                            </div>
+
+                                            {errors.filter((error) => error.modelLabel === label && error.datasetId === dataset.id).length > 0 && (
+                                                <div className="flex flex-col space-y-4 pb-4">
+                                                    {errors
+                                                        .filter((error) => error.modelLabel === label && error.datasetId === dataset.id)
+                                                        .map((e, idx) => (
+                                                            <div key={`${e.modelLabel}-${e.testCaseId}-${idx}`}>
+                                                                <TestCaseErrorCard error={e}/>
+                                                            </div>
+                                                        ))}
                                                 </div>
-                                            ))}
-                                    </div>
-                                )}
+                                            )}
+                                        </TabsContent>
+                                    )) }
+                                </Tabs>
                             </TabsContent>
                         );
                     })}
