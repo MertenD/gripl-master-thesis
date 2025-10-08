@@ -56,6 +56,7 @@ export interface EvaluationReportStepInfo {
 export interface EvaluationReportError {
     type: "error";
     testCaseId: number;
+    datasetId?: number;
     testCaseName?: string;
     errorMessage: string;
     markdown: string;
