@@ -51,7 +51,7 @@ class GlobalExceptionHandler {
     fun handleRuntimeException(ex: RuntimeException): ResponseEntity<ApiError> =
         ResponseEntity
             .status(HttpStatus.INTERNAL_SERVER_ERROR)
-            .body(ApiError(code = "INTERNAL_ERROR", message = "There was an internal error processing your request. Please try again."))
+            .body(ApiError(code = "INTERNAL_ERROR", message = "There was an internal error processing your request: ${ex.localizedMessage}"))
             .also { ex.printStackTrace() }
 
     @ExceptionHandler(MissingRequestValueException::class)
