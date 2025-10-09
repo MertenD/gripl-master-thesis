@@ -15201,7 +15201,21 @@
       "avgF1Score": 0.7883876155950243,
       "stdF1Score": 0.010130354313089293,
       "avgAccuracy": 0.7145945945945946,
-      "stdAccuracy": 0.01251441827328673
+      "stdAccuracy": 0.01251441827328673,
+      "avgPassed": 7.6,
+      "stdPassed": 1.0198039027185568,
+      "avgFailed": 17.4,
+      "stdFailed": 1.0198039027185568,
+      "avgErrors": 0,
+      "stdErrors": 0,
+      "avgTruePositives": 98.4,
+      "stdTruePositives": 2.576819745345025,
+      "avgFalsePositives": 34.2,
+      "stdFalsePositives": 2.5612496949731396,
+      "avgFalseNegatives": 18.6,
+      "stdFalseNegatives": 2.576819745345025,
+      "avgTrueNegatives": 33.8,
+      "stdTrueNegatives": 2.5612496949731396
     },
     "Gemma-3-27B-it": {
       "avgPrecision": 0.6947915225707328,
@@ -15211,7 +15225,21 @@
       "avgF1Score": 0.7818063781976206,
       "stdF1Score": 0.0123055453173305,
       "avgAccuracy": 0.6843243243243243,
-      "stdAccuracy": 0.01921771765906073
+      "stdAccuracy": 0.01921771765906073,
+      "avgPassed": 6.2,
+      "stdPassed": 0.39999999999999997,
+      "avgFailed": 18.8,
+      "stdFailed": 0.39999999999999997,
+      "avgErrors": 0,
+      "stdErrors": 0,
+      "avgTruePositives": 104.6,
+      "stdTruePositives": 1.8547236990991407,
+      "avgFalsePositives": 46,
+      "stdFalsePositives": 3.03315017762062,
+      "avgFalseNegatives": 12.4,
+      "stdFalseNegatives": 1.8547236990991407,
+      "avgTrueNegatives": 22,
+      "stdTrueNegatives": 3.03315017762062
     }
   }
 }

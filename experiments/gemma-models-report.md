@@ -22,6 +22,20 @@
 
 - Accuracy: 0.715 ± 0.013
 
+- True Positives: 98.400 ± 2.577
+
+- False Positives: 34.200 ± 2.561
+
+- False Negatives: 18.600 ± 2.577
+
+- True Negatives: 33.800 ± 2.561
+
+- Passed: 7.600 ± 1.020 / 25
+
+- Failed: 17.400 ± 1.020 / 25
+
+- Errors: 0.000 ± 0.000 / 25
+
 ## Model: Gemma-3-27B-it
 
 - Precision: 0.695 ± 0.015
@@ -31,6 +45,20 @@
 - F1-Score: 0.782 ± 0.012
 
 - Accuracy: 0.684 ± 0.019
+
+- True Positives: 104.600 ± 1.855
+
+- False Positives: 46.000 ± 3.033
+
+- False Negatives: 12.400 ± 1.855
+
+- True Negatives: 22.000 ± 3.033
+
+- Passed: 6.200 ± 0.400 / 25
+
+- Failed: 18.800 ± 0.400 / 25
+
+- Errors: 0.000 ± 0.000 / 25
 
 # Run 1
 

@@ -22,6 +22,20 @@
 
 - Accuracy: 0.790 ± 0.013
 
+- True Positives: 106.400 ± 1.356
+
+- False Positives: 28.200 ± 2.926
+
+- False Negatives: 10.600 ± 1.356
+
+- True Negatives: 39.800 ± 2.926
+
+- Passed: 10.000 ± 1.095 / 25
+
+- Failed: 15.000 ± 1.095 / 25
+
+- Errors: 0.000 ± 0.000 / 25
+
 ## Model: GPT-OSS-120B
 
 - Precision: 0.813 ± 0.015
@@ -32,6 +46,20 @@
 
 - Accuracy: 0.812 ± 0.016
 
+- True Positives: 106.800 ± 1.833
+
+- False Positives: 24.600 ± 2.498
+
+- False Negatives: 10.200 ± 1.833
+
+- True Negatives: 43.400 ± 2.498
+
+- Passed: 10.800 ± 1.470 / 25
+
+- Failed: 14.200 ± 1.470 / 25
+
+- Errors: 0.000 ± 0.000 / 25
+
 ## Model: GPT-4o (2024-11-20)
 
 - Precision: 0.886 ± 0.015
@@ -41,6 +69,20 @@
 - F1-Score: 0.810 ± 0.018
 
 - Accuracy: 0.778 ± 0.020
+
+- True Positives: 87.200 ± 2.482
+
+- False Positives: 11.200 ± 1.327
+
+- False Negatives: 29.800 ± 2.482
+
+- True Negatives: 56.800 ± 1.327
+
+- Passed: 10.600 ± 0.490 / 25
+
+- Failed: 14.400 ± 0.490 / 25
+
+- Errors: 0.000 ± 0.000 / 25
 
 # Run 1
 

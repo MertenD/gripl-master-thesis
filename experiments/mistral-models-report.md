@@ -22,6 +22,20 @@
 
 - Accuracy: 0.546 ± 0.033
 
+- True Positives: 75.600 ± 6.312
+
+- False Positives: 43.400 ± 5.122
+
+- False Negatives: 39.400 ± 7.031
+
+- True Negatives: 24.200 ± 5.528
+
+- Passed: 3.200 ± 0.748 / 25
+
+- Failed: 21.600 ± 0.490 / 25
+
+- Errors: 0.200 ± 0.400 / 25
+
 ## Model: Mistral-8x7B-Instruct-v0.1
 
 - Precision: 0.655 ± 0.020
@@ -31,6 +45,20 @@
 - F1-Score: 0.593 ± 0.015
 
 - Accuracy: 0.530 ± 0.012
+
+- True Positives: 63.600 ± 3.611
+
+- False Positives: 33.600 ± 4.128
+
+- False Negatives: 53.400 ± 3.611
+
+- True Negatives: 34.400 ± 4.128
+
+- Passed: 3.800 ± 0.400 / 25
+
+- Failed: 21.200 ± 0.400 / 25
+
+- Errors: 0.000 ± 0.000 / 25
 
 ## Model: Mistral-Large-Instruct-2411
 
@@ -42,6 +70,20 @@
 
 - Accuracy: 0.766 ± 0.005
 
+- True Positives: 102.000 ± 1.265
+
+- False Positives: 28.200 ± 1.939
+
+- False Negatives: 15.000 ± 1.265
+
+- True Negatives: 39.800 ± 1.939
+
+- Passed: 7.200 ± 0.748 / 25
+
+- Failed: 17.800 ± 0.748 / 25
+
+- Errors: 0.000 ± 0.000 / 25
+
 ## Model: Mistral Medium 3.1
 
 - Precision: 0.814 ± 0.011
@@ -51,6 +93,20 @@
 - F1-Score: 0.848 ± 0.014
 
 - Accuracy: 0.800 ± 0.017
+
+- True Positives: 103.600 ± 2.417
+
+- False Positives: 23.600 ± 1.497
+
+- False Negatives: 13.400 ± 2.417
+
+- True Negatives: 44.400 ± 1.497
+
+- Passed: 10.600 ± 1.200 / 25
+
+- Failed: 14.400 ± 1.200 / 25
+
+- Errors: 0.000 ± 0.000 / 25
 
 # Run 1
 

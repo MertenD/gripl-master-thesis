@@ -27783,7 +27783,21 @@
       "avgF1Score": 0.6452807427275373,
       "stdF1Score": 0.032379719642783765,
       "avgAccuracy": 0.5463583815028902,
-      "stdAccuracy": 0.032775431143184666
+      "stdAccuracy": 0.032775431143184666,
+      "avgPassed": 3.2,
+      "stdPassed": 0.7483314773547882,
+      "avgFailed": 21.6,
+      "stdFailed": 0.4898979485566356,
+      "avgErrors": 0.2,
+      "stdErrors": 0.4000000000000001,
+      "avgTruePositives": 75.6,
+      "stdTruePositives": 6.3118935352238,
+      "avgFalsePositives": 43.4,
+      "stdFalsePositives": 5.122499389946279,
+      "avgFalseNegatives": 39.4,
+      "stdFalseNegatives": 7.031358332498779,
+      "avgTrueNegatives": 24.2,
+      "stdTrueNegatives": 5.528109984434102
     },
     "Mistral-8x7B-Instruct-v0.1": {
       "avgPrecision": 0.6554551909847101,
@@ -27793,7 +27807,21 @@
       "avgF1Score": 0.5934467690609001,
       "stdF1Score": 0.015380926717583975,
       "avgAccuracy": 0.5297297297297298,
-      "stdAccuracy": 0.012326220811882593
+      "stdAccuracy": 0.012326220811882593,
+      "avgPassed": 3.8,
+      "stdPassed": 0.39999999999999997,
+      "avgFailed": 21.2,
+      "stdFailed": 0.39999999999999997,
+      "avgErrors": 0,
+      "stdErrors": 0,
+      "avgTruePositives": 63.6,
+      "stdTruePositives": 3.6110940170535577,
+      "avgFalsePositives": 33.6,
+      "stdFalsePositives": 4.127953488110059,
+      "avgFalseNegatives": 53.4,
+      "stdFalseNegatives": 3.6110940170535577,
+      "avgTrueNegatives": 34.4,
+      "stdTrueNegatives": 4.127953488110059
     },
     "Mistral-Large-Instruct-2411": {
       "avgPrecision": 0.7836378322451891,
@@ -27803,7 +27831,21 @@
       "avgF1Score": 0.825249945063683,
       "stdF1Score": 0.002854716949761762,
       "avgAccuracy": 0.7664864864864865,
-      "stdAccuracy": 0.005296194038450101
+      "stdAccuracy": 0.005296194038450101,
+      "avgPassed": 7.2,
+      "stdPassed": 0.7483314773547882,
+      "avgFailed": 17.8,
+      "stdFailed": 0.7483314773547882,
+      "avgErrors": 0,
+      "stdErrors": 0,
+      "avgTruePositives": 102,
+      "stdTruePositives": 1.2649110640673518,
+      "avgFalsePositives": 28.2,
+      "stdFalsePositives": 1.9390719429665317,
+      "avgFalseNegatives": 15,
+      "stdFalseNegatives": 1.2649110640673518,
+      "avgTrueNegatives": 39.8,
+      "stdTrueNegatives": 1.9390719429665315
     },
     "Mistral Medium 3.1": {
       "avgPrecision": 0.8144723315292784,
@@ -27813,7 +27855,21 @@
       "avgF1Score": 0.8484083872803645,
       "stdF1Score": 0.013860113757729773,
       "avgAccuracy": 0.8,
-      "stdAccuracy": 0.017093392757666904
+      "stdAccuracy": 0.017093392757666904,
+      "avgPassed": 10.6,
+      "stdPassed": 1.2,
+      "avgFailed": 14.4,
+      "stdFailed": 1.2,
+      "avgErrors": 0,
+      "stdErrors": 0,
+      "avgTruePositives": 103.6,
+      "stdTruePositives": 2.416609194718914,
+      "avgFalsePositives": 23.6,
+      "stdFalsePositives": 1.4966629547095767,
+      "avgFalseNegatives": 13.4,
+      "stdFalseNegatives": 2.4166091947189146,
+      "avgTrueNegatives": 44.4,
+      "stdTrueNegatives": 1.4966629547095767
     }
   }
 }

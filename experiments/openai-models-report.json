@@ -20758,7 +20758,21 @@
       "avgF1Score": 0.8458575330768549,
       "stdF1Score": 0.008143899046710297,
       "avgAccuracy": 0.7902702702702703,
-      "stdAccuracy": 0.012972972972972974
+      "stdAccuracy": 0.012972972972972974,
+      "avgPassed": 10,
+      "stdPassed": 1.0954451150103321,
+      "avgFailed": 15,
+      "stdFailed": 1.0954451150103321,
+      "avgErrors": 0,
+      "stdErrors": 0,
+      "avgTruePositives": 106.4,
+      "stdTruePositives": 1.3564659966250536,
+      "avgFalsePositives": 28.2,
+      "stdFalsePositives": 2.9257477676655586,
+      "avgFalseNegatives": 10.6,
+      "stdFalseNegatives": 1.3564659966250536,
+      "avgTrueNegatives": 39.8,
+      "stdTrueNegatives": 2.9257477676655586
     },
     "GPT-OSS-120B": {
       "avgPrecision": 0.8130584642081926,
@@ -20768,7 +20782,21 @@
       "avgF1Score": 0.8599257602844943,
       "stdF1Score": 0.01135748358174689,
       "avgAccuracy": 0.8118918918918918,
-      "stdAccuracy": 0.015814852798192194
+      "stdAccuracy": 0.015814852798192194,
+      "avgPassed": 10.8,
+      "stdPassed": 1.469693845669907,
+      "avgFailed": 14.2,
+      "stdFailed": 1.469693845669907,
+      "avgErrors": 0,
+      "stdErrors": 0,
+      "avgTruePositives": 106.8,
+      "stdTruePositives": 1.8330302779823358,
+      "avgFalsePositives": 24.6,
+      "stdFalsePositives": 2.4979991993593593,
+      "avgFalseNegatives": 10.2,
+      "stdFalseNegatives": 1.8330302779823362,
+      "avgTrueNegatives": 43.4,
+      "stdTrueNegatives": 2.4979991993593593
     },
     "GPT-4o (2024-11-20)": {
       "avgPrecision": 0.8860256679991585,
@@ -20778,7 +20806,21 @@
       "avgF1Score": 0.8095542443688359,
       "stdF1Score": 0.018388762283055242,
       "avgAccuracy": 0.7783783783783784,
-      "stdAccuracy": 0.020225175063642947
+      "stdAccuracy": 0.020225175063642947,
+      "avgPassed": 10.6,
+      "stdPassed": 0.48989794855663565,
+      "avgFailed": 14.4,
+      "stdFailed": 0.48989794855663565,
+      "avgErrors": 0,
+      "stdErrors": 0,
+      "avgTruePositives": 87.2,
+      "stdTruePositives": 2.4819347291981715,
+      "avgFalsePositives": 11.2,
+      "stdFalsePositives": 1.32664991614216,
+      "avgFalseNegatives": 29.8,
+      "stdFalseNegatives": 2.481934729198171,
+      "avgTrueNegatives": 56.8,
+      "stdTrueNegatives": 1.3266499161421599
     }
   }
 }

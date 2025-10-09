@@ -183,3 +183,96 @@ assistant:
 # 6) Erfolgreiches Parsing und Weiterverarbeitung
 2025-10-03T19:12:01.519+02:00  INFO  PromptBpmnAnalyzer : BPMN Analysis Result: elements=[... isRelevant=true ...]
 \end{lstlisting}
+
+\begin{lstlisting}[caption={Konfigurationsdatei des Experiments mit Gemma Modellen}, label={lst:gemma-experiment-config}]
+defaultEvaluationEndpoint: /gdpr/analysis/prompt-engineering
+seed: 24523833
+maxConcurrent: 10
+repetitions: 5
+models:
+  - label: Gemma-3-12B-it
+    llmProps:
+      baseUrl: https://openrouter.ai/api/v1
+      modelName: google/gemma-3-12b-it
+      apiKey: ${OPEN_ROUTER_API_KEY}
+  - label: Gemma-3-27B-it
+    llmProps:
+      baseUrl: https://openrouter.ai/api/v1
+      modelName: google/gemma-3-27b-it
+      apiKey: ${OPEN_ROUTER_API_KEY}
+datasets:
+  - 2
+  - 7
+  - 1
+\end{lstlisting}
+
+\begin{lstlisting}[caption={Konfigurationsdatei des Experiments mit DeepSeek Modellen}, label={lst:deepseek-experiment-config}]
+defaultEvaluationEndpoint: /gdpr/analysis/prompt-engineering
+seed: 24523833
+maxConcurrent: 10
+repetitions: 5
+models:
+  - label: DeepSeek-V3.1
+    llmProps:
+      baseUrl: https://openrouter.ai/api/v1
+      modelName: deepseek/deepseek-chat-v3.1
+      apiKey: ${OPEN_ROUTER_API_KEY}
+  - label: DeepSeek-R1-Distill-Qwen-14B
+    llmProps:
+      baseUrl: https://openrouter.ai/api/v1
+      modelName: deepseek/deepseek-r1-distill-qwen-14b
+      apiKey: ${OPEN_ROUTER_API_KEY}
+datasets:
+  - 2
+  - 7
+  - 1
+\end{lstlisting}
+
+\begin{lstlisting}[caption={Konfigurationsdatei des Experiments mit Qwen Modellen}, label={lst:qwen-experiment-config}]
+defaultEvaluationEndpoint: /gdpr/analysis/prompt-engineering
+seed: 24523833
+maxConcurrent: 10
+repetitions: 5
+models:
+  - label: Qwen2.5-7B-Instruct
+    llmProps:
+      baseUrl: https://openrouter.ai/api/v1
+      modelName: qwen/qwen-2.5-7b-instruct
+      apiKey: ${OPEN_ROUTER_API_KEY}
+  - label: Qwen3-235B-A22B-Thinking-2507
+    llmProps:
+      baseUrl: https://openrouter.ai/api/v1
+      modelName: qwen/qwen3-vl-235b-a22b-thinking
+      apiKey: ${OPEN_ROUTER_API_KEY}
+datasets:
+  - 2
+  - 7
+  - 1
+\end{lstlisting}
+
+\begin{lstlisting}[caption={Konfigurationsdatei des Experiments mit GPT Modellen}, label={lst:gpt-oss-experiment-config}]
+defaultEvaluationEndpoint: /gdpr/analysis/prompt-engineering
+seed: 24523833
+maxConcurrent: 10
+repetitions: 5
+models:
+  - label: GPT-OSS-20B
+    llmProps:
+      baseUrl: https://openrouter.ai/api/v1
+      modelName: openai/gpt-oss-20b
+      apiKey: ${OPEN_ROUTER_API_KEY}
+  - label: GPT-OSS-120B
+    llmProps:
+      baseUrl: https://openrouter.ai/api/v1
+      modelName: openai/gpt-oss-120b
+      apiKey: ${OPEN_ROUTER_API_KEY}
+  - label: GPT-4o (2024-11-20)
+    llmProps:
+      baseUrl: https://openrouter.ai/api/v1
+      modelName: openai/gpt-4o-2024-11-20
+      apiKey: ${OPEN_ROUTER_API_KEY}
+datasets:
+  - 2
+  - 7
+  - 1
+\end{lstlisting}

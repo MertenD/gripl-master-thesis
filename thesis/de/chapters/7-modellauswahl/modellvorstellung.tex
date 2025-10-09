@@ -19,14 +19,15 @@ Im Folgenden werden die in dieser Arbeit evaluierten \acp{LLM} vorgestellt. Der 
                 Mistral-7B-Instruct-v0.3 & 7.24 & 32{,}000  & Frankreich \cite{HF_Mistral7B_2025} \\
                 Mixtral-8x7B-Instruct-v0.1 & 46.7 total / 12.9 aktiv\tablefootnote{Mixtral nutzt eine Mixture-of-Experts-Architektur mit 8 Experten. Die Gesamtparameterzahl bezieht sich auf alle Experten, die aktive Parameterzahl auf den jeweils genutzten Expertenanteil pro Inferenzdurchlauf \cite{Mixtral_Blog}.} & 32{,}000 & Frankreich \cite{HF_Mixtral8x7B_2025, Mixtral_Blog} \\
                 Mistral-Large-Instruct-2411 & 123 & 128{,}000 & Frankreich \cite{HF_MistralLargeInstruct_2025} \\
-                Gemma-3-12B-it & 12.2 & 128{,}000 & Großbritannien\tablefootnote{Google DeepMind hat seinen Hauptsitz in London, gehört jedoch zu Alphabet (USA). Wo genau trainiert wurde, ist unklar.\\\\\\} \cite{HF_Gemma3_12B_2025} \\
+                Mistral-Medium-3.1 & n.v. & 128{,}000 & Frankreich \cite{mistral_models_overview} \\
+                Gemma-3-12B-it & 12.2 & 128{,}000 & Großbritannien\tablefootnote{Google DeepMind hat seinen Hauptsitz in London, gehört jedoch zu Alphabet (USA). Wo genau trainiert wurde, ist unklar.\\\\\\\\} \cite{HF_Gemma3_12B_2025} \\
                 Gemma-3-27B-it & 27.4 & 128{,}000 & Großbritannien \cite{HF_Gemma3_27B_2025} \\
-                GPT-OSS-20B & 20.91 total / 3.61 aktiv & 131{,}072 & USA \cite{OpenAI_GPTOSS_ModelCard_2025} \\
-                GPT-OSS-120B & 116.83 total / 5.13 aktiv & 131{,}072 & USA \cite{OpenAI_GPTOSS_ModelCard_2025} \\
                 DeepSeek-R1-Distill-Qwen-14B & 14.8 & 131{,}072 & China \cite{HF_DeepSeekR1_Distill_Qwen14B_2025} \\
                 DeepSeek-V3.1 & 671 total / 37 aktiv & 163{,}80 & China \cite{HF_DeepSeek_V3_2_2025} \\
                 Qwen2.5-7B-Instruct & 7.62 & 131{,}072 & China \cite{HF_Qwen7B_2025} \\
                 Qwen3-235B-A22B-Thinking-2507 & 235 & 256{,}000 & China \cite{HF_Qwen3_235B_2025} \\
+                GPT-OSS-20B & 20.91 total / 3.61 aktiv & 131{,}072 & USA \cite{OpenAI_GPTOSS_ModelCard_2025} \\
+                GPT-OSS-120B & 116.83 total / 5.13 aktiv & 131{,}072 & USA \cite{OpenAI_GPTOSS_ModelCard_2025} \\
                 GPT-4o (2024-11-20) & n.v. & 128{,}000 & USA \cite{openai-hello-gpt-4o} \\
                 \bottomrule
             \end{tabular}
@@ -42,14 +43,15 @@ Im Folgenden werden die in dieser Arbeit evaluierten \acp{LLM} vorgestellt. Der 
                 Mistral-7B-Instruct-v0.3 & Apache-2.0 & 24.07.2025 & 687{,}000 \cite{HF_Mistral7B_2025} \\
                 Mixtral-8x7B-Instruct-v0.1 & Apache-2.0 & 24.07.2025 & 43{,}500 \cite{HF_Mixtral8x7B_2025} \\
                 Mistral-Large-Instruct-2411 & Mistral Research License & 28.07.2025 & 4{,}200 \cite{HF_MistralLargeInstruct_2025, MRL_Research_License} \\
+                Mistral-Medium-3.1 & Proprietär & 25.08.2025 & n.v. \cite{mistral_models_overview} \\
                 Gemma-3-12B-it & Gemma & 21.03.2025 & 523{,}000 \cite{Gemma3_License, HF_Gemma3_12B_2025} \\
                 Gemma-3-27B-it & Gemma & 21.03.2025 & 1{,}180{,}000 \cite{Gemma3_License, HF_Gemma3_27B_2025} \\
-                GPT-OSS-20B & Apache-2.0 & 26.08.2025 & 6{,}450{,}000 \cite{OpenAI_GPTOSS_ModelCard_2025} \\
-                GPT-OSS-120B & Apache-2.0 & 26.08.2025 & 3{,}600{,}000 \cite{OpenAI_GPTOSS_ModelCard_2025} \\
                 DeepSeek-R1-Distill-Qwen-14B & MIT & 24.02.2025 & 341{,}000 \cite{HF_DeepSeekR1_Distill_Qwen14B_2025} \\
                 DeepSeek-V3.1 & MIT & 05.09.2025 & 447{,}000 \cite{HF_DeepSeek_V3_2_2025} \\
                 Qwen2.5-7B-Instruct & Apache-2.0 & 12.01.2025 & 5{,}100{,}000 \cite{HF_Qwen7B_2025} \\
                 Qwen3-235B-A22B-Thinking-2507 & Apache-2.0 & 17.08.2025 & 52{,}900 \cite{HF_Qwen3_235B_2025} \\
+                GPT-OSS-20B & Apache-2.0 & 26.08.2025 & 6{,}450{,}000 \cite{OpenAI_GPTOSS_ModelCard_2025} \\
+                GPT-OSS-120B & Apache-2.0 & 26.08.2025 & 3{,}600{,}000 \cite{OpenAI_GPTOSS_ModelCard_2025} \\
                 GPT-4o (2024-11-20) & Proprietär & 20.11.2024 & n.v. \cite{openai-hello-gpt-4o} \\
                 \bottomrule
             \end{tabular}
