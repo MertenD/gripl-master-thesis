@@ -545,15 +545,15 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
                                                 </div>
                                                 <div>
                                                     <p className="text-sm text-muted-foreground">Passed</p>
-                                                    <p className="font-mono">{stats.avgPassed.toFixed(3)} ± {stats.stdPassed.toFixed(3)} / {metadata.totalTestCases}</p>
+                                                    <p className="font-mono">{stats.avgPassed.toFixed(3)} ± {stats.stdPassed.toFixed(3)} {metadata && `/ ${metadata.totalTestCases}`}</p>
                                                 </div>
                                                 <div>
                                                     <p className="text-sm text-muted-foreground">Failed</p>
-                                                    <p className="font-mono">{stats.avgFailed.toFixed(3)} ± {stats.stdFailed.toFixed(3)} / {metadata.totalTestCases}</p>
+                                                    <p className="font-mono">{stats.avgFailed.toFixed(3)} ± {stats.stdFailed.toFixed(3)} {metadata && `/ ${metadata.totalTestCases}`}</p>
                                                 </div>
                                                 <div>
                                                     <p className="text-sm text-muted-foreground">Errors</p>
-                                                    <p className="font-mono">{stats.avgErrors.toFixed(3)} ± {stats.stdErrors.toFixed(3)} / {metadata.totalTestCases}</p>
+                                                    <p className="font-mono">{stats.avgErrors.toFixed(3)} ± {stats.stdErrors.toFixed(3)} {metadata && `/ ${metadata.totalTestCases}`}</p>
                                                 </div>
                                             </div>
                                         </div>
