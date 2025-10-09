@@ -1,6 +1,5 @@
 package de.mertendieckmann.griplbackend.evaluation
 
-import de.mertendieckmann.griplbackend.config.LlmConfig
 import de.mertendieckmann.griplbackend.model.dto.EvaluationMetadataReport
 import de.mertendieckmann.griplbackend.model.dto.EvaluationRequest
 import de.mertendieckmann.griplbackend.model.dto.ModelReportEnvelope
@@ -11,6 +10,9 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
+import java.security.MessageDigest
 
 class MultiEvaluationRunner(
     private val singleRunner: EvaluationRunner,
@@ -22,9 +24,9 @@ class MultiEvaluationRunner(
     fun runAll(request: MultiEvaluationRequest): Flow<ModelReportEnvelope> = flow {
         require(request.models.isNotEmpty()) { "models must not be empty" }
 
-        val seed = request.seed ?: (System.currentTimeMillis() * (Math.random() * 10) % Int.MAX_VALUE).toInt()
+        val baseSeed = request.seed ?: (System.currentTimeMillis() * (Math.random() * 10) % Int.MAX_VALUE).toInt()
         val repetitions = request.repetitions.coerceAtLeast(1)
-        emit(ModelReportEnvelope("", createMetadata(request, seed, repetitions), 1))
+        emit(ModelReportEnvelope("", createMetadata(request, baseSeed, repetitions), 1))
 
         for (runNumber in 1..repetitions) {
             log.info { "Starting evaluation run $runNumber/$repetitions" }
@@ -33,9 +35,11 @@ class MultiEvaluationRunner(
                 val effectiveEndpoint = model.evaluationEndpoint ?: request.defaultEvaluationEndpoint
                 log.info { "Run $runNumber - Starting model ${index + 1}/${request.models.size}: '${model.label}' @ $effectiveEndpoint" }
 
+                val runSeed = deriveRunSeed(baseSeed, runNumber)
+
                 val singleRequest = EvaluationRequest(
                     evaluationEndpoint = effectiveEndpoint,
-                    llmProps = model.llmProps?.copy(seed = seed),
+                    llmProps = model.llmProps?.copy(seed = runSeed),
                     maxConcurrent = request.maxConcurrent,
                     datasets = request.datasets
                 )
@@ -62,5 +66,21 @@ class MultiEvaluationRunner(
             defaultEvaluationEndpoint = request.defaultEvaluationEndpoint,
             totalRepetitions = repetitions
         )
+    }
+
+    /**
+     * Stable and deterministic derivation of a run-specific seed from a base seed and the run number.
+     * The result is guaranteed to be in the range [1..Int.MAX_VALUE].
+     */
+    private fun deriveRunSeed(baseSeed: Int, runNumber: Int): Int {
+        val digest = MessageDigest.getInstance("SHA-256")
+        val payload = ByteBuffer.allocate(8).order(ByteOrder.BIG_ENDIAN)
+            .putInt(baseSeed)
+            .putInt(runNumber)
+            .array()
+        val hash = digest.digest(payload)
+        val raw = ByteBuffer.wrap(hash, 0, 4).order(ByteOrder.BIG_ENDIAN).int
+        val position = raw and 0x7fffffff
+        return if (position == 0) 1 else position
     }
 }
