@@ -1,0 +1,42 @@
+\section{Konfigurationen}\label{sec:konfigurationen}
+
+Die Konfigurationen der Experimente sind als YAML-Dateien in Listings \ref{lst:mistral-experiment-config}, \ref{lst:gemma-experiment-config}, \ref{lst:deepseek-experiment-config}, \ref{lst:qwen-experiment-config} und \ref{lst:gpt-experiment-config} dargestellt. Diese Dateien enthalten die zu evaluierenden Modelle, die zu verwendenden Datensätze, den Basis-Seed sowie die Anzahl der Wiederholungen und weitere Rahmenparameter. In Listing \ref{lst:mistral-experiment-config} wird ein Experiment dargestellt, in dem vier verschiedene Mistral-Modelle über OpenRouter evaluiert werden. Die Datensätze werden jeweils fünf Mal durchlaufen. Der Basis-Seed ist auf \texttt{24523833} gesetzt.
+
+Auf Basis des Seeds aus der Konfiguration und der aktuellen Wiederholungsnummer wird für jede Wiederholung ein neuer Seed generiert. Dadurch sind die Ergebnisse reproduzierbar und dennoch wird die Stabilität der Modelle über mehrere Wiederholungen mit unterschiedlichen Seeds abgebildet.
+
+Alle Datensätze, Konfigurationen und die daraus resultierenden
+Ergebnisse sind außerdem im GitLab‑Repository verfügbar\footnote{Siehe das GitLab Repository: \hyperlink{https://gitlab.com/andreaskonrad/bpmn-gdpr-llm-evaluation}{// TODO}}.
+
+\textcolor{orange}{// TODO Hier noch über Temperature reden? Problem ist, dass eine niedrigere Temperature in meinen Versuchen mit einer geringeren Ausgaben-Format Konsistenz einherging. Vielleicht sollte ich ein Experiment starten wo ich das gleiche Modell mit verschiedenen Temperature Werten teste, und das dann auf die weiteren Experimente mit allen Modellen übertragen.}
+
+\begin{lstlisting}[caption={Konfigurationsdatei des Experiments mit Mistral Modellen}, label={lst:mistral-experiment-config}]
+defaultEvaluationEndpoint: /gdpr/analysis/prompt-engineering
+seed: 24523833
+maxConcurrent: 10
+repetitions: 5
+models:
+  - label: Mistral-7B-Instruct-v0.3
+    llmProps:
+      baseUrl: https://openrouter.ai/api/v1
+      modelName: mistralai/mistral-7b-instruct-v0.3
+      apiKey: ${OPEN_ROUTER_API_KEY}
+  - label: Mistral-8x7B-Instruct-v0.1
+    llmProps:
+      baseUrl: https://openrouter.ai/api/v1
+      modelName: mistralai/mixtral-8x7b-instruct
+      apiKey: ${OPEN_ROUTER_API_KEY}
+  - label: Mistral-Large-Instruct-2411
+    llmProps:
+      baseUrl: https://openrouter.ai/api/v1
+      modelName: mistralai/mistral-large-2411
+      apiKey: ${OPEN_ROUTER_API_KEY}
+  - label: Mistral Medium 3.1
+    llmProps:
+      baseUrl: https://openrouter.ai/api/v1
+      modelName: mistralai/mistral-medium-3.1
+      apiKey: ${OPEN_ROUTER_API_KEY}
+datasets:
+  - 2
+  - 7
+  - 1
+\end{lstlisting}

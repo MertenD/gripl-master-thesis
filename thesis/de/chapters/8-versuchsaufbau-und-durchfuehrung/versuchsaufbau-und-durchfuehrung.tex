@@ -1,0 +1,11 @@
+\chapter{Versuchsaufbau und Durchführung}\label{ch:versuchsaufbau-und-durchfuhrung}
+
+Wie im Abschnitt \ref{sec:experimentdesign} beschrieben, soll eine fairer Vergleich verschiedener \acp{LLM} erreicht werden. Dazu werden alle, der im vorherigen Kapitel beschriebenen, Modelle durch dieselbe Klassifikationspipeline geschickt und anhand der im Kapitel \ref{sec:qualitatsziele} definierten Metriken (Accuracy, Precision, Recall, F1 sowie die erfolgreiche klassifizierten Testfälle) bewertet. Dieses Kapitel beschreibt den konkreten Versuchsaufbau und die Durchführung der Experimente. Die hier dokumentierten Parameter und Konfigurationen sind wesentlich, um die Ergebnisse nachvollziehbar und reproduzierbar zu machen.
+
+Um sowohl kleine als auch große Modelle testen zu können, wurde \emph{OpenRouter} \cite{openrouter} als API-Anbieter genutzt. Über diese Cloud-basierte Schnittstelle lassen sich auch Modelle ausführen, die lokal aufgrund begrenzter Hardware nicht betrieben werden können. Der API-Schlüssel wird über eine Umgebungsvariable in die Konfigurationsdatei eingebunden, um sensible Daten aus den Konfigurationen fernzuhalten.
+
+In den Experimenten wurden mehrere Modelle aus unterschiedlichen Anbieterfamilien. Für jeden Anbieter gibt es ein eigenes Experiment, in dem mehrere Modellgrößen (z.\,B. 7B, 8x7B, Large) gegeneinander verglichen werden. Da alle Experimente die gleiche Pipeline und die gleichen Datensätze verwenden, können auch die Ergebnisse verschiedener Anbieter untereinander verglichen werden. Diese Aufteilung in verschiedene Experimente dient lediglich der Übersichtlichkeit in der Benutzeroberfläche des Evaluationsframeworks.
+
+\input{de/chapters/8-versuchsaufbau-und-durchfuehrung/einheitliche-klassifizierung}
+\input{de/chapters/8-versuchsaufbau-und-durchfuehrung/konfigurationen}
+\input{de/chapters/8-versuchsaufbau-und-durchfuehrung/durchfuehrung}
