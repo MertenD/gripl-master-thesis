@@ -297,9 +297,9 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
                 sections.push(`- False Positives: ${stats.avgFalsePositives.toFixed(3)} ± ${stats.stdFalsePositives.toFixed(3)}`);
                 sections.push(`- False Negatives: ${stats.avgFalseNegatives.toFixed(3)} ± ${stats.stdFalseNegatives.toFixed(3)}`);
                 sections.push(`- True Negatives: ${stats.avgTrueNegatives.toFixed(3)} ± ${stats.stdTrueNegatives.toFixed(3)}`);
-                sections.push(`- Passed: ${stats.avgPassed.toFixed(3)} ± ${stats.stdPassed.toFixed(3)} / ${metadata.totalTestCases}`);
-                sections.push(`- Failed: ${stats.avgFailed.toFixed(3)} ± ${stats.stdFailed.toFixed(3)} / ${metadata.totalTestCases}`);
-                sections.push(`- Errors: ${stats.avgErrors.toFixed(3)} ± ${stats.stdErrors.toFixed(3)} / ${metadata.totalTestCases}`);
+                sections.push(`- Passed: ${stats.avgPassed.toFixed(3)} ± ${stats.stdPassed.toFixed(3)} / ${metadata?.totalTestCases}`);
+                sections.push(`- Failed: ${stats.avgFailed.toFixed(3)} ± ${stats.stdFailed.toFixed(3)} / ${metadata?.totalTestCases}`);
+                sections.push(`- Errors: ${stats.avgErrors.toFixed(3)} ± ${stats.stdErrors.toFixed(3)} / ${metadata?.totalTestCases}`);
             }
         }
 
