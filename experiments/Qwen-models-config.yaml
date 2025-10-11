@@ -8,11 +8,15 @@ models:
       baseUrl: https://openrouter.ai/api/v1
       modelName: qwen/qwen-2.5-7b-instruct
       apiKey: ${OPEN_ROUTER_API_KEY}
+      temperature: 0.1
+      topP: 1
   - label: Qwen3-235B-A22B-Thinking-2507
     llmProps:
       baseUrl: https://openrouter.ai/api/v1
       modelName: qwen/qwen3-vl-235b-a22b-thinking
       apiKey: ${OPEN_ROUTER_API_KEY}
+      temperature: 0.1
+      topP: 1
 datasets:
   - 2
   - 7
