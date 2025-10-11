@@ -58,14 +58,17 @@ export default function EvaluationConfigModelRow({model, index, canRemove, effec
                 <div className="space-y-4">
                     <div className="space-y-2">
                         <Label>Label</Label>
-                        <Input id={`label-${model.id}`} value={model.label} onChange={(e) => updateModel(model.id, "label", e.target.value)} placeholder={`Model ${index + 1}`} />
+                        <Input id={`label-${model.id}`} value={model.label}
+                               onChange={(e) => updateModel(model.id, "label", e.target.value)}
+                               placeholder={`Model ${index + 1}`}/>
                     </div>
 
                     <div className="space-y-2">
                         <Label>Endpoint</Label>
-                        <Select value={model.endpointChoice} onValueChange={(v: EndpointChoice) => updateModel(model.id, "endpointChoice", v)}>
+                        <Select value={model.endpointChoice}
+                                onValueChange={(v: EndpointChoice) => updateModel(model.id, "endpointChoice", v)}>
                             <SelectTrigger>
-                                <SelectValue />
+                                <SelectValue/>
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="default">Use default</SelectItem>
@@ -78,9 +81,10 @@ export default function EvaluationConfigModelRow({model, index, canRemove, effec
                     {model.endpointChoice === "preset" && (
                         <div className="space-y-2">
                             <Label>Preset Endpoint</Label>
-                            <Select value={model.selectedPresetEndpoint} onValueChange={(v) => updateModel(model.id, "selectedPresetEndpoint", v)}>
+                            <Select value={model.selectedPresetEndpoint}
+                                    onValueChange={(v) => updateModel(model.id, "selectedPresetEndpoint", v)}>
                                 <SelectTrigger>
-                                    <SelectValue placeholder="Select preset endpoint" />
+                                    <SelectValue placeholder="Select preset endpoint"/>
                                 </SelectTrigger>
                                 <SelectContent>
                                     <>
@@ -117,11 +121,9 @@ export default function EvaluationConfigModelRow({model, index, canRemove, effec
                             onChange={(e) => updateModel(model.id, "baseUrl", emptyToNull(e.target.value))}
                             list="llm-base-url-datalist"
                         />
-                        <LlmBaseUrlDatalist id="llm-base-url-datalist" />
+                        <LlmBaseUrlDatalist id="llm-base-url-datalist"/>
                     </div>
-                </div>
 
-                <div className="space-y-4">
                     <div className="space-y-2">
                         <Label>LLM Model Name</Label>
                         <Input
@@ -133,13 +135,9 @@ export default function EvaluationConfigModelRow({model, index, canRemove, effec
                         />
                         <LlmModelNameDatalist id="llm-model-name-datalist"/>
                     </div>
+                </div>
 
-                    <div className="space-y-2">
-                        <Label>LLM Response Timeout (seconds)</Label>
-                        <Input type="number" placeholder="240" value={model.timeoutSeconds ?? ""}
-                               onChange={(e) => updateModel(model.id, "timeoutSeconds", safeIntOrNull(e.target.value))}/>
-                    </div>
-
+                <div className="space-y-4">
                     <div className="space-y-2">
                         <Label>API Key</Label>
                         <PasswordInput
@@ -155,6 +153,18 @@ export default function EvaluationConfigModelRow({model, index, canRemove, effec
                         <Label>Temperature</Label>
                         <Input type="number" placeholder="1.0" value={model.temperature ?? ""}
                                onChange={(e) => updateModel(model.id, "temperature", safeFloatOrNull(e.target.value))}/>
+                    </div>
+
+                    <div className="space-y-2">
+                        <Label>Top P</Label>
+                        <Input type="number" placeholder="0.8" value={model.topP ?? ""}
+                               onChange={(e) => updateModel(model.id, "topP", safeFloatOrNull(e.target.value))}/>
+                    </div>
+
+                    <div className="space-y-2">
+                        <Label>LLM Response Timeout (seconds)</Label>
+                        <Input type="number" placeholder="240" value={model.timeoutSeconds ?? ""}
+                               onChange={(e) => updateModel(model.id, "timeoutSeconds", safeIntOrNull(e.target.value))}/>
                     </div>
                 </div>
             </div>

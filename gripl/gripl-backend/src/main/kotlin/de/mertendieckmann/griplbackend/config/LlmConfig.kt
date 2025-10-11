@@ -37,6 +37,7 @@ class LlmConfig(private val defaultProps: LlmProps) {
             .logResponses(true)
             .listeners(listOf(usageListener))
             .temperature(props.temperature)
+            .topP(props.topP)
             .seed(props.seed)
             .responseFormat(ResponseFormat.JSON.toString())
             .build()
@@ -53,6 +54,7 @@ class LlmConfig(private val defaultProps: LlmProps) {
             var apiKey: String? = null,
             var timeoutSeconds: Long = 240L,
             var temperature: Double? = null,
+            var topP: Double? = null,
             var seed: Int? = null
         )
 
@@ -62,6 +64,7 @@ class LlmConfig(private val defaultProps: LlmProps) {
             var apiKey: String? = null,
             var timeoutSeconds: Long? = null,
             var temperature: Double? = null,
+            var topP: Double? = null,
             var seed: Int? = null
         )
 
@@ -72,6 +75,7 @@ class LlmConfig(private val defaultProps: LlmProps) {
                 apiKey         = override.apiKey?.takeIf { it.isNotBlank() } ?: apiKey,
                 timeoutSeconds = override.timeoutSeconds ?: timeoutSeconds,
                 temperature     = override.temperature ?: temperature,
+                topP           = override.topP ?: topP,
                 seed           = override.seed ?: seed
             )
 

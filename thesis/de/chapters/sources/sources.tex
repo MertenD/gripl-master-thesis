@@ -125,7 +125,9 @@ private fun resolveActivityIdUniquely(partialId: String, existingActivityIds: Se
                 },
                 "modelName": { "type": "string" },
                 "apiKey": { "type": "string"},
-                "timeoutSeconds": { "type": "number" }
+                "timeoutSeconds": { "type": "number" },
+                "temperature": { "type": "number" },
+                "topP": { "type": "number" },
             },
             "required": [],
             "title": "LlmProps"

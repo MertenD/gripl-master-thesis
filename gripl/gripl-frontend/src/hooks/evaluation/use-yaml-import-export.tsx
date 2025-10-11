@@ -121,6 +121,7 @@ export function useYamlImportExport(props: {
                 const apiKey = llmProps?.apiKey ?? null;
                 const timeoutSeconds = typeof llmProps?.timeoutSeconds === "number" ? llmProps.timeoutSeconds : null;
                 const temperature = typeof llmProps?.temperature === "number" ? llmProps.temperature : null;
+                const topP = typeof llmProps?.topP === "number" ? llmProps.topP : null;
 
                 return {
                     id: cryptoRandomId(),
@@ -133,6 +134,7 @@ export function useYamlImportExport(props: {
                     apiKey,
                     timeoutSeconds,
                     temperature,
+                    topP,
                 } as ModelRowState;
             });
 
@@ -155,12 +157,13 @@ export function useYamlImportExport(props: {
                 apiKey: normalize(m.apiKey),
                 timeoutSeconds: m.timeoutSeconds ?? null,
                 temperature: m.temperature ?? null,
+                topP: m.topP ?? null,
             } as const;
 
             return {
                 label: m.label.trim() || "Model",
                 evaluationEndpoint,
-                llmProps: !llmProps.baseUrl && !llmProps.modelName && !llmProps.apiKey && !llmProps.timeoutSeconds &&!llmProps.temperature ? null : llmProps,
+                llmProps: !llmProps.baseUrl && !llmProps.modelName && !llmProps.apiKey && !llmProps.timeoutSeconds && !llmProps.temperature && !llmProps.topP ? null : llmProps,
             };
         });
 
