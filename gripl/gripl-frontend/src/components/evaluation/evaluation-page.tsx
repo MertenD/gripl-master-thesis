@@ -285,7 +285,7 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
             sections.push(metadata.markdown);
         }
 
-        if (aggregateStats && summaryByRun.size > 1) {
+        if (aggregateStats && summaryByRun.size >= 1) {
             sections.push("# Aggregate Statistics Across All Runs");
             for (const [modelLabel, stats] of aggregateStats.entries()) {
                 sections.push(`## Model: ${modelLabel}`);
@@ -493,7 +493,7 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
                                     <tr><td>Datasets:</td><td className="pl-4">{metadata.datasets.map(d => d.name).join(", ")}</td></tr>
                                     <tr><td>Total Test Cases:</td><td className="pl-4">{metadata.totalTestCases}</td></tr>
                                     <tr><td>Default Evaluation Endpoint:</td><td className="pl-4">{metadata.defaultEvaluationEndpoint}</td></tr>
-                                    {metadata.totalRepetitions && metadata.totalRepetitions > 1 && <tr><td>Total Runs:</td><td className="pl-4">{metadata.totalRepetitions}</td></tr>}
+                                    {metadata.totalRepetitions && metadata.totalRepetitions >= 1 && <tr><td>Total Runs:</td><td className="pl-4">{metadata.totalRepetitions}</td></tr>}
                                     <tr><td>Seed:</td><td className="pl-4">{metadata.seed}</td></tr>
                                     <tr><td>Timestamp:</td><td className="pl-4">{new Date(metadata.timestamp).toLocaleString()}</td></tr>
                                     </tbody>
@@ -503,7 +503,7 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
                     </Card>
                     <div className="space-y-6 mb-8">
                         {/* Aggregate Statistics across all runs */}
-                        {aggregateStats && metadata && metadata.totalRepetitions && metadata.totalRepetitions > 1 && (
+                        {aggregateStats && metadata && metadata.totalRepetitions && metadata.totalRepetitions >= 1 && (
                             <Card>
                                 <CardHeader><h3 className="text-xl font-semibold">Aggregate Statistics Across {metadata.totalRepetitions} Runs</h3></CardHeader>
                                 <CardContent className="space-y-4">
@@ -567,7 +567,7 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
                 </Card>}
 
                 {/* Run selection tabs (only show if multiple runs) */}
-                {metadata && metadata.totalRepetitions && metadata.totalRepetitions > 1 && (
+                {metadata && metadata.totalRepetitions && metadata.totalRepetitions >= 1 && (
                     <>
                         <h2 className="text-2xl font-semibold mb-2">Results by Run</h2>
                         <Tabs value={selectedRun.toString()} onValueChange={(v) => setSelectedRun(parseInt(v))} className="w-full mb-6">
@@ -582,7 +582,7 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
                             {Array.from({ length: metadata.totalRepetitions }, (_, i) => i + 1).map((runNum) => (
                                 <TabsContent value={runNum.toString()} key={`run-${runNum}-content`}>
                                     {!summaryByRun.get(runNum) && !testCasesByRun.get(runNum) && !errorsByRun.get(runNum) && (
-                                        <Card className="p-4 text-muted-foreground">
+                                        <Card className="p-4 text-muted-foreground mb-4">
                                             No results yet for Run {runNum}. Start an evaluation to see results here.
                                         </Card>
                                     )}
@@ -619,7 +619,7 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
                                             return (
                                                 <TabsContent value={label} key={`${label}-content`}>
                                                     {!modelSummary && !testCases.some((tc) => tc.modelLabel === label) && !errors.some((e) => e.modelLabel === label) && (
-                                                        <Card className="p-4 text-muted-foreground">
+                                                        <Card className="p-4 text-muted-foreground mb-4">
                                                             No results yet for model <strong>{label}</strong>. Start an
                                                             evaluation to see results here.
                                                         </Card>
