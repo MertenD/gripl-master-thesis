@@ -1,14 +1,12 @@
 \section{Modellvorstellung}\label{sec:modellvorstellung}
 
-Im Folgenden werden die in dieser Arbeit evaluierten \acp{LLM} vorgestellt. Der Stichtag der Modellauswahl war der 30.\,September\,2025. Zuerst werden die technischen Kenndaten der Modelle in Tabelle\ref{tab:models-all} dargestellt.
-
-\textcolor{orange}{// TODO EIne Beschreibung der gewählten Modelle, welche durch die Tabellen ergänzt wird. Außerdem noch Begründung, warum diese Modelle ausgewählt wurden.}
+Tabelle \ref{tab:models-all} stellt die für diese Arbeit ausgewählten Modelle kurz vor. Der Stichtag der Modellauswahl war der 30.\,September\,2025. Im Folgenden wird die Modellauswahl im Detail erläutert.
 
 \begin{sidewaystable}[htbp]
     \centering
     \caption{Übersicht aller Modelle mit technischen Eckdaten (Stand 30.09.2025).}
+    \label{tab:models-all}
     \begin{threeparttable}
-        \label{tab:models-all}
         \begin{subtable}[t]{0.49\linewidth}
             \centering
             \subcaption{Technische Eckdaten und Herkunft der Modelle.}
@@ -22,10 +20,10 @@ Im Folgenden werden die in dieser Arbeit evaluierten \acp{LLM} vorgestellt. Der 
                 Mistral-Medium-3.1 & n.v. & 128{,}000 & Frankreich \cite{mistral_models_overview} \\
                 Gemma-3-12B-it & 12.2 & 128{,}000 & Großbritannien\tablefootnote{Google DeepMind hat seinen Hauptsitz in London, gehört jedoch zu Alphabet (USA). Wo genau trainiert wurde, ist unklar.\\\\\\\\} \cite{HF_Gemma3_12B_2025} \\
                 Gemma-3-27B-it & 27.4 & 128{,}000 & Großbritannien \cite{HF_Gemma3_27B_2025} \\
-                DeepSeek-R1-Distill-Qwen-14B & 14.8 & 131{,}072 & China \cite{HF_DeepSeekR1_Distill_Qwen14B_2025} \\
-                DeepSeek-V3.1 & 671 total / 37 aktiv & 163{,}80 & China \cite{HF_DeepSeek_V3_2_2025} \\
                 Qwen2.5-7B-Instruct & 7.62 & 131{,}072 & China \cite{HF_Qwen7B_2025} \\
                 Qwen3-235B-A22B-Thinking-2507 & 235 & 256{,}000 & China \cite{HF_Qwen3_235B_2025} \\
+                DeepSeek-R1-Distill-Qwen-14B & 14.8 & 131{,}072 & China \cite{HF_DeepSeekR1_Distill_Qwen14B_2025} \\
+                DeepSeek-V3.1 & 671 total / 37 aktiv & 128{,}000 & China \cite{HF_DeepSeek_V3_1_2025} \\
                 GPT-OSS-20B & 20.91 total / 3.61 aktiv & 131{,}072 & USA \cite{OpenAI_GPTOSS_ModelCard_2025} \\
                 GPT-OSS-120B & 116.83 total / 5.13 aktiv & 131{,}072 & USA \cite{OpenAI_GPTOSS_ModelCard_2025} \\
                 GPT-4o (2024-11-20) & n.v. & 128{,}000 & USA \cite{openai-hello-gpt-4o} \\
@@ -46,10 +44,10 @@ Im Folgenden werden die in dieser Arbeit evaluierten \acp{LLM} vorgestellt. Der 
                 Mistral-Medium-3.1 & Proprietär & 25.08.2025 & n.v. \cite{mistral_models_overview} \\
                 Gemma-3-12B-it & Gemma & 21.03.2025 & 523{,}000 \cite{Gemma3_License, HF_Gemma3_12B_2025} \\
                 Gemma-3-27B-it & Gemma & 21.03.2025 & 1{,}180{,}000 \cite{Gemma3_License, HF_Gemma3_27B_2025} \\
-                DeepSeek-R1-Distill-Qwen-14B & MIT & 24.02.2025 & 341{,}000 \cite{HF_DeepSeekR1_Distill_Qwen14B_2025} \\
-                DeepSeek-V3.1 & MIT & 05.09.2025 & 447{,}000 \cite{HF_DeepSeek_V3_2_2025} \\
                 Qwen2.5-7B-Instruct & Apache-2.0 & 12.01.2025 & 5{,}100{,}000 \cite{HF_Qwen7B_2025} \\
                 Qwen3-235B-A22B-Thinking-2507 & Apache-2.0 & 17.08.2025 & 52{,}900 \cite{HF_Qwen3_235B_2025} \\
+                DeepSeek-R1-Distill-Qwen-14B & MIT & 24.02.2025 & 341{,}000 \cite{HF_DeepSeekR1_Distill_Qwen14B_2025} \\
+                DeepSeek-V3.1 & MIT & 05.09.2025 & 447{,}000 \cite{HF_DeepSeek_V3_1_2025} \\
                 GPT-OSS-20B & Apache-2.0 & 26.08.2025 & 6{,}450{,}000 \cite{OpenAI_GPTOSS_ModelCard_2025} \\
                 GPT-OSS-120B & Apache-2.0 & 26.08.2025 & 3{,}600{,}000 \cite{OpenAI_GPTOSS_ModelCard_2025} \\
                 GPT-4o (2024-11-20) & Proprietär & 20.11.2024 & n.v. \cite{openai-hello-gpt-4o} \\
@@ -58,3 +56,15 @@ Im Folgenden werden die in dieser Arbeit evaluierten \acp{LLM} vorgestellt. Der 
         \end{subtable}
     \end{threeparttable}
 \end{sidewaystable}
+
+Die französische Firma Mistral AI bietet mehrere leistungsstarke Modelle an, die zum großteil offene Gewichte haben. Durch ihre Herkunft repräsentieren die Mistral Modelle in dieser Arbeit die \ac{EU}-Modelle. \textbf{Mistral-7B-Instruct-v0.3} \cite{HF_Mistral7B_2025} ist ein 7,24\,B Parameter großes Modell mit einem Kontextfenster von 32{,}000 Tokens. Es wurde speziell für Anweisungsfolgen (Instruct) optimiert und ist unter der Apache-2.0-Lizenz frei verfügbar. Das \textbf{Mixtral-8x7B-Instruct-v0.1} Modell \cite{HF_Mixtral8x7B_2025} nutzt eine Mixture-of-Experts-Architektur mit insgesamt 46,7\,B Parametern, von denen jedoch nur 12,9\,B aktiv genutzt werden. Es hat ebenfalls ein Kontextfenster von 32{,}000 Tokens und ist unter der Apache-2.0-Lizenz lizenziert. Das \textbf{Mistral-Large-Instruct-2411} Modell \cite{HF_MistralLargeInstruct_2025} ist mit 123\,B Parametern deutlich größer und bietet ein Kontextfenster von 128{,}000 Tokens. Es wird unter der Mistral Research License veröffentlicht, die die Nutzung auf nicht-kommerzielle Forschung beschränkt \cite{MRL_Research_License}. Das Modell \textbf{Mistral-Medium-3.1} \cite{mistral_models_overview} bietet ein Kontextfenster von 128{,}000 Tokens und gilt als aktuelles Spitzenmodell der Mistral-Modellreihe. Anders als die übrigen Mistral-Modelle ist es proprietär und wird von Mistral~AI auf \ac{EU}-Servern unter Beachtung der \ac{DSGVO} betrieben \cite{mistral-gdpr, mistral-data-storing}. Damit ist die Verarbeitung sensibler Daten möglich. Das Modell eignet sich daher - trotz nicht veröffentlichter Gewichte – für den Einsatz in datenschutzkritischen Szenarien.
+
+Die Gemma-3-Modelle von Google Deepmind repräsentieren eine neue Generation multimodaler \acp{LLM} mit offenen Gewichten. Die hier betrachteten Varianten sind \textbf{Gemma-3-12B-it} \cite{HF_Gemma3_12B_2025} mit 12,2\,B Parametern und \textbf{Gemma-3-27B-it} \cite{HF_Gemma3_27B_2025} mit 27,4\,B Parametern. Beide Modelle verfügen über ein großes Kontextfenster von 128{,}000 Tokens und sind unter der proprietären Gemma-Lizenz veröffentlicht, die eine breite kommerzielle Nutzung erlaubt \cite{Gemma3_License}. Die genaue Herkunft der Modelle ist unklar, da Google DeepMind seinen Hauptsitz in Großbritannien hat, jedoch zu Alphabet in den USA gehört. Wo genau die Modelle trainiert wurden, ist nicht bekannt.
+
+Die Qwen-Modelle wurden von Alibaba Cloud in China entwickelt worden. Das kleinere Modell \textbf{Qwen2.5-7B-Instruct} \cite{HF_Qwen7B_2025} hat 7,62\,B Parameter, ein Kontextfenster von 131{,}072 Tokens und ist unter der Apache-2.0-Lizenz frei verfügbar. Das größere Modell \textbf{Qwen3-235B-A22B-Thinking-2507} \cite{HF_Qwen3_235B_2025} verfügt über 235\,B Parameter, ein Kontextfenster von 256{,}000 Tokens und ist ebenfalls unter der Apache-2.0-Lizenz veröffentlicht.
+
+Das chinesische Unternehmen DeepSeek AI hat mit \textbf{DeepSeek-R1-Distill-Qwen-14B} \cite{HF_DeepSeekR1_Distill_Qwen14B_2025} ein Modell mit 14{,}8\,B Parametern veröffentlicht, das auf Qwen-2.5 basiert, ein Kontextfenster von 131{,}072 Tokens bietet und unter der MIT-Lizenz frei verfügbar ist. Das größere Modell \textbf{DeepSeek-V3.1} \cite{HF_DeepSeek_V3_1_2025} setzt auf eine Mixture-of-Experts-Architektur mit insgesamt 671\,B Parametern, von denen pro Token 37\,B aktiv sind. Es bietet ein Kontextfenster von 128{,}000 Tokens und ist ebenfalls MIT-lizenziert. Besonders bemerkenswert sind die DeepSeek-Modelle, weil DeepSeek im Januar 2025 mit \emph{DeepSeek-R1-Zero} \cite{HF_DeepSeekR1_Zero_2025} eines der ersten permissiv lizenzierten Reasoning-Modelle in OpenAI-Größenordnung vorlegte und zugleich einen Trainings-Ansatz etablierte, bei dem \ac{LLM}-Reasoning nahezu ausschließlich über Reinforcement Learning erlernt wird \cite{deepseekai2025deepseekr1incentivizingreasoningcapability}.
+
+\textbf{GPT-4o} \cite{openai-hello-gpt-4o} ist ein proprietäres Modell von OpenAI mit einem Kontextfenster von 128{,}000 Tokens. Es wurde am 20.\,November\,2024 veröffentlicht und ist das einzige internationale proprietäre Modell in dieser Arbeit. Die genauen Parameterzahlen sind nicht bekannt. GPT-4o wird über die OpenAI-API bereitgestellt. GPT-4o ist das erste Omni-Modell von OpenAI, das neben Text auch Bilder als Eingabe akzeptieren kann und ist der De-facto-Standard in der Industrie. \textcolor{orange}{Ich weiß das von meiner Arbeit, aber brauche ich für diese Aussage auch eine Quelle?}. Das Modell dient in diesem Vergleich als Referenzpunkt für den aktuellen Stand der Technik. Mit den GPT-OSS Modellen \cite{OpenAI_GPTOSS_ModelCard_2025} hat OpenAI zudem zwei Modelle mit offenen Gewichten und unter Apache-2.0-Lizenz veröffentlicht, die explizit für Forschung und kommerzielle Nutzung freigegeben sind. Das \textbf{GPT-OSS-20B} Modell hat 20,91\,B Parameter (3,61\,B aktiv) und ein Kontextfenster von 131{,}072 Tokens. Das größere \textbf{GPT-OSS-120B} Modell verfügt über 116,83\,B Parameter (5,13\,B aktiv) und das gleiche Kontextfenster. Sie sind spannende Vergleichsmodelle, da sie von einem der führenden \ac{LLM}-Anbieter stammen und dennoch offen verfügbar sind.
+
+Insgesamt deckt die Modellauswahl in dieser Arbeit eine breite Palette von Modellgrößen, Architekturen und Lizenztypen ab. Die Mistral-Modelle repräsentieren die \ac{EU}-Modelle mit offenen Gewichten, während die Gemma-, Qwen- und GPT-OSS-Modelle internationale Alternativen aus verschiedenen Herkunftsländern darstellen. Die DeepSeek-Modelle bieten innovative Ansätze im Reasoning-Bereich, und GPT-4o dient als aktueller Industriestandard. Diese Vielfalt ermöglicht eine umfassende Evaluation der Modelle hinsichtlich ihrer Eignung für die Klassifizierungsaufgabe von \ac{BPMN}-Modellen.

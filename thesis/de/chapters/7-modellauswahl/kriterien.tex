@@ -1,25 +1,37 @@
 \section{Kriterien}\label{sec:kriterien}
 
-Dieser Abschnitt legt die Auswahlkriterien der \acp{LLM} offen. Ziel ist es, die Auswahl nachvollziehbar zu machen und eine Grundlage für zukünftige Arbeiten zu schaffen, die ähnliche Modelle evaluieren möchten.
+Dieser Abschnitt legt die Auswahlkriterien der \acp{LLM} offen, nach denen die Modelle ausgewählt und kategorisiert wurden. Tabelle \ref{tab:kriterien} zeigt eine Übersicht der Kriterien. Diese Kriterien helfen, die Modelle systematisch zu vergleichen und ihre Eignung für die Klassifizierungsaufgabe zu bewerten.
 
-\subsection*{Einordnung als \ac{EU}-Modell vs. internationales}
+\begin{table}[htbp]
+    \centering
+    \caption{Übersicht der Kriterien zur Modellauswahl}
+    \label{tab:kriterien}
+    \begin{tabularx}{\textwidth}{p{0.3\textwidth} p{0.65\textwidth}}
+        \toprule
+        \textbf{Kriterium} & \textbf{Beschreibung} \\
+        \midrule
+        Herkunft & Das Land in dem das Modell entwickelt wurde bzw. der Hauptsitz des Anbieters \\
+        Lizenz & Art der Lizenz, wie bspw. Open-Source oder proprietär \\
+        Größe & Anzahl der Parameter in Milliarden (B) \\
+        Kontext & Maximale Anzahl der Token, die das Modell verarbeiten kann \\
+        Letztes Update & Datum der letzten Aktualisierung des Modells bei Hugging Face \cite{huggingface} \\
+        Downloads & Anzahl der Downloads des Modells bei Hugging Face, sofern verfügbar \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
 
-Als \enquote{\ac{EU}‑Modell} gelten Modelle, deren Anbieter ihren Hauptsitz in der \ac{EU} haben, deren Veröffentlichung in der \ac{EU} erfolgt oder die schwerpunktmäßig in der \ac{EU} entwickelt oder verfeinert wurden. Alle anderen Modelle werden als \enquote{international} eingeordnet. Diese Klassifizierung hilft, europäische von nicht‑europäischen Modelle zu unterscheiden.
+Ein wesentliches Auswahlkriterium ist die geografische \textbf{Herkunft} der Modelle. Als \emph{\ac{EU}-Modell} gelten Modelle, deren Anbieter ihren Hauptsitz in der \ac{EU} haben, deren Veröffentlichung in der \ac{EU} erfolgt oder die schwerpunktmäßig in der \ac{EU} entwickelt oder verfeinert wurden. Alle anderen Modelle werden als \emph{international} eingeordnet. Diese Unterscheidung ist relevant, da europäische Modelle sowohl beim Training als auch beim Betrieb stärker den europäischen Datenschutzbestimmungen unterliegen und somit potenziell besser für den Einsatz in datensensiblen Bereichen wie der Klassifizierung von \ac{BPMN}-Modellen geeignet sind.
 
-\subsection*{Definition von Open-Source im Kontext}
+Ein weiteres zentrales Kriterium ist die \textbf{Lizenzierung} der Modelle. Als \emph{Open-Source} oder \emph{Open-Weights} veröffentlichte Modelle bieten mehr Flexibilität und Transparenz. Sie sind häufig lizenzkostenfrei nutzbar und lassen sich eigenständig betreiben, was insbesondere ein Vorteil für Unternehmen und Organisationen mit strengen Datenschutzanforderungen ist. Proprietäre Modelle sind dagegen an spezifische Nutzungsbedingungen gebunden und bringen teils Einschränkungen bei Datenverarbeitung und -speicherung mit sich. Im engeren Sinne definiert die \ac{OSI} Open-Source-Lizenzen über die \emph{Open Source Definition} \cite{OSI_OSD}. Viele aktuelle \acp{LLM} erscheinen als \emph{Open-Weights}, was bedeutet, dass die Gewichte frei beziehbar sind. Die Lizenz kann jedoch restriktive Klauseln enthalten (z.\,B. die Meta-Llama\,3 Community License mit Nutzungs- und Output-Beschränkungen \cite{Llama3_License}). In dieser Arbeit gilt ein Modell als \emph{offen} bzw.\ \emph{Open-Source-nah}, wenn
 
-Im strengen Sinn definiert die \ac{OSI} Open‑Source‑Lizenzen über die \emph{Open Source Definition} \cite{OSI_OSD}. Viele aktuelle \acp{LLM} werden als \emph{open weights} veröffentlicht. Das beudetet, dass die Gewichte frei beziehbar sind, die Lizenz jedoch restriktive Klauseln enthalten kann (z.\,B. Meta Llama\,3 Community License mit Nutzungs‑ und Output‑Beschränkungen \cite{Llama3_License}). Für diese Arbeit gilt ein Modell als \emph{offen} bzw.\ \emph{Open‑Source‑nah}, wenn:
-
-\begin{itemize}
+\begin{enumerate}
     \item die Gewichte frei zugänglich sind und
-    \item eine \emph{permissive} Lizenz (z.\,B. Apache‑2.0 oder MIT) eine breite kommerzielle Nutzung erlaubt (z.\,B. Mistral 7B \cite{HF_Mistral7B_2025}, GPT‑OSS \cite{OpenAI_GPTOSS_ModelCard_2025, OpenAI_GPTOSS_Blog_2025} oder DeepSeek V3.2 Exp \cite{HF_DeepSeekR1_2025}).
-\end{itemize}
+    \item eine \emph{permissive} Lizenz (z.\,B. Apache-2.0 oder MIT) eine breite kommerzielle Nutzung erlaubt (z.\,B. Mistral 7B \cite{HF_Mistral7B_2025}, GPT-OSS \cite{OpenAI_GPTOSS_ModelCard_2025, OpenAI_GPTOSS_Blog_2025} oder DeepSeek V3.1 \cite{HF_DeepSeek_V3_1_2025}).
+\end{enumerate}
 
-Modelle mit \emph{Community}- oder \emph{Eigennutzer}-Lizenzen (z.\,B. Mistral Large Instruct unter Mistral Research License \cite{MRL_Research_License, HF_MistralLargeInstruct_2025}) werden rechtlich \emph{nicht} als \ac{OSI}‑Open‑Source gewertet, können aber technisch als Vergleich herangezogen werden.
+Modelle mit \emph{Community}- oder \emph{Eigennutzer}-Lizenzen (z.\,B. Mistral Large Instruct unter Mistral Research License \cite{HF_MistralLargeInstruct_2025, MRL_Research_License}) werden rechtlich \emph{nicht} als \ac{OSI}‑Open‑Source gewertet, können aber technisch als Vergleich herangezogen werden.
 
-\subsection*{Größenklassen}
-
-Die Modellgröße wird in \emph{Anzahl der Parameter} angegeben. Meist in \emph{Milliarden} (Billionen, engl. \emph{Billion}) Parametern (B, engl. \emph{Billion}). 1\,B = \(10^9\) Parameter. Diese Zahl korreliert mit dem Ressourcenbedarf für Training und Inferenz sowie der Leistungsfähigkeit \cite{webdev-llm-sizes}. Für die Einordnung werden hier folgende Klassen verwendet:
+Die \textbf{Modellgröße} wird in \emph{Anzahl der Parameter} angegeben. Meist in \emph{Milliarden} (Billionen, engl. \emph{Billion}) Parametern (B, engl. \emph{Billion}). 1\,B = \(10^9\) Parameter. Diese Zahl korreliert mit dem Ressourcenbedarf für Training und Inferenz sowie der Leistungsfähigkeit \cite{webdev-llm-sizes}. Für die Einordnung werden hier folgende Klassen verwendet:
 
 \begin{itemize}
     \item \textbf{Klein} (\(\leq\)\,\textasciitilde{}25\,B Parameter): z.\,B. Mistral\,7B Instruct (\textasciitilde{}7.3\,B) \cite{HF_Mistral7B_2025}.
@@ -28,18 +40,8 @@ Die Modellgröße wird in \emph{Anzahl der Parameter} angegeben. Meist in \emph{
 
 Die Klassifikation dient als methodische Abgrenzung für die Experimente. Kleinere Modelle lassen sich häufig lokal ausführen, größere erfordern typischerweise mehrere GPUs. Parameterzahl ist dabei ein nützlicher, wenn auch unvollständiger Indikator für Ressourcenbedarf und erwartete Leistung. Dies ermöglicht konsistente Entscheidungen zu Deployment und Kosten.
 
-\subsection*{Kontextfenster}
+Der \textbf{Kontext} gibt an, wie viele Token ein Modell gleichzeitig verarbeiten kann. Ein Token ist dabei eine Grundeinheit von Text, die ein Wort, einen Teil eines Wortes oder sogar ein einzelnes Zeichen darstellen kann. Die Größe des Kontextfensters beeinflusst maßgeblich, wie gut ein Modell längere Texte verstehen und darauf reagieren kann \cite{ibm-llm-context}.
 
-Das Kontextfenster gibt an, wie viele Token ein Modell gleichzeitig verarbeiten kann. Ein Token ist dabei eine Grundeinheit von Text, die ein Wort, einen Teil eines Wortes oder sogar ein einzelnes Zeichen darstellen kann. Die Größe des Kontextfensters beeinflusst maßgeblich, wie gut ein Modell längere Texte verstehen und darauf reagieren kann \cite{ibm-llm-context}.
-
-\subsection*{Weitere Kriterien}
-
-Zusätzlich zu den oben genannten Hauptkriterien werden folgende Merkmale erfasst, um die Modelle umfassend zu charakterisieren:
-
-\begin{itemize}
-    \item Das \textbf{Herkunftsland} des Anbieters,
-    \item das \textbf{letzte Update} des Modells, um einordnen zu können, wie aktuell das Modell ist und
-    \item wie viele \textbf{Downloads} das Modell hat, sofern verfügbar, um die Popularität abzuschätzen
-\end{itemize}
+Neben den genannten Hauptkriterien werden weitere Merkmale erfasst, um die Modelle umfassend zu charakterisieren. Dazu gehören das \textbf{letzte Update} des Modells, um einordnen zu können, wie aktuell das Modell ist, und wie viele \textbf{Downloads} das Modell hat, sofern verfügbar. Diese Informationen helfen, die Popularität und Akzeptanz der Modelle in der Community einzuschätzen.
 
 Im nächsten Abschnitt werden auf Basis dieser Kriterien die ausgewählten Modelle vorgestellt.
