@@ -4,14 +4,12 @@ Dieses Kapitel beschreibt das API-Design der Klassifizierungspipeline, die zur E
 
 \subsection*{HTTP-Endpunkt}
 
-Die Klassifizierungspipeline ist über einen HTTP-Endpunkt nutzbar, der im Folgenden definiert wird. Der \texttt{POST}-Endpunkt akzeptiert \texttt{multipart/form-data} mit den folgenden Teilen:
+Die Klassifizierungspipeline ist über einen standardisierten HTTP-Endpunkt nutzbar, dessen Struktur und die klar definierten JSON-Schemas eine einfache Integration in bestehende Werkzeuge sowie das Evaluationsframework ermöglichen. Der \texttt{POST}-Endpunkt akzeptiert \texttt{multipart/form-data} mit den folgenden Teilen:
 
 \begin{description}
     \item[\texttt{bpmnFile} (Pflicht)] Eine BPMN-2.0-XML-Datei (\texttt{.bpmn} oder \texttt{text/xml}), die den zu analysierenden Prozess beinhaltet.
     \item[\texttt{llmProps} (Optional)] Ein JSON-Objekt zur Überschreibung von \ac{LLM}-Eigenschaften zur Laufzeit. Siehe Listing \ref{lst:api-request-schema} für das JSON-Schema. Wird nichts angegeben, nutzt die Pipeline Standardwerte.
 \end{description}
-
-Die \texttt{llmProps} erlauben es, verschiedene \acp{LLM} und deren Konfigurationen flexibel für die Klassifizierung zu nutzen, ohne die Anwendung neu starten zu müssen. Dies ist besonders nützlich im Evaluationsframework, um verschiedene Modelle zu vergleichen.
 
 \begin{lstlisting}[caption={JSON-Schema der \texttt{llmProps}.},label={lst:api-request-schema}]
 {
@@ -30,6 +28,8 @@ Die \texttt{llmProps} erlauben es, verschiedene \acp{LLM} und deren Konfiguratio
   "required": []
 }
 \end{lstlisting}
+
+Die \texttt{llmProps} erlauben das Überschreiben von \ac{LLM}-Eigenschaften zur Laufzeit. Dadurch können unterschiedliche Modelle mit demselben Klassifizierungsalgorithmus flexibel getestet und verglichen werden, ohne die Anwendung neu starten zu müssen. Dieses Design wurde gewählt, um die Experimente wie in Kapitel \ref{sec:experimentdesign} beschrieben flexibel durchführen zu können.
 
 Die Antwort des Endpunkts wird als \texttt{application/json} geliefert und enthält eine Liste der als \ac{DSGVO}-kritisch klassifizierten Elemente, einschließlich einer optionalen Begründung für jede Klassifikation und einem optionalen Namen des Elements für bessere Lesbarkeit. Das JSON-Schema der API-Antwort ist in Listing \ref{lst:api-response-schema} dargestellt.
 
@@ -56,20 +56,4 @@ Die Antwort des Endpunkts wird als \texttt{application/json} geliefert und enth�
 }
 \end{lstlisting}
 
-Ein Beispielaufruf des Klassifizierungsendpunkts mit \texttt{curl} könnte wie in Listing \ref{lst:api-curl-example} aussehen. Dabei wird eine BPMN-Datei hochgeladen und einige \ac{LLM}-Eigenschaften zur Laufzeit überschrieben, damit das Modell \texttt{mistral-small-latest} von Mistral AI verwendet wird.
-
-\begin{lstlisting}[language=bash,caption={Beispielaufruf des Klassifizierungsendpunkts mit \texttt{curl}.},label={lst:api-curl-example}]
-curl -X POST http://localhost:8080/gdpr/analysis/prompt-engineering \
-    -F 'bpmnFile=@/path/to/process.bpmn' \
-    -F 'llmProps={
-        "baseUrl": "https://api.mistral.ai/v1",
-        "modelName": "mistral-small-latest",
-        "apiKey": "******"
-    }'
-\end{lstlisting}
-
-\subsection*{Integration und Erweiterbarkeit}
-
-Die gewählte API-Struktur mit einem standardisierten HTTP-Endpunkt und klar definierten JSON-Schemas ermöglicht eine einfache Integration in bestehende Werkzeuge und das Evaluationsframework (siehe Kapitel \ref{ch:evaluationsframework}). Durch die Möglichkeit, verschiedene \ac{LLM}-Eigenschaften zur Laufzeit zu überschreiben, können unterschiedliche Modelle mit einem Klassifizierungsalgorithmus flexibel getestet und verglichen werden, ohne die Anwendung neu starten zu müssen.
-
-Zukünftige Arbeiten können die gleiche API nutzen, um ihre eigenen Klassifizierungsalgorithmen zu integrieren und so eine Vergleichbarkeit der Ergebnisse zu gewährleisten.
+Im nächsten Kapitel wird die Webapp-Sandbox beschrieben, die als Beispielanwendung dient, um die Klassifizierungspipeline intuitiv nutzen zu können. Sie verwendet das hier beschriebene API, um die Klassifizierung durchzuführen.
