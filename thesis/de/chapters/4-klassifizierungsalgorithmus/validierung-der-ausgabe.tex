@@ -32,8 +32,6 @@ Gibt das \ac{LLM} beispielsweise die \texttt{id} \texttt{Activity\_1} aus, exist
 
 Dieser Schritt fängt typische \ac{LLM}-Ausgabefehler ab – etwa Halluzinationen oder abgeschnittene Bezeichner – und stellt die Konsistenz mit dem Eingabemodell sicher. Im Diagramm \ref{fig:architecture-diagram} ist er als \enquote{\texttt{ids} validieren und vervollständigen} markiert. Ein fokussierter Code-Auszug findet sich in Listing \ref{lst:activity-id-resolution}.
 
-\subsection*{Zusammenfassung}
-
 Nach der Validierung besteht \texttt{BpmnAnalysisResult} nur noch aus Aktivitäten, die vom \ac{LLM} als kritisch eingestuft wurden (\texttt{isRelevant = true}) und deren \texttt{ids} im Prozess existieren.
 
 Da es nun möglich ist, \ac{BPMN}-Prozesse vorzuverarbeiten, zu klassifizieren und die Ausgabe zu validieren und zu beheben, folgt als nächster Schritt die Definition einer Schnittstelle zum Aufruf der Pipeline. Das nächste Kapitel beschreibt dafür das API-Design.

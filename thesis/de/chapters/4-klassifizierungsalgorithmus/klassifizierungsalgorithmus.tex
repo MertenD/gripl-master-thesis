@@ -9,7 +9,7 @@
 
 Dieses Kapitel beschreibt die Pipeline zur Klassifikation \ac{DSGVO}-kritischer Aktivitäten in \ac{BPMN}-Prozessen. Ausgehend von der in Kapitel \ref{sec:aufgabenstellung} formulierten Aufgabenstellung wird der gesamte Weg von der Eingabe eines \emph{BPMN-XML} über die Vorverarbeitung, das Prompt Engineering bis hin zur strukturierten, schema-konformen Ausgabe aufgezeigt. Außerdem wird ein HTTP-basiertes API-Design vorgestellt, das die Einbindung in weitere Werkzeuge und das Evaluationsframework ermöglicht. Der Prozessfluss der Klassifizierungspipeline ist in Abbildung \ref{fig:architecture-diagram} dargestellt und wird in diesem Kapitel im Detail erläutert.
 
-Die Klassifizierungspipeline soll eine binäre Entscheidung auf Ebene einzelner BPMN-Aktivitäten treffen: Für jede Aktivität eines Eingabemodells wird bestimmt, ob sie \emph{kritisch} im Sinne der \ac{DSGVO} ist. Die Pipeline ist so konzipiert, dass sie mit Modellen aus gängigen Modellierungswerkzeugen kompatibel ist.
+Die Klassifizierungspipeline soll eine binäre Entscheidung auf Ebene einzelner\linebreak\ac{BPMN}-Aktivitäten treffen: Für jede Aktivität eines Eingabemodells wird bestimmt, ob sie \emph{kritisch} im Sinne der \ac{DSGVO} ist. Die Pipeline ist so konzipiert, dass sie mit Modellen aus gängigen Modellierungswerkzeugen kompatibel ist. Dadurch kann sie in bestehende Modellierungswerkzeuge wie Camunda Modeler \cite{camunda} integriert werden, um einen praktischen Einsatz in realen Prozessmodellierungs-Workflows zu ermöglichen.
 
 \input{de/chapters/4-klassifizierungsalgorithmus/bpmn-preprocessing}
 \input{de/chapters/4-klassifizierungsalgorithmus/prompt-engineering}

@@ -7,8 +7,6 @@ Zur Reduktion von Boilerplate und für konsistente Prompts wird \emph{LangChain4
 
 Die Kommunikation mit dem \ac{LLM} erfolgt damit über einfache Funktionsaufrufe, während LangChain4j Prompt-Erzeugung, Parameterbindung sowie die Deserialisierung der Antwort übernimmt \cite{langchain4j-ai-services}. So kann im Code ohne zusätzlichen Aufwand direkt mit typisierten Objekten gearbeitet werden.
 
-\subsection*{Zero-Shot mit eingebetteten Kategorien}
-
 Für die Klassifikation \emph{\ac{DSGVO}-kritisch vs.\ unkritisch} wird ein \textbf{Zero-Shot}-Ansatz verwendet. Das \ac{LLM} erhält im System-Prompt eine präzise Instruktion mit Kriterien und illustrativen Beispielfällen, was als kritisch gilt. Es sind jedoch keine Beispiele mit konkreten Ein- und Ausgabe-paaren pro Prozess enthalten. Zero-Shot reduziert den Pflegeaufwand und nutzt die In-Context-Fähigkeiten moderner Modelle, nur über Instruktionen zu generalisieren \cite{brown2020fewshot,liu2023prompting}. Wie genau die Prompts aufgebaut sind, wird im Folgenden beschrieben.
 
 \subsection*{System-Prompt}
@@ -29,15 +27,11 @@ Die Kombination dieser Elemente im System-Prompt stellt sicher, dass das \ac{LLM
 
 Der User-Prompt übergibt dem \ac{LLM} die konkreten Eingabedaten einer Anfrage. Während der System-Prompt Regeln, Ziele und Ausgabevorgaben festlegt, liefert der User-Prompt die Fall- bzw.\ Kontextinformationen, auf die diese Regeln angewendet werden.
 
-Der User-Prompt wird mithilfe der Daten aus der Vorverarbeitung aus Abschnitt \ref{sec:bpmn-preprocessing} erzeugt und enthält eine Liste von \texttt{BpmnElement}-Objekten, siehe Listing~\ref{lst:bpmn-element-class}. Die Interaktion mit dem \ac{LLM} erfolgt deklarativ über \emph{LangChain4j}. Dafür wird die Liste der \texttt{BpmnElement}-Objekte als Methodenparameter mit der Annotation \texttt{@UserMessage} an die Interface-Methode übergeben (Listing~\ref{lst:ai-service-interface}) und dort automatisch in den User-Prompt eingebettet.
+Der User-Prompt wird mithilfe der Daten aus der Vorverarbeitung aus Abschnitt \ref{sec:bpmn-preprocessing} erzeugt und enthält eine Liste von \texttt{BpmnElement}-Objekten, siehe Listing~\ref{lst:bpmn-element-class}. Die Interaktion mit dem \ac{LLM} erfolgt deklarativ über \emph{LangChain4j}. Dafür wird die Liste der \texttt{BpmnElement}-Objekte als Methodenparameter mit der Annotation \texttt{@UserMessage} an die Interface-Methode übergeben und dort automatisch in den User-Prompt eingebettet.
 
-\begin{lstlisting}[language=Kotlin,caption={Deklarative Schnittstelle für die Analyse eines \ac{BPMN}-Prozesses.},label={lst:ai-service-interface}]
-fun analyze(@UserMessage bpmnElements: Set<BpmnElement>): BpmnAnalysisResult
-\end{lstlisting}
+Zur Laufzeit serialisiert \emph{LangChain4j} die \texttt{BpmnElement}-Liste zu einem JSON-Array und stellt sie als User-Prompt bereit. Der zuvor konfigurierte System-Prompt wird bei einer Anfrage an das \ac{LLM} automatisch dem User-Prompt vorangestellt. Auf diese Weise wendet das \ac{LLM} die im System-Prompt definierten Kriterien auf die im User-Prompt gelieferten Informationen zum \ac{BPMN}-Prozessmodell an. Dadurch wird jede Aktivität des Prozesses genau so wie im System-Prompt beschrieben klassifiziert. In Abbildung \ref{fig:architecture-diagram} findet dieser Schritt in der Aktivität \enquote{Anfrage an das LLM schicken} statt.
 
-Zur Laufzeit serialisiert \emph{LangChain4j} die \texttt{BpmnElement}-Liste zu einem JSON-Array und stellt sie als User-Prompt bereit. Der zuvor konfigurierte System-Prompt wird bei einer Anfrage an das \ac{LLM} automatisch vor dem User-Prompt vorangestellt. Auf diese Weise wendet das \ac{LLM} die im System-Prompt definierten Kriterien auf die im User-Prompt gelieferten Informationen zum \ac{BPMN}-Prozessmodell an. Dadurch wird jede Aktivität des Prozesses genau so wie im System-Prompt beschrieben klassifiziert. In Abbildung \ref{fig:architecture-diagram} findet dieser Schritt in der Aktivität \enquote{Anfrage an das LLM schicken} statt.
-
-Zusammenfassend setzt der System-Prompt typischerweise das Regelwerk und der User-Prompt liefert die konkreten Eingabedaten. Besonders in mehrstufigen Dialogen mit dem \ac{LLM} spielt dieses Muster eine größere Rolle, da der System-Prompt konstant bleibt, während der User-Prompt je nach Anfrage variiert. Im vorliegenden Szenario, wo immer nur genau eine Anfrage pro pro Prozessmodell gestellt wird fällt der Unterschied weniger ins Gewicht, als würden sämtliche Vorgaben direkt im User-Prompt stehen. Die Trennung erhöht dennoch die Nachvollziehbarkeit, sorgt für klare Rollen und erleichtert die Wiederverwendung.
+Zusammenfassend setzt der System-Prompt typischerweise das Regelwerk, und der User-Prompt liefert die konkreten Eingabedaten. Besonders in mehrstufigen Dialogen mit dem \ac{LLM} spielt dieses Muster eine größere Rolle, da der System-Prompt konstant bleibt, während der User-Prompt je nach Anfrage variiert. Im vorliegenden Szenario, wo immer nur genau eine Anfrage pro Prozessmodell gestellt wird fällt der Unterschied weniger ins Gewicht, als würden sämtliche Vorgaben direkt im User-Prompt stehen. Die Trennung erhöht dennoch die Nachvollziehbarkeit, sorgt für klare Rollen und erleichtert die Wiederverwendung.
 
 Im folgenden Abschnitt wird beschrieben, wie auf dieser Basis strukturierte Ausgaben erzeugt werden, damit im Code direkt mit typisierten Objekten weitergearbeitet werden kann.
 

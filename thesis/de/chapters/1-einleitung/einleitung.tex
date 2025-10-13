@@ -1,9 +1,16 @@
 \chapter{Einleitung}\label{ch:einleitung}
 
-Dieses Kapitel leitet thematisch in die Arbeit ein und gibt einen Überblick über die Ziele und die Struktur.
+Geschäftsprozesse sind in nahezu allen Organisationen allgegenwärtig und bilden die Grundlage für effiziente Abläufe. Zugleich ist in Europa durch die \ac{DSGVO} der Datenschutz zu einem zentralen regulatorischen Aspekt geworden \cite{Capodieci2023BPMNEnabledDP, GDPR2016}. Unternehmen müssen sicherstellen, dass in ihren Prozessen personenbezogene Daten rechtskonform verarbeitet werden; andernfalls drohen Strafen von bis zu 20 Millionen Euro oder 4\% des weltweit gesamten erzielten Jahresumsatzes \cite{GDPR2016}.
 
-\input{de/chapters/1-einleitung/motivation}
+
+Die Überprüfung von Prozessen auf Konformität in Bezug auf Datenschutz ist jedoch zeit- und kostenintensiv \cite{nake2023towards, varela2025business}. Besonders in großen Organisationen mit hunderten parallel laufenden Prozessen ist eine manuelle Analyse kaum praktikabel und zudem fehleranfällig. Fehlerhafte Untererkennungen datenschutzkritischer Aktivitäten (False Negatives) können weitreichende Folgen haben – von Reputationsschäden bis hin zu hohen Bußgeldern \cite{nake2023towards}.
+
+
+Vor diesem Hintergrund rücken \acp{LLM} als aufstrebende Technologie im Bereich \ac{KI} in den Fokus. Sie sind darauf trainiert, natürliche Sprache auch in langen und komplexen Texten zu verstehen, Zusammenhänge über große Kontexte hinweg zu erkennen und Anweisungen zu befolgen. Damit erscheinen \acp{LLM} als vielversprechender Ansatz für das automatisierte Screening von Prozessmodellen. Erste Arbeiten belegen dieses Potenzial, etwa bei der Identifikation datenschutzrelevanter Verarbeitungstätigkeiten oder in der Analyse von Datenschutzerklärungen \cite{ciaramella2022leveraging, pragyan2024toward}.
+
+
+Besonders interessant sind in diesem Kontext europäische Open-Source-Modelle wie die von Mistral \cite{mistralai}. Sie sind zum einen frei verfügbar und transparent, zum anderen wurden sie bislang kaum im Hinblick auf \ac{DSGVO}-bezogene Aufgaben evaluiert. Es fehlen belastbare, reproduzierbare empirische Vergleiche, die eine fundierte Bewertung dieser Modelle erlauben würden \cite{schwerin2024systematic}.
+
 \input{de/chapters/1-einleitung/problemstellung}
 \input{de/chapters/1-einleitung/zielsetzung}
-\input{de/chapters/1-einleitung/forschungsfrage}
 \input{de/chapters/1-einleitung/aufbau}
