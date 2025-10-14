@@ -1,6 +1,37 @@
 \section{Analyse}\label{sec:analyse}
 
-\begin{itemize}
-    \item Aufschlüsselung nach Datensätzen
-    \item Aufzeigen sichtbarer Muster
-\end{itemize}
+Neben den Diagrammen \ref{fig:results-evaluation-metrics-comparison} und \ref{fig:results-evaluation-robustness-f1-std} liefert \autoref{tab:metrics-overview} eine tabellarische
+Übersicht der konkreten durchschnittlichen Metrik-Werte inklusive Standardabweichungen für alle Modelle über alle fünf Wiederholungen hinweg. Diese Werte werden genutzt um im Folgenden die Leistungen der Modelle detailliert zu analysieren.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Aggregierte Mittelwerte und Standardabweichungen der Evaluationsmetriken über alle fünf Wiederholungen hinweg.}
+    \label{tab:metrics-overview}
+    \begin{tabular}{l r r r r}
+        \toprule
+        Modell & Precision & Recall & F1-Score & Accuracy \\
+        \midrule
+        DeepSeek-V3.1 & 0.791 $\pm$ 0.012 & 0.897 $\pm$ 0.011 & 0.841 $\pm$ 0.011 & 0.785 $\pm$ 0.015 \\
+        DeepSeek-R1-Distill-Qwen-14B & 0.829 $\pm$ 0.021 & 0.868 $\pm$ 0.022 & 0.848 $\pm$ 0.011 & 0.803 $\pm$ 0.016 \\
+        Gemma-3-12B-it & 0.751 $\pm$ 0.013 & 0.879 $\pm$ 0.006 & 0.810 $\pm$ 0.006 & 0.738 $\pm$ 0.011 \\
+        Gemma-3-27B-it & 0.687 $\pm$ 0.016 & 0.916 $\pm$ 0.014 & 0.785 $\pm$ 0.015 & 0.683 $\pm$ 0.023 \\
+        Mistral-7B-Instruct-v0.3 & 0.712 $\pm$ 0.022 & 0.856 $\pm$ 0.019 & 0.777 $\pm$ 0.018 & 0.690 $\pm$ 0.028 \\
+        Mistral-8x7B-Instruct-v0.1 & 0.652 $\pm$ 0.027 & 0.550 $\pm$ 0.054 & 0.596 $\pm$ 0.042 & 0.531 $\pm$ 0.035 \\
+        Mistral-Large-Instruct-2411 & 0.779 $\pm$ 0.008 & 0.872 $\pm$ 0.018 & 0.823 $\pm$ 0.008 & 0.762 $\pm$ 0.010 \\
+        Mistral Medium 3.1 & 0.811 $\pm$ 0.015 & 0.877 $\pm$ 0.040 & 0.843 $\pm$ 0.025 & 0.794 $\pm$ 0.029 \\
+        GPT-OSS-20B & 0.820 $\pm$ 0.024 & 0.918 $\pm$ 0.009 & 0.866 $\pm$ 0.017 & 0.821 $\pm$ 0.025 \\
+        GPT-OSS-120B & 0.822 $\pm$ 0.013 & 0.906 $\pm$ 0.012 & 0.862 $\pm$ 0.009 & 0.816 $\pm$ 0.012 \\
+        GPT-4o & 0.892 $\pm$ 0.004 & 0.762 $\pm$ 0.010 & 0.822 $\pm$ 0.007 & 0.791 $\pm$ 0.007 \\
+        Qwen2.5-7B-Instruct & 0.756 $\pm$ 0.022 & 0.696 $\pm$ 0.055 & 0.724 $\pm$ 0.037 & 0.668 $\pm$ 0.040 \\
+        Qwen3-235B-A22B & 0.824 $\pm$ 0.019 & 0.932 $\pm$ 0.014 & 0.874 $\pm$ 0.015 & 0.830 $\pm$ 0.021 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+Die proprietären Modelle \texttt{GPT-4o} und \texttt{Mistral Medium 3.1} erreichen mit $0{,}822$ bzw. $0{,}843$ im Vergleichsfeld einen mittleren F1-Score. \texttt{Mistral Medium 3.1} liegt mit
+einem F1-Wert von $0{,}843$ leicht über \texttt{GPT-4o} und weist zugleich
+einen höheren Recall von $0{,}877$ auf. \textttt{GPT-4o} fällt vor allem durch eine sehr hohe Precision von $0{,}892$ auf, die jedoch einem vergleichsweise niedrigem Recall von $0{,}762$ gegenübersteht. Dies deutet darauf hin, dass \texttt{GPT-4o} eher konservativ kritische Aktivitäten klassifiziert und somit weniger \acp{FP}, aber auch mehr \acp{FN} produziert. Dies
+macht das Modell geeignet für strikte Sicherheitsanforderungen, jedoch
+weniger für ein Vorscreening, wie es in dieser Arbeit angestrebt wird.
+
+... Hier würde ich die Modelle im Stil wie im Absatz drüber analysieren, also Stärken und Schwächen herausarbeiten.
