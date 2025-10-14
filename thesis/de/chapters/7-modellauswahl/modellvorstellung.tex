@@ -15,7 +15,7 @@ Tabelle \ref{tab:models-all} stellt die für diese Arbeit ausgewählten Modelle 
                 \textbf{Modell} & \textbf{Parameter (B)} & \textbf{Kontext (Tokens)} & \textbf{Herkunftsland} \\
                 \midrule
                 Mistral-7B-Instruct-v0.3 & 7.24 & 32{,}000  & Frankreich \cite{HF_Mistral7B_2025} \\
-                Mixtral-8x7B-Instruct-v0.1 & 46.7 total / 12.9 aktiv\tablefootnote{Mixtral nutzt eine Mixture-of-Experts-Architektur mit 8 Experten. Die Gesamtparameterzahl bezieht sich auf alle Experten, die aktive Parameterzahl auf den jeweils genutzten Expertenanteil pro Inferenzdurchlauf \cite{Mixtral_Blog}.} & 32{,}000 & Frankreich \cite{HF_Mixtral8x7B_2025, Mixtral_Blog} \\
+                Mixtral-8x7B-Instruct-v0.1 & 46.7 total / 12.9 aktiv\tablefootnote{Mixtral nutzt \ac{MoE} mit 8 Experten als Architekur. Die Gesamtparameterzahl bezieht sich auf alle Experten, die aktive Parameterzahl auf den jeweils genutzten Expertenanteil pro Inferenzdurchlauf \cite{Mixtral_Blog}.} & 32{,}000 & Frankreich \cite{HF_Mixtral8x7B_2025, Mixtral_Blog} \\
                 Mistral-Large-Instruct-2411 & 123 & 128{,}000 & Frankreich \cite{HF_MistralLargeInstruct_2025} \\
                 Mistral-Medium-3.1 & n.v. & 128{,}000 & Frankreich \cite{mistral_models_overview} \\
                 Gemma-3-12B-it & 12.2 & 128{,}000 & Großbritannien\tablefootnote{Google DeepMind hat seinen Hauptsitz in London, gehört jedoch zu Alphabet (USA). Wo genau trainiert wurde, ist unklar.\\\\\\\\} \cite{HF_Gemma3_12B_2025} \\

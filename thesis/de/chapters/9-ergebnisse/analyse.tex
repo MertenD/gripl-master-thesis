@@ -1,1 +1,47 @@
 \section{Analyse}\label{sec:analyse}
+
+Im Folgenden werden die Ergebnisse nach Modellkategorien aufgeschlüsselt und analysiert. Zunächst werden die Leistungen der Open-Weight-Modelle mit denen der proprietären Modelle verglichen. Anschließend erfolgt eine Betrachtung der Modelle, die in der EU entwickelt wurden oder einen Fokus auf den europäischen Markt haben. Abschließend wird die Auswirkung der Modellgröße auf die Klassifizierungsleistung untersucht.
+
+\subsection*{Proprietäre vs. Open-Weight Modelle}
+
+\subsection*{Europäische versus internationale Modelle}
+
+\subsection*{Kleine vs. große Modelle}
+
+Die Gegenüberstellung kleiner Modelle mit $\leq 25B$ und großer Modelle mit $> 25B$ Parametern in Tabelle \ref{tab:small-vs-large} zeigt nahezu keinen Unterschied im durchschnittlichen F1-Score mit $0{,}805$ vs. $0{,}806$. Wird jedoch der durchschnittliche F1-Score der großen Modelle ohne das Ausreißermodell \texttt{Mixtral-8x7B-Instruct-v0.1} betrachtet, ergibt sich mit $0{,}836$ ein deutlich höherer Wert. Dies deutet darauf hin, dass größere Modelle tendenziell bessere Leistungen erbringen können, aber auch anfälliger für Leistungseinbußen sind, wenn sie nicht optimal auf die Aufgabe abgestimmt sind. Auch Precision und Accuracy sind vergleichbar mit ein wenig besseren Werten bei den großen Modellen. Beim Recall zeigen die kleinen Modelle mit $0{,}843$ sogar einen leicht höheren Wert als die großen Modelle mit $0{,}839$. Allerdings ist die Standardabweichung bei den großen Modellen mit $0{,}089$ deutlich höher als bei den kleinen Modellen mit $0{,}057$, was auf eine größere Varianz in der Leistung der großen Modelle hinweist. Diese Varianz wird ebenfalls vor allem durch das Ausreißermodell \texttt{Mixtral-8x7B-Instruct-v0.1} verursacht, das mit einem Recall von nur $0{,}550$ deutlich schlechter abschneidet als die anderen großen Modelle.
+
+\begin{table}[htbp]
+ \centering
+ \caption{Kleine vs. große Modelle: Mittelwerte je Gruppe und bestes Modell.}
+ \label{tab:small-vs-large}
+ \begin{adjustbox}{width=\textwidth}
+ \begin{threeparttable}[width=\textwidth]
+  \begin{tabular}[width=\textwidth]{l r r}
+   \toprule
+   \textbf{Metrik} & \textbf{Klein} ($\leq 25B$) & \textbf{Groß} ($> 25B$) \\
+   \midrule
+   Anzahl Modelle\tnote{1}             & 5                         & 8 \\
+   Ø F1-Score $\pm$ SD\tnote{2}      & 0.805 $\pm$ 0.057                     & 0.806 $\pm$ 0.089 \\
+   Ø Precision $\pm$ SD    & 0.774 $\pm$ 0.050                     & 0.779 $\pm$ 0.085 \\
+   Ø Recall $\pm$ SD       & 0.843 $\pm$ 0.086                     & 0.839 $\pm$ 0.128 \\
+   Ø Accuracy $\pm$ SD     & 0.744 $\pm$ 0.067                     & 0.749 $\pm$ 0.099 \\
+   Bester F1-Score & 0.866                     & 0.874 \\
+   Bestes Modell (F1-Score)   & GPT-OSS-20B               & Qwen3-235B-A22B-Thinking-2507 \\
+   Bester Precision & 0.829                     & 0.892 \\
+    Bestes Modell (Precision) & DeepSeek-R1-Distill-Qwen-14B        & GPT-4o \\
+   Bester Recall & 0.918                     & 0.932 \\
+    Bestes Modell (Recall)      & GPT-OSS-20B      & Qwen3-235B-A22B-Thinking-2507 \\
+    Beste Accuracy & 0.821                     & 0.830 \\
+    Bestes Modell (Accuracy)     & GPT-OSS-20B               & Qwen3-235B-A22B-Thinking-2507 \\
+   \bottomrule
+  \end{tabular}
+  \begin{tablenotes}
+   \footnotesize
+   \item[1] Einteilung nach gesamten Milliarden Parametern bei \ac{MoE}. Die Proprietären Modelle \texttt{GPT-4o} und \texttt{Mistral Medium 3.1} wurden trotz fehlender Parameterangabe als große Modelle eingeordnet.
+   \item[2] Ohne \texttt{Mixtral-8x7B-Instruct-v0.1} beträgt der Durchschnitt der großen Modelle $\pm$ SD $0.836 \pm 0.029$.
+  \end{tablenotes}
+ \end{threeparttable}
+ \end{adjustbox}
+\end{table}
+
+ Das beste kleine Modell \texttt{GPT-OSS-20B} erreicht mit $0{,}866$ einen F1-Score, der nur geringfügig unter dem besten großen Modell \texttt{Qwen3-235B-A22B-Thinking-2507} mit $0{,}874$ liegt. Außerdem hat \texttt{GPT-OSS-20B} mit einem Recall von $0{,}918$ ebenfalls nur einen minimal kleineren Wert als \texttt{Qwen3-235B-A22B-Thinking-2507} mit $0{,}932$ Insgesamt zeigen die Ergebnisse, dass die Modellgröße allein kein ausschlaggebender Faktor für die Klassifizierungsleistung ist. Vielmehr spielen die Trainingsdaten, die Feinabstimmung und die Architektur eine entscheidende Rolle. Die richtigen kleinen Modelle können mit den großen Modellen durchaus mithalten, was insbesondere für den praktischen Einsatz relevant ist, da kleinere Modelle oft ressourcenschonender und kostengünstiger betrieben werden können.
