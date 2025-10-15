@@ -23,6 +23,7 @@ export default function TestCaseReportCard({ report }: TestCaseReportCardProps) 
     const totalActual = report.actualNamesWithIds.length
     const correctCount = report.correctActivityIds?.length || 0
     const falsePositiveCount = report.falsePositiveIds?.length || 0
+    const amountOfRetries = report.amountOfRetries
 
     return (
         <Collapsible open={isOpen} onOpenChange={setIsOpen}>
@@ -37,7 +38,7 @@ export default function TestCaseReportCard({ report }: TestCaseReportCardProps) 
                             )}
                             <div className="text-left">
                                 <CardTitle className="text-lg font-semibold">{report.testCaseName} ({report.testCaseId})</CardTitle>
-                                <p className="text-sm text-muted-foreground mt-1">{correctCount}/{totalExpected} correct, {falsePositiveCount} false positives</p>
+                                <p className="text-sm text-muted-foreground mt-1">{correctCount}/{totalExpected} correct, {falsePositiveCount} false positives, {amountOfRetries !== null ? `retried ${amountOfRetries} times` : null}</p>
                             </div>
                         </div>
                         <div className="flex items-center gap-3">

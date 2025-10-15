@@ -21,7 +21,7 @@ export default function ConfusionMatrixBarsMulti({
         <ResponsiveContainer width="100%" height={340}>
             <BarChart data={data} margin={{ top:20, right:30, left:20, bottom:40 }}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" tick={{ fontSize:12 }} interval={0} angle={-15} textAnchor="end" height={40} />
+                <XAxis dataKey="name" />
                 <YAxis />
                 <Tooltip content={<UniversalTooltip />} cursor={{ fill: "hsl(var(--card-foreground))", fillOpacity: 0.1 }}/>
                 <Legend />

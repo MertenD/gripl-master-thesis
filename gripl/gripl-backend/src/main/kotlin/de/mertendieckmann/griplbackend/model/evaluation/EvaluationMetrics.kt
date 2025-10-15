@@ -5,5 +5,6 @@ data class EvaluationMetrics(
     val falsePositives: Int,
     val falseNegatives: Int,
     val trueNegatives: Int,
-    val isSuccessful: Boolean
+    val isSuccessful: Boolean,
+    val amountOfRetries: Int? = null
 )

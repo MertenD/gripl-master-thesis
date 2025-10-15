@@ -7,6 +7,7 @@ import PerformanceMetricsOverviewRadarSingle from "@/components/evaluation/chart
 import PerformanceMetricsBarsSingle from "@/components/evaluation/charts/single/performance-metrics-bars-single";
 import ConfusionMatrixBarsSingle from "@/components/evaluation/charts/single/confusion-matrix-bars-single";
 import PerformanceMetricsBarsMulti from "@/components/evaluation/charts/multi/performance-metrics-bars-multi";
+import AmountOfRetriesBarsMulti from "@/components/evaluation/charts/multi/amount-of-retries-bars-multi";
 
 type SingleProps = { reportSummary: EvaluationReportSummary; reportSummaries?: undefined };
 type MultiProps  = { reportSummary?: undefined; reportSummaries: Array<{ label: string; summary: EvaluationReportSummary }> };
@@ -20,6 +21,7 @@ export default function MetricsCharts(props: Props) {
                 <PerformanceMetricsBarsMulti items={items} />
                 <ResultsPerModelBarsMulti items={items} />
                 <ConfusionMatrixBarsMulti items={items} />
+                <AmountOfRetriesBarsMulti items={items} />
             </div>
         );
     }

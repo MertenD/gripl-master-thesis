@@ -28,9 +28,13 @@ class BaselineBpmnAnalyzer(
             maxRetries = 3
         ) {
             bpmnAnalysisAiService.analyze(sessionId, bpmnXml)
-        }.resolveActivities(bpmnElements)
-        log.info { "BPMN Analysis Result: $result" }
+        }
 
-        return AnalysisResponse.fromBpmnAnalysisResult(result, bpmnXml)
+        val analysisResult = result.first.resolveActivities(bpmnElements)
+        val amountOfRetries = result.second
+
+        log.info { "BPMN Analysis Result: $analysisResult" }
+
+        return AnalysisResponse.fromBpmnAnalysisResult(analysisResult, bpmnElements, amountOfRetries)
     }
 }

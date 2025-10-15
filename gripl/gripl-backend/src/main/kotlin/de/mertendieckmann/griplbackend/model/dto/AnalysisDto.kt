@@ -5,7 +5,8 @@ import de.mertendieckmann.griplbackend.model.BpmnElement
 import de.mertendieckmann.griplbackend.model.analysis.BpmnAnalysisResult
 
 data class AnalysisResponse(
-    val criticalElements: List<CriticalElement>
+    val criticalElements: List<CriticalElement>,
+    val amountOfRetries: Int? = null
 ) {
     data class CriticalElement(
         val id: String,
@@ -14,7 +15,7 @@ data class AnalysisResponse(
     )
 
     companion object {
-        fun fromBpmnAnalysisResult(result: BpmnAnalysisResult, bpmnElements: Set<BpmnElement>): AnalysisResponse {
+        fun fromBpmnAnalysisResult(result: BpmnAnalysisResult, bpmnElements: Set<BpmnElement>, amountOfRetries: Int): AnalysisResponse {
             val elements = result.elements.map { element ->
                 CriticalElement(
                     id = element.id,
@@ -24,14 +25,15 @@ data class AnalysisResponse(
             }
 
             return AnalysisResponse(
-                criticalElements = elements
+                criticalElements = elements,
+                amountOfRetries = amountOfRetries
             )
         }
 
-        fun fromBpmnAnalysisResult(result: BpmnAnalysisResult, bpmnXml: String): AnalysisResponse {
+        fun fromBpmnAnalysisResult(result: BpmnAnalysisResult, bpmnXml: String, amountOfRetries: Int): AnalysisResponse {
             val extractor = BpmnExtractor()
             val bpmnElements = extractor.extractBpmnElements(bpmnXml)
-            return fromBpmnAnalysisResult(result, bpmnElements)
+            return fromBpmnAnalysisResult(result, bpmnElements, amountOfRetries)
         }
     }
 }

@@ -60,6 +60,7 @@ class MultiEvaluationRunner(
         return EvaluationMetadataReport(
             modelLabels = request.models.map { it.label },
             modelTemperatures = request.models.map { it.llmProps?.temperature },
+            modelTopPs = request.models.map { it.llmProps?.topP },
             datasets = datasets.map { EvaluationMetadataReport.DatasetInfo(it.id, it.name) },
             totalTestCases = totalTestCases,
             seed = seed,

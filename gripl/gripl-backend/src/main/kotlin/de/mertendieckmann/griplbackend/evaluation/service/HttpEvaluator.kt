@@ -22,7 +22,7 @@ class HttpEvaluator(
 
     private val webClient = WebClient.builder().build()
 
-    override suspend fun evaluate(bpmnXml: String, evaluationRequest: EvaluationRequest): List<ExpectedValue> {
+    override suspend fun evaluate(bpmnXml: String, evaluationRequest: EvaluationRequest): Pair<List<ExpectedValue>, Int?> {
         val bodyBuilder = MultipartBodyBuilder()
         bodyBuilder.part("bpmnFile", ByteArrayResource(bpmnXml.toByteArray()))
             .header("Content-Disposition", "form-data; name=\"bpmnFile\"; filename=\"process.bpmn\"")
@@ -48,7 +48,10 @@ class HttpEvaluator(
                 .retrieve()
                 .awaitBody()
 
-            return analysisResponse.criticalElements.map { ExpectedValue(value = it.id, reason = it.reason) }
+            return Pair(
+                analysisResponse.criticalElements.map { ExpectedValue(value = it.id, reason = it.reason) },
+                analysisResponse.amountOfRetries
+            )
         } catch (e: WebClientResponseException) {
             throw RuntimeException("Failed to evaluate BPMN XML at endpoint '$absoluteEndpoint': ${e.responseBodyAsString}", e)
         }

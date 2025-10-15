@@ -24,6 +24,7 @@ sealed class EvaluationReport{
 data class EvaluationMetadataReport(
     val modelLabels: List<String>,
     val modelTemperatures: List<Double?>,
+    val modelTopPs: List<Double?>,
     val datasets: List<DatasetInfo>,
     val timestamp: Timestamp = Timestamp(System.currentTimeMillis()),
     val totalTestCases: Int,
@@ -36,6 +37,7 @@ data class EvaluationMetadataReport(
             |## Evaluation Metadata
             |- **Models:** ${modelLabels.joinToString(", ")}
             |- **Temperatures:** ${modelTemperatures.joinToString(", ") { it?.toString() ?: "default" }}
+            |- **Top Ps:** ${modelTopPs.joinToString(", ") { it?.toString() ?: "default" }}
             |- **Datasets:** ${datasets.joinToString(", ")}
             |- **Total Test Cases:** $totalTestCases
             |${if (totalRepetitions > 1) "- **Repetitions:** $totalRepetitions" else ""}
@@ -62,7 +64,8 @@ data class TestCaseReport(
     val expectedNamesWithIds: List<String>,
     val actualNamesWithIds: List<String>,
     val isSuccessful: Boolean,
-    val result: List<ExpectedValue>
+    val result: List<ExpectedValue>,
+    val amountOfRetries: Int? = null
 ): EvaluationReport() {
 
     override fun toMarkdown(): String {
@@ -81,6 +84,8 @@ data class TestCaseReport(
             |- **False Positives:** ${if (falsePositiveIds.isEmpty()) "None" else falsePositiveIds.joinToString(", ") { id -> actualNamesWithIds.find { it.contains(id) } ?: id }}
             |- **False Negatives:** ${if (falseNegativeIds.isEmpty()) "None" else falseNegativeIds.joinToString(", ") { id -> expectedNamesWithIds.find { it.contains(id) } ?: id }}
             |
+            |- **Amount of Retries:** ${amountOfRetries ?: "N/A"}
+            |
             |<details>
             |<summary><h3>Reasoning of the LLM</h3></summary>
             |
@@ -96,6 +101,7 @@ data class EvaluationReportSummary(
     val passed: Int,
     val failed: Int,
     val error: Int,
+    val amountOfRetries: Int? = null,
     val precision: Double,
     val recall: Double,
     val f1Score: Double,
@@ -113,6 +119,7 @@ data class EvaluationReportSummary(
             |Passed: $passed
             |Failed: $failed
             |${if (error > 0) "Error: $error" else ""}
+            |${if (amountOfRetries != null) "Total Retries: $amountOfRetries" else ""}
             |
             |### Metrics
             |Accuracy: ${"%.3f".format(accuracy)}

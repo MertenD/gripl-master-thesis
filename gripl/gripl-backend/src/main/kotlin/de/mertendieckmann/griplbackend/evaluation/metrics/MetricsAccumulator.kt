@@ -13,6 +13,7 @@ class MetricsAccumulator {
     private var total: Int = 0
     private var passed: Int = 0
     private var errors: Int = 0
+    private var amountOfRetries: Int = 0
     private var totalTruePositives: Int = 0
     private var totalFalsePositives: Int = 0
     private var totalFalseNegatives: Int = 0
@@ -25,6 +26,7 @@ class MetricsAccumulator {
         totalFalsePositives += metrics.falsePositives
         totalFalseNegatives += metrics.falseNegatives
         totalTrueNegatives += metrics.trueNegatives
+        amountOfRetries += metrics.amountOfRetries ?: 0
     }
 
     suspend fun addError() = lock.withLock {
@@ -54,6 +56,7 @@ class MetricsAccumulator {
             passed = passed,
             failed = (total - passed - errors).coerceAtLeast(0),
             error = errors,
+            amountOfRetries = amountOfRetries,
             precision = precision,
             recall = recall,
             f1Score = f1Score,

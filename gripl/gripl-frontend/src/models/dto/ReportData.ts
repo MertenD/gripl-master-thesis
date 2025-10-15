@@ -2,6 +2,7 @@ export interface EvaluationMetadataReport {
     type: "metadata";
     modelLabels: string[],
     modelTemperatures: (number | undefined)[];
+    modelTopPs: (number | undefined)[];
     datasets: { id: number; name: string }[];
     timestamp: string;
     totalTestCases: number;
@@ -24,6 +25,7 @@ export interface TestCaseReport {
     actualNamesWithIds: string[];
     isSuccessful: boolean;
     result: { value: string; reason?: string }[];
+    amountOfRetries: number | null;
     markdown: string;
 }
 
@@ -33,6 +35,7 @@ export interface EvaluationReportSummary {
     passed: number;
     failed: number;
     error: number;
+    amountOfRetries: number | null;
     precision: number;
     recall: number;
     f1Score: number;

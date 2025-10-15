@@ -59,7 +59,7 @@ class EvaluationRunner(
     ): EvaluationOutcome = try {
         val expectedActivityIds = entry.expectedValues.map { it.value }
         val actualResult = evaluator.evaluate(entry.bpmnXml, evaluationRequest)
-        val actualActivityIds = actualResult.map { it.value }
+        val actualActivityIds = actualResult.first.map { it.value }
 
         val bpmnModel = parseBpmn(entry.bpmnXml)
 
@@ -76,7 +76,8 @@ class EvaluationRunner(
             falsePositives = classification.falsePositiveIds.size,
             falseNegatives = classification.falseNegativeIds.size,
             trueNegatives = trueNegativesCount,
-            isSuccessful = actualActivityIds.toSet() == expectedActivityIds.toSet()
+            isSuccessful = actualActivityIds.toSet() == expectedActivityIds.toSet(),
+            amountOfRetries = actualResult.second
         )
 
         val testCaseReport = TestCaseReport(
@@ -95,7 +96,8 @@ class EvaluationRunner(
             expectedNamesWithIds = getNamesWithIds(bpmnModel, expectedActivityIds),
             actualNamesWithIds = getNamesWithIds(bpmnModel, actualActivityIds),
             isSuccessful = metrics.isSuccessful,
-            result = actualResult
+            result = actualResult.first,
+            amountOfRetries = actualResult.second
         )
 
         EvaluationOutcome.Success(testCaseReport, metrics)

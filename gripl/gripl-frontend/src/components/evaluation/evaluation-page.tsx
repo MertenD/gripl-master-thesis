@@ -175,6 +175,8 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
             stdFailed: number;
             avgErrors: number;
             stdErrors: number;
+            stdAmountOfRetries?: number;
+            avgAmountOfRetries?: number;
             avgTruePositives: number;
             stdTruePositives: number;
             avgFalsePositives: number;
@@ -193,6 +195,7 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
             const passedCounts: number[] = [];
             const failedCounts: number[] = [];
             const errorCounts: number[] = [];
+            const amountOfRetries: number[] = [];
             const truePositives: number[] = [];
             const falsePositives: number[] = [];
             const falseNegatives: number[] = [];
@@ -208,6 +211,9 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
                     passedCounts.push(modelSummary.passed);
                     failedCounts.push(modelSummary.failed);
                     errorCounts.push(modelSummary.error);
+                    if (modelSummary.amountOfRetries !== null && modelSummary.amountOfRetries !== undefined) {
+                        amountOfRetries.push(modelSummary.amountOfRetries);
+                    }
                     truePositives.push(modelSummary.totalTruePositives);
                     falsePositives.push(modelSummary.totalFalsePositives);
                     falseNegatives.push(modelSummary.totalFalseNegatives);
@@ -233,6 +239,9 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
                 const avgErrors = errorCounts.reduce((a, b) => a + b, 0) / errorCounts.length;
                 const stdErrors = Math.sqrt(errorCounts.reduce((sum, val) => sum + Math.pow(val - avgErrors, 2), 0) / errorCounts.length);
 
+                const avgAmountOfRetries = amountOfRetries.length > 0 ? amountOfRetries.reduce((a, b) => a + b, 0) / amountOfRetries.length : undefined;
+                const stdAmountOfRetries = amountOfRetries.length > 0 ? Math.sqrt(amountOfRetries.reduce((sum, val) => sum + Math.pow(val - (avgAmountOfRetries || 0), 2), 0) / amountOfRetries.length) : undefined;
+
                 const avgTruePositives = truePositives.reduce((a, b) => a + b, 0) / truePositives.length;
                 const avgFalsePositives = falsePositives.reduce((a, b) => a + b, 0) / falsePositives.length;
                 const avgFalseNegatives = falseNegatives.reduce((a, b) => a + b, 0) / falseNegatives.length;
@@ -257,6 +266,8 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
                     stdFailed,
                     avgErrors,
                     stdErrors,
+                    avgAmountOfRetries,
+                    stdAmountOfRetries,
                     avgTruePositives,
                     stdTruePositives,
                     avgFalsePositives,
@@ -300,6 +311,9 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
                 sections.push(`- Passed: ${stats.avgPassed.toFixed(3)} ± ${stats.stdPassed.toFixed(3)} / ${metadata?.totalTestCases}`);
                 sections.push(`- Failed: ${stats.avgFailed.toFixed(3)} ± ${stats.stdFailed.toFixed(3)} / ${metadata?.totalTestCases}`);
                 sections.push(`- Errors: ${stats.avgErrors.toFixed(3)} ± ${stats.stdErrors.toFixed(3)} / ${metadata?.totalTestCases}`);
+                if (stats.avgAmountOfRetries !== undefined && stats.stdAmountOfRetries !== undefined) {
+                    sections.push(`- Amount of Retries: ${stats.avgAmountOfRetries.toFixed(3)} ± ${stats.stdAmountOfRetries.toFixed(3)}`);
+                }
             }
         }
 
@@ -490,6 +504,7 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
                                     <tbody>
                                     <tr><td>Models:</td><td className="pl-4">{metadata.modelLabels.join(", ")}</td></tr>
                                     <tr><td>Temperatures:</td><td className="pl-4">{metadata.modelTemperatures.map(t => t || "default").join(", ")}</td></tr>
+                                    <tr><td>Top-p Values:</td><td className="pl-4">{metadata.modelTopPs?.map(p => p || "default").join(", ") || "n.a."}</td></tr>
                                     <tr><td>Datasets:</td><td className="pl-4">{metadata.datasets.map(d => d.name).join(", ")}</td></tr>
                                     <tr><td>Total Test Cases:</td><td className="pl-4">{metadata.totalTestCases}</td></tr>
                                     <tr><td>Default Evaluation Endpoint:</td><td className="pl-4">{metadata.defaultEvaluationEndpoint}</td></tr>
@@ -555,6 +570,12 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
                                                     <p className="text-sm text-muted-foreground">Errors</p>
                                                     <p className="font-mono">{stats.avgErrors.toFixed(3)} ± {stats.stdErrors.toFixed(3)} {metadata && `/ ${metadata.totalTestCases}`}</p>
                                                 </div>
+                                                {stats.avgAmountOfRetries !== undefined && stats.stdAmountOfRetries !== undefined && (
+                                                    <div>
+                                                        <p className="text-sm text-muted-foreground">Amount of Retries</p>
+                                                        <p className="font-mono">{stats.avgAmountOfRetries.toFixed(3)} ± {stats.stdAmountOfRetries.toFixed(3)}</p>
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
                                     ))}

@@ -27,10 +27,13 @@ class PromptBpmnAnalyzer(
             maxRetries = 3,
         ) {
             bpmnAnalysisAiService.analyze(sessionId, bpmnElements)
-        }.resolveActivities(bpmnElements)
+        }
 
-        log.info { "BPMN Analysis Result: $result" }
+        val analysisResult = result.first.resolveActivities(bpmnElements)
+        val amountOfRetries = result.second
 
-        return AnalysisResponse.fromBpmnAnalysisResult(result, bpmnElements)
+        log.info { "BPMN Analysis Result: $analysisResult" }
+
+        return AnalysisResponse.fromBpmnAnalysisResult(analysisResult, bpmnElements, amountOfRetries)
     }
 }
