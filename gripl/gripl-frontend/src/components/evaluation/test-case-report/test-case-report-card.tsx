@@ -38,7 +38,7 @@ export default function TestCaseReportCard({ report }: TestCaseReportCardProps) 
                             )}
                             <div className="text-left">
                                 <CardTitle className="text-lg font-semibold">{report.testCaseName} ({report.testCaseId})</CardTitle>
-                                <p className="text-sm text-muted-foreground mt-1">{correctCount}/{totalExpected} correct, {falsePositiveCount} false positives, {amountOfRetries !== null ? `retried ${amountOfRetries} times` : null}</p>
+                                <p className="text-sm text-muted-foreground mt-1">{correctCount}/{totalExpected} correct, {falsePositiveCount} false positives {amountOfRetries !== undefined && amountOfRetries !== null ? `, retried ${amountOfRetries} times` : null}</p>
                             </div>
                         </div>
                         <div className="flex items-center gap-3">
