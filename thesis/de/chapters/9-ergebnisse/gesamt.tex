@@ -41,3 +41,14 @@ Tabelle \ref{tab:metrics-overview} fasst alle Metriken mit ihren Mittelwerten un
         \end{tabular}
     \end{adjustbox}
 \end{table}
+
+Neben den zusammengeführten Metriken wurden die 25 Testfälle je Modell auch hinsichtlich der Frage ausgewertet, wie viele Testfälle das Modell bestanden hat. Ein Testfall gilt als bestanden, wenn alle \ac{DSGVO}‑kritischen Aktivitäten korrekt klassifiziert und keine unkritischen Aktivitäten fälschlicherweise als kritisch markiert wurden. Schlägt ein Testfall fehl, liegt mindestens eine Fehlklassifikation (\ac{FP} oder \ac{FN}) vor. Daneben gab es wenige technische Fehler, etwa Parsing‑Fehler oder Timeouts, die selbst nach dem in Abschnitt  \ref{sec:validierung-der-ausgabe} beschriebenen Retry‑Mechanismus nicht behoben werden konnten. Diese technischen Fehler wurden, wie in Abschnitt \ref{sec:scope-und-annahmen} festgehalten, nicht in die Metriken einbezogen und sind hier separat ausgewiesen.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{images/results/evaluation_testcase_outcomes_grouped}
+    \caption{Durchschnittliche Testergebnisse pro Modell in Bezug auf die 25 Testfälle}
+    \label{fig:results-testcase-outcomes}
+\end{figure}
+
+Wie Abbildung \ref{fig:results-testcase-outcomes} zeigt, korrespondieren die Ergebnisse der Testfälle weitgehend mit den Metriken aus \autoref{tab:metrics-overview}. Modelle wie \texttt{Qwen3-235B-A22B-Thinking-\linebreak~2507}, \texttt{DeepSeek-V3.1} und \texttt{GPT-OSS-20B} bestehen im Durchschnitt fast die Hälfte der Testfälle, während \texttt{Mistral-7B-Instruct-v0.3} und \texttt{Mistral-8x7B-\linebreak~Instruct-v0.1} die meisten Testfälle verfehlen. Auffällig ist, dass \texttt{Qwen2.5-7B-\linebreak~Instruct} als einziges Modell vereinzelte technische Fehler zeigte. Dabei ging es um Parsing-Fehler. Diese treten jedoch selten auf und haben keinen Einfluss auf die berechneten Metriken. Insgesamt bestätigt die Testfallanalyse, dass die leistungsstärksten Modelle nicht nur hohe Metrikwerte erzielen, sondern auch die meisten Testfälle bestehen.
