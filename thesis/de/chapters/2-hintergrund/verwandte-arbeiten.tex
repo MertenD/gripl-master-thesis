@@ -1,10 +1,52 @@
 \section{Verwandte Arbeiten}\label{sec:verwandte-arbeiten}
 
-\begin{itemize}
-    \item Was für Ansätze gibt es bereits Prozesse automatisiert nach datenschutzkritischen Aktivitäten klassifizieren zu lassen
-    \item LLMs zum Klassifizieren nutzen
-    \item Prompt Engineering (Zero-Shot)
-    \item Überblick über LLMs in Businessprozessen. Was gibt es bereits für Ansätze diese zu benutzen
-    \item Benchmarking und Evaluierung von LLMs
-    \item Identifizierte Forschungslücken: LLMs zur Klassifizierung, EU-Fokus, einheitliche reproduzierbare Benchmarks
-\end{itemize}
+Dieses Kapitel gibt einen strukturierten Überblick über Forschung zur automatisierten \emph{Klassifikation datenschutzkritischer Aktivitäten} in Geschäftsprozessen und zur \emph{Nutzung großer Sprachmodelle (\acp{LLM})} für Datenschutz- und \ac{BPM}-Aufgaben. Neben klassischen Machine-Learning-Ansätzen werden jüngere Entwicklungen bei generativen \acp{LLM}, Prompting-Strategien, Benchmarks sowie bestehende Forschungslücken dargestellt.
+
+\subsection*{Klassifikation datenschutzkritischer Aktivitäten}
+
+Die Identifikation von Prozessschritten, in denen personenbezogene Daten verarbeitet werden, ist Grundvoraussetzung für \enquote{Privacy by Design} und wirksame \ac{DSGVO}-Konformität. Frühe Arbeiten setzen dafür überwachte Lernverfahren ein: Nake et al.\ \cite{nake2023towards} trainieren ein Modell auf 37 textuellen Prozessbeschreibungen zur Unterscheidung zwischen \ac{DSGVO}-kritischen und unkritischen Aufgaben. Das Verfahren erreicht einen F1-Score von $0{,}81$ bei einem Recall von $0{,}83$. Aufgrund der kleinen Datenbasis ist die Generalisierbarkeit jedoch eingeschränkt; die Autorinnen und Autoren betonen daher den Einsatz als Assistenz für Datenschutzbeauftragte statt vollständiger Automatisierung.
+
+Komplementär dazu erweitert Capodieci et al.\ \cite{Capodieci2023BPMNEnabledDP} die \ac{BPMN}-Notation um \ac{DSGVO}-Meta-Attribute (z.\,B.\ \enquote{personalDataUsed}, \enquote{legalBasis}, \enquote{storageDuration}, \enquote{riskLevel}), um datenschutzrelevante Informationen direkt im Prozessmodell zu kennzeichnen und potenzielle Verstöße frühzeitig zu identifizieren. In eine ähnliche Richtung zielt die designorientierte Arbeit von Agostinelli et al.\ \cite{agostinelli2019achievingGDPRComliance}, die zentrale \ac{DSGVO}-Anforderungen analysiert und Muster wie \enquote{Data Breach}, \enquote{Consent to Use the Data}, \enquote{Right to Access/Rectify}, \enquote{Portability} und \enquote{Right to be Forgotten} für eine transparente Einbettung in \ac{BPMN}-Modelle vorstellt.
+
+\subsection*{Nutzung von \acp{LLM} im Datenschutz- und Prozessmanagement}
+
+Mit der Verfügbarkeit großer vortrainierter Sprachmodelle werden zunehmend \acp{LLM} für die Analyse datenschutzrelevanter Texte eingesetzt. Ciaramella et al.\ \cite{ciaramella2022leveraging} verwenden BERT-Varianten, RoBERTa und DistilBERT, um Sätze aus Online-\linebreak~Datenschutzerklärungen hinsichtlich der Informationspflichten aus Art.~13 (2)(b) \ac{DSGVO} (Hinweis auf Berichtigung/Löschung) zu klassifizieren; die Ergebnisse sind moderat und unterstreichen, dass Gesetzeskonformität nicht als binäre Klassifikationsaufgabe missverstanden werden darf.
+
+Neuere Arbeiten nutzen generative \acp{LLM} als flexible Klassifizierer und Parser: Hooda et al.\ \cite{hooda2024policylr} stellen \emph{PolicyLR} vor, das Richtlinien in logische Repräsentationen aus atomaren Formeln überführt. Ein zweistufiger \ac{LLM}-basierter Compiler erreicht auf dem ToS;DR-Datensatz eine Precision von $0{,}91$ und einen Recall von $0{,}88$ und ermöglicht Konsistenzprüfungen sowie Richtlinienvergleiche. Rodriguez et al.\ \cite{rodriguez2024largelanguagemodels} kombinieren ausgefeiltes Prompting mit \texttt{GPT-4}, um feingranulare Praktiken der Datenerhebung und -weitergabe aus umfangreichen Datenschutzrichtlinien zu extrahieren. Auf dem MAPP-Datensatz erzielt das System einen F1-Score von $0{,}935$; auf OPP-115 werden $0{,}93$ F1, $0{,}949$ Precision und $0{,}912$ Recall erreicht. Sie zeigen zudem, dass \texttt{Llama-2-70B-Chat} vergleichbare, aber leicht schwächere Ergebnisse liefert und dass sorgfältiges Prompting, Parameterwahl und Kontextaufteilung entscheidend sind.
+
+Zur Reduktion von Halluzinationen koppeln Silva et al.\ \cite{silva2024entailment} einen erklärenden \ac{LLM}-Klassifikator mit einem nachgelagerten Schlussfolgerungsprüfer. Auf OPP-115 verbessert diese Pipeline den Macro-F1-Score auf $0{,}63$ (plus $11{,}2$\%). Die Hinzunahme der Schlussfolgerungskomponente erhöht die Präzision, senkt jedoch den Recall.
+
+Über größere Benchmarks hinweg zeigen Fallstudien, dass moderne \acp{LLM} spezialisierten Modellen überlegen sein können. Liu et al.\ \cite{liu2024privacy} vergleichen \texttt{GPT-4o}, \texttt{Mistral-7B} u.\,a.\ mit dem spezialisierten \texttt{ComBERT}; in der Aufgabe \enquote{Privacy Information Extraction} erreichen \texttt{GPT-4o} und \texttt{Mistral-7B} F1-Scores von bis zu $99{,}8$\%, während \texttt{ComBERT} $91{,}8$\% erzielt.
+
+\subsection*{\acp{LLM} in Business Process Management}
+
+Über Richtlinientexte hinaus werden \acp{LLM} als Werkzeuge im \ac{BPM}-Lebenszyklus erprobt. Vidgof et al.\ \cite{vidgof2023largelanguagemodelsbusiness} identifizieren sechs zentrale Forschungsrichtungen, darunter (1) Best Practices für den produktiven Einsatz, (2) \ac{BPM}-spezifische Datensätze und Benchmarks, (3) Leitlinien zu Prompting und Modellauswahl sowie (4) \acp{LLM}, die Struktur und Semantik von Geschäftsprozessen explizit berücksichtigen.
+
+Eine systematische Evaluierung liefern Kourani et al.\ \cite{kourani2025evaluating}: In einem Benchmark mit 20 Prozessen werden 16 \acp{LLM} zur Transformation von Prozessbeschreibungen in ausführbare Modelle verglichen. Die Ergebnisse zeigen deutliche Leistungsunterschiede; \texttt{Claude-3.5-Sonnet} erzielt die höchste durchschnittliche Qualitätsbewertung, während Modelle wie \texttt{Mixtral-8x22B} klar zurückfallen. Ein positiver Zusammenhang zwischen Fehlerbehandlung und Modellqualität wird beobachtet; Output-Optimierungstechniken können schwächere Modelle spürbar verbessern.
+
+Für dialogorientierte Prozessunterstützung kombinieren Bernardi et al.\ \cite{bernardi2024conversing} \ac{RAG} mit feingetunten \texttt{LLaMA-2}-Modellen in der BPLLM-Architektur. Durch semantisches Chunking der Prozessmodelle liefert BPLLM in Domänen wie Food-Delivery, E-Commerce und Erstattungen präzise Antworten zu Aktivitäten und Sequenzflüssen, sofern hinreichend kontextrelevante Chunks abgerufen werden.
+
+\subsection*{Prompting und Reproduzierbarkeit}
+
+Die in dieser Arbeit genutzten \ac{LLM}-Klassifizierer operieren überwiegend im Zero-Shot-Modus. Brown et al.\ \cite{brown2020fewshot} zeigen, dass große autoregressive Sprachmodelle wie \texttt{GPT-3} Aufgaben allein durch geeignetes Prompting ohne Feinabstimmung lösen können. Liu et al.\ \cite{liu2023prompting} liefern hierzu eine systematische Übersicht und unterscheiden zwischen manuell konstruierten und automatisch optimierten Prompts.
+
+Im Datenschutzkontext untersuchen Pragyan et al.\ \cite{pragyan2024toward} Few-Shot-Prompts für\linebreak~\texttt{GPT-3.5 Turbo} zur Generierung von \ac{RoPA} aus Nutzungsszenarien. Die Experimente belegen einen deutlichen Einfluss der Beispielanzahl im Prompt auf ROUGE-L-F1 (ca.~$70$\%), während Wiederholungen und Reihenfolge der Beispiele kaum Effekte zeigen. Von Schwerin und Reichert \cite{schwerin2024systematic} evaluieren vier offene Modelle (u.\,a.\ \texttt{Qwen2-7B}) sowie \texttt{GPT-4} zur Generierung strukturierter Datenkategorien in Verarbeitungstätigkeiten. \texttt{Qwen2-7B} erreicht Leistungen auf Augenhöhe mit \texttt{GPT-4}. \ac{RAG} verbessert Ergebnisse für bekannte Kategorien, versagt jedoch bei unbekannten. Es wird daher für organisationsspezifische Anpassungen und stärkere Kontextanreicherung plädiert.
+
+Ein zentraler Aspekt ist die Reproduzierbarkeit: Reimers und Gurevych \cite{reimers2017reporting} zeigen, dass unterschiedliche Seeds bei \acp{LLM} signifikante Leistungsschwankungen verursachen können; Bewertungen sollten daher Score-Verteilungen statt Einzelmessungen berücksichtigen.
+
+\subsection*{Benchmarking und Evaluierung}
+
+Neben den oben skizzierten Studien nimmt die Zahl systematischer Vergleiche weiter zu. Liu et al.\ \cite{liu2024privacy} zeigen, dass moderne \acp{LLM} beim \enquote{Privacy Information Extraction} traditionelle Modelle deutlich übertreffen und teilweise nahezu perfekte Ergebnisse erzielen. Kourani et al.\ \cite{kourani2025evaluating} bieten mit ihrem 20-Prozess-Benchmark eine reproduzierbare Grundlage zur Bewertung der Prozessmodellierungsfähigkeiten von \acp{LLM} und machen klare Leistungsunterschiede sichtbar.
+
+\subsection*{Forschungslücken}
+
+Aus der Literatur ergeben sich mehrere offene Fragen, die die vorliegende Arbeit adressiert:
+\begin{enumerate}
+    \item \textbf{Granularität und Domänenfokus.} Viele Studien fokussieren einzelne Artikel (z.\,B.\ Art.~13) oder allgemeine Privacy-Tasks. Eine systematische Klassifikation \emph{kompletter} Geschäftsprozesse nach datenschutzrelevanten Aktivitäten ist selten; Datensätze sind klein und wenig repräsentativ \cite{nake2023towards}.
+    \item \textbf{\ac{LLM}-Anwendung in Geschäftsprozessen.} Während es Benchmarks für Prozessmodellierung gibt, fehlen reproduzierbare Benchmarks speziell für die Klassifikation datenschutzkritischer Prozessschritte. Positionsarbeiten wie\linebreak~Vidgof et al.\ \cite{vidgof2023largelanguagemodelsbusiness} fordern \ac{BPM}-spezifische Datensätze und Modelle; öffentlich verfügbare, auf den europäischen Rechtsraum zugeschnittene Benchmarks sind jedoch rar.
+    \item \textbf{Erklärbarkeit und Halluzinationen.} \acp{LLM} erzeugen teils überzeugende, aber unzutreffende Ausgaben. Ansätze wie Silva et al.\ \cite{silva2024entailment} und Hooda et al.\ \cite{hooda2024policylr} zeigen, dass Schlussfolgerungsprüfer oder formale Repräsentationen nötig sind, um Halluzinationen zu reduzieren.
+    \item \textbf{Datenschutz- und Sicherheitsbedenken.} Studien nutzen häufig geschlossene Modelle wie \texttt{GPT-4}, deren Einsatz aufgrund möglicher Datenübermittlungen in die USA datenschutzrechtlich problematisch sein kann. Offene Modelle wie \texttt{Qwen2-7B} liefern vergleichbare Ergebnisse \cite{schwerin2024systematic} und sind für \ac{EU}-Organisationen potenziell vorteilhaft.
+    \item \textbf{Prompt-Engineering-Leitlinien.} Obwohl mehrere Arbeiten den maßgeblichen Einfluss von Prompt-Gestaltung (z.\,B.\ Anzahl von Beispielen, Kontexttrennung) belegen \cite{pragyan2024toward,liu2023prompting}, fehlen breit akzeptierte Leitfäden speziell für\linebreak~Datenschutz- und \ac{BPM}-Kontexte.
+\end{enumerate}
+
+Diese Lücken unterstreichen den Bedarf an umfassenden, reproduzierbaren Benchmarks sowie an robusten Methoden zur Klassifikation datenschutzkritischer Aktivitäten in Geschäftsprozessen unter Berücksichtigung der europäischen \ac{DSGVO}. Das folgende Kapitel präzisiert die Problemdefinition und die Zielkriterien der vorliegenden Arbeit.
