@@ -1,6 +1,6 @@
-\section{Überblick}\label{sec:ueberblick}
+\section{Zusammenfassung der Ergebnisse}\label{sec:ueberblick}
 
-Abbildung \ref{fig:results-evaluation-metrics-comparison} zeigt für jedes der untersuchten Modelle die durchschnittlichen Metrik-Werte über alle fünf Wiederholungen hinweg inklusive Standardabweichung. Für einen besseren Vergleich sind die proprietären Modelle rot, die kleineren Modelle orange und die größeren Modelle blau dargestellt. Diese Einteilung entspricht der in Kapitel \ref{ch:modellauswahl} beschriebenen Kategorisierung. Die Diagramme aus diesem Kapitel stammen nicht direkt aus dem Evaluationsframework, sondern wurden mit den zusammengeführten Ergebnissen aller Experimente erstellt, damit alle Modelle auf einen Blick verglichen werden können. Im Folgenden wird zuerst ein Überblick über die Ergebnisse gegeben, bevor im Anschluss eine detaillierte Analyse erfolgt.
+Für jeden der 13 untersuchten Modelle wurden fünf unabhängige Läufe mit unterschiedlichen Seeds durchgeführt. Abbildung \ref{fig:results-evaluation-metrics-comparison} visualisiert die mittleren Werte für Precision, Recall, F1-Score und Accuracy jeweils inklusive Standardabweichung über alle Wiederholungen hinweg. Für einen besseren Vergleich sind proprietäre Modelle rot, kleinere Modelle orange und größere Modelle blau eingefärbt. Die Einteilung entspricht der in Kapitel~\ref{ch:modellauswahl} beschriebenen Kategorisierung.
 
 \begin{figure}[htbp]
     \centering
@@ -9,25 +9,11 @@ Abbildung \ref{fig:results-evaluation-metrics-comparison} zeigt für jedes der u
     \label{fig:results-evaluation-metrics-comparison}
 \end{figure}
 
-Positiv aufgefallen ist, dass neun von dreizehn Modellen das Qualitätsziel eines F1-Scores von $\geq 0{,}80$ erreichen konnten - darunter auch kleine Modelle. Über alle Metriken hinweg sind \texttt{Qwen3-235B-A22B-Thinking-2507}, \texttt{GPT-OSS-120B} und \texttt{GPT-OSS-20B} ganz vorne mit dabei. Auffällig ist das schwache Abschneiden des europäischen \texttt{Mixtral-8x7B-Instruct-v0.1}-Modells, das sowohl in Precision, als auch Recall weit zurückfällt und als einziges Modell einen F1-Score von $\le 0{,}60$ erreicht.
+Insgesamt erfüllen neun der dreizehn Modelle den Zielwert von $F1-Score \geq 0{,}80$ aus Abschnitt~\ref{sec:qualitatsziele}. Besonders gut schneiden \texttt{Qwen3-235B-A22B-Thinking-2507}, \texttt{GPT-OSS-120B} und \texttt{GPT-OSS-20B} ab, die F1-Scores zwischen $0{,}862$ und $0{,}874$ erreichen. Erfreulich ist, dass auch mehrere kleinere Modelle diesen Zielwert überschreiten. Am unteren Ende des Spektrums liegt das europäische \texttt{Mixtral-8x7B-\linebreak~Instruct-v0.1}, das sowohl in Precision als auch in Recall schwach abschneidet und als einziges Modell einen F1-Score deutlich unter $0{,}60$ erzielt.
 
-Die Abbildung \ref{fig:results-evaluation-metrics-comparison} macht deutlich, dass einige Modelle – etwa \texttt{GPT-4o} oder\linebreak\texttt{Qwen-2.5-7B-Instruct} – hohe Präzisionswerte aufweisen, aber im Recall zurückliegen. Anders sieht es bei \texttt{Gemma-3-27B-it} aus, das einen sehr guten Recall erreicht, aber bei der Präzision auf dem vorletzten Platz liegt. Modelle wie \texttt{Qwen3-235B-A22B} und \texttt{GPT-OSS-20B} erreichen einen ausgezeichneten Recall bei gleichzeitig hoher Präzision.
+Die Abbildung zeigt zudem, dass sich die Modelle hinsichtlich Precision und Recall unterschiedlich verhalten. \texttt{GPT-4o} erreicht beispielsweise mit $0{,}892$ die höchste Precision, liegt jedoch beim Recall mit $0{,}762$ unter dem Mindestziel von $0{,}80$. Umgekehrt erzielt \texttt{Gemma-3-27B-it} einen sehr hohen Recall von $0{,}916$, wird aber durch eine niedrige Precision von $0{,}687$ ausgebremst. Modelle wie \texttt{Qwen3-235B-A22B-\linebreak~Thinking-2507}, \texttt{GPT-OSS-20B} und \texttt{DeepSeek-R1-Distill-Qwen-14B} bieten eine ausgewogene Balance und zählen deshalb zu den Spitzenreitern.
 
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=0.9\textwidth]{images/results/evaluation_robustness_f1_std}
-    \caption{Robustheit der Modelle gemessen an der Standardabweichung des F1-Scores über alle Wiederholungen hinweg.}
-    \label{fig:results-evaluation-robustness-f1-std}
-\end{figure}
-
-Abbildung \ref{fig:results-evaluation-robustness-f1-std} zeigt die Robustheit der Modelle gemessen an der Standardabweichung des F1-Scores über alle Wiederholungen hinweg. Hier zeigt sich eine große Varianz: Während einige Modelle wie \texttt{Gemma-3-12B.it} und \texttt{Mistral-\linebreak~Large-Instruct-2411} eine sehr geringe Standardabweichung von $\le 0{,}01$ aufweisen, zeigen andere Modelle wie \texttt{Mixtral-8x7B-Instruct-v0.1} und\linebreak\texttt{Qwen2.5-7B-Instruct} eine hohe Varianz von $\ge 0{,}03$ bis $\ge 0{,}04$ im F1-Score. Dies deutet darauf hin, dass die Leistung dieser Modelle stark von der Wahl des Seeds abhängen und ihre Leistung weniger stabil ist.
-
-Neben den Diagrammen \ref{fig:results-evaluation-metrics-comparison} und \ref{fig:results-evaluation-robustness-f1-std} liefert \autoref{tab:metrics-overview} eine tabellarische
-Übersicht der konkreten durchschnittlichen Metrik-Werte inklusive Standardabweichungen für alle Modelle über alle fünf Wiederholungen hinweg. Diese Werte werden genutzt um im Folgenden die Leistungen der Modelle detailliert aufzuzeigen.
-
-Die proprietären Modelle \texttt{GPT-4o} und \texttt{Mistral Medium 3.1} erreichen mit $0{,}822$ bzw. $0{,}843$ im Vergleichsfeld einen mittleren F1-Score. \texttt{Mistral Medium 3.1} liegt mit
-einem F1-Wert von $0{,}843$ leicht über \texttt{GPT-4o} und weist zugleich
-einen höheren Recall von $0{,}877$ auf. \texttt{GPT-4o} fällt vor allem durch eine sehr hohe Precision von $0{,}892$ auf, die jedoch einem vergleichsweise niedrigem Recall von $0{,}762$ gegenübersteht. Dies deutet darauf hin, dass \texttt{GPT-4o} eher konservativ kritische Aktivitäten klassifiziert und somit weniger \acp{FP}, aber auch mehr \acp{FN} produziert.
+Tabelle \ref{tab:metrics-overview} fasst alle Metriken mit ihren Mittelwerten und Standardabweichungen tabellarisch zusammen. Für die weitere Analyse werden diese Werte nur noch punktuell zitiert, um Wiederholungen zu vermeiden.
 
 \begin{table}[htbp]
     \centering
@@ -55,16 +41,3 @@ einen höheren Recall von $0{,}877$ auf. \texttt{GPT-4o} fällt vor allem durch 
         \end{tabular}
     \end{adjustbox}
 \end{table}
-
-Die Mehrzahl der großen Modelle steht in den meisten Metriken vor den kleineren Modellen, auch wenn teilweise nur knapp. Ein bemerkenswerter Befund ist jedoch die starke Leistung von \texttt{GPT-OSS-20B}, das mit Blick auf die F1-, Recall- und Accuracy-Werten von $0{,}866$, $0{,}918$ bzw. $0{,}821$ fast mit den besten Modellen mithalten kann und dort sogar besser abschneidet als das größere \texttt{GPT-OSS-120B}. Nur in der Precision liegt \texttt{GPT-OSS-120B} mit $0{,}821$ knapp vor \texttt{GPT-OSS-20B}. Allerdings deuten die Standardabweichungen auf eine geringere Stabilität von \texttt{GPT-OSS-20B} hin. Ein weiteres starkes kelines Open-Source-Modell ist \texttt{DeepSeek-R1-Distill\linebreak-Qwen-14B}, das in F1-Score und Accuracy die
-beiden proprietären Modelle übertrifft und in der Precision sogar über \texttt{Qwen3-235B-A22B-Thinking-2507} und die \texttt{GPT-OSS}-Modelle hinausgeht.
-
-Die Ergebnisse unterstreichen, dass \texttt{Qwen3-235B-A22B-Thinking-2507},\linebreak\texttt{Gemma-3-27B-it} und \texttt{GPT-OSS-20B} mit $\geq 0{,}91$ die höchsten Recall Werte erzielen. Dies bedeutet, dass diese Modelle die meisten kritischen Aktivitäten korrekt identifizieren und somit das Risiko von \acp{FN} minimieren. Besonders hervorzuheben ist \texttt{Qwen3-235B-A22B-Thinking-2507}, das mit einem Recall von $0{,}932$ und einer Precision von $0{,}824$ eine ausgezeichnete Balance zwischen Sensitivität und Genauigkeit bietet. Mit Abstand am schwächsten im Recall schneiden\linebreak\texttt{Mixtral-8x7B-Instruct-v0.1} und \texttt{Qwen2.5-7B-Instruct} ab, die mit $0{,}550$ bzw. $0{,}696$ weit hinter den anderen Modellen zurückbleiben.
-
-\texttt{Mixtral-8x7B-Instruct-v0.1} schnitt insgesamt am schlechtesten ab. Sowohl die Precision von $0{,}652$ als auch der Recall von $0{,}55$ und die Accuracy von $0{,}531$ sind klar unter den Werten der anderen Modelle. Besonders bemerkenswert ist, dass das kleinere \texttt{Mistral-7B-Instruct-v0.3} – mit achtmal weniger Parametern – deutlich bessere Ergebnisse erzielt. Auch gegenüber dem ähnlich großen \texttt{Qwen2.5-7B-Instruct} ist es im F1-Score und in der Accuracy leicht voraus und im Recall mit einer Differenz von $0{,}106$ schneidet \texttt{Mistral-7B-Instruct-v0.3} deutlich besser ab. Dies deutet darauf hin, dass \texttt{Mixtral-8x7B-Instruct-v0.1} für die hier betrachtete Klassifikationsaufgabe ungeeignet ist.
-
-Das große europäische Modell \texttt{Mistral-Large-Instruct-2411} und das große chinesische Modell \texttt{DeepSeek-V3.1} erreichen mit $0{,}823$ bzw. $0{,}841$ im F1-Score einen mittleren Platz im Vergleichsfeld. Beide Modelle liegen in allen Metriken auf einem ähnlichen Niveau, wobei \texttt{DeepSeek-V3.1} in jeder Metrik etwas bessere Werte erzielt. Mit Blick auf die Standardabweichungen sind beide Modelle robust und zeigen eine geringe Varianz über die Wiederholungen hinweg. Obwohl\linebreak\texttt{Mistral-Large-Instruct-2411} das schwächste der großen Modelle ist, liegt sein F1-Score immer noch über dem des Referenzmodells \texttt{GPT-4o}.
-
-Die beiden Varianten der Gemma-Reihe erreichen F1-Scores knapp unterhalb der Benchmark-Modelle \texttt{GPT-4o} und \texttt{Mistral Medium 3.1}, sind mit 12B beziehungsweise 27B Parametern jedoch deutlich kleiner. \texttt{Gemma-3-12B-it} erreicht mit $0{,}810$ einen soliden F1-Score, während \texttt{Gemma-3-27B-it} mit $0{,}785$ etwas darunter liegt. Beide Modelle zeigen eine gute Balance zwischen Precision und Recall, wobei \texttt{Gemma-3-27B-it} mit einem Recall von $0{,}916$ besonders stark in der Identifikation kritischer Aktivitäten ist. Allerdings leidet die Precision mit $0{,}687$ darunter, was auf eine höhere Rate an \acp{FP} hindeutet.
-
-Zusammenfassend zeigen die Ergebnisse, dass sowohl große als auch kleinere \acp{LLM} in der Lage sind, die datenschutzrechtliche Klassifikation von Prozessaktivitäten mit hoher Genauigkeit durchzuführen. Besonders hervorzuheben sind die Modelle \texttt{Qwen3-235B-A22B-Thinking-2507}, \texttt{GPT-OSS-20B} und \texttt{DeepSeek-R1-\linebreak~Distill-Qwen-14B}, die in mehreren Metriken Spitzenwerte erzielen. Allerdings gibt es auch Modelle wie \texttt{Mixtral-8x7B-Instruct-v0.1}, die für diese Aufgabe ungeeignet sind.

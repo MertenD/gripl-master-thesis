@@ -1,10 +1,10 @@
 \section{Fallstudien}\label{sec:fallstudien}
 
-Neben den aggregierten Metriken aus den Ergebnissen bieten einzelne Testfälle wichtige Einblicke in die Stärken und Schwächen der Modelle. Im Folgenden werden drei exemplarische Szenarien vorgestellt, die jeweils typische Fehlklassifikationen illustrieren: ...
+Die aggregierten Kennzahlen liefern einen guten Überblick über die Modellqualität, verbergen jedoch individuelle Fehlklassifikationen. Im Folgenden verdeuttlichen drei ausgewählte Fallstudien typische Muster von \ac{FP} und \ac{FN}.
 
 \subsection*{Sales Warehouse}
 
-Bei dem Testfall \enquote{Sales Warehouse} handelt es sich um einen englischen Prozess aus dem Testdatensatz \enquote{Universität}. Der Prozess ist in Abbildung \ref{fig:qwen3-fall} zu sehen. Im Testfall sind vier Aktivitäten als kritisch markiert. Das Modell \texttt{Qwen3-235B-A22B-\linebreak~Thinking-2507} erkennt alle vier korrekt, markiert jedoch zusätzlich die Aktivität \enquote{Ship product} als kritisch. Die manuell festgelegten Labels ordnen das Versenden eines Produkts als unkritisch ein, da Logistikvorgänge in der Regel ohne Verarbeitung personenbezogener Daten erfolgen (vgl. Tabelle \ref{tab:labeling-examples}). \texttt{Qwen3-235B-A22B-\linebreak~Thinking-2507} begründet die Entscheidung mit der Nutzung der Kundenadresse zum Versand und zur Zustellung. Diese Begründung zeigt, dass das Modell mögliche Datenflüsse im Hintergrund berücksichtigt und daher zu einer vorsichtigeren Klassifikation gelangt. Angesichts der hohen Strafen bei übersehenen Datenschutzverstößen und des angestrebten hohen Recalls kann dieses \ac{FP} als vertretbar gelten.
+Der englische Prozess \enquote{Sales Warehouse} aus dem Datensatz \enquote{Universität} enthält vier als kritisch gelabelte Aktivitäten. Das Modell \texttt{Qwen3-235B-A22B-Thinking-\linebreak~2507} erkennt diese korrekt, markiert jedoch zusätzlich die Aktivität \enquote{Ship product} als kritisch, was in \Abbildung{fig:qwen3-fall} als rot markierte Aktivität dargestellt ist. Die Begründung verweist auf die Nutzung der Kundenadresse für Versand und Zustellung. Obwohl während der Modellierung nur ein rein logistischer Schritt vorgesehen war - der laut Tabelle \ref{tab:labeling-examples} in dem Labeling-Guide nicht kritisch ist - interpretiert das Modell den möglichen Datenfluss und wählt eine konservative Einstufung. Angesichts des Zielkriteriums eines hohen Recalls ist dieses \ac{FP} vertretbar.
 
 \begin{figure}
     \centering
@@ -13,24 +13,24 @@ Bei dem Testfall \enquote{Sales Warehouse} handelt es sich um einen englischen P
     \label{fig:qwen3-fall}
 \end{figure}
 
-Das Beispiel verdeutlicht eine grundsätzliche Limitierung der Klassifizierung: Fehlen in einem \ac{BPMN}-Modell explizite Informationen über Verarbeitungsschritte, ist es für das System schwierig, eine eindeutige Klassifikation vorzunehmen.
+Das Beispiel verdeutlicht eine grundsätzliche Limitierung der Klassifizierung. Wenn in einem \ac{BPMN}-Modell explizite Informationen über Datenverarbeitungen fehlen, ist es für das das \ac{LLM} schwierig, eine eindeutige Klassifikation vorzunehmen.
 
 \subsection*{Marketing-Kampagne}
 
-Im deutschen Testfall \enquote{Marketing-Kampagne}, aus dem Testdatensatz \enquote{Kleine Szenarien}, sind drei Aktivitäten als kritisch gelabelt: \enquote{Leads sammeln}, \enquote{Newsletter versenden} und \enquote{CRM aktualisieren}. \texttt{GPT‑OSS‑20B} identifiziert diese korrekt, markiert aber zusätzlich die Aktivität \enquote{Klickraten auswerten} als kritisch. Die Prozessmodellierung sah vor, dass die Klickdaten komplett anonymisiert werden und daher keine personenbezogenen Daten verarbeitet werden. Da diese Information im \ac{BPMN}-Diagramm jedoch nicht explizit hinterlegt ist, stuft das Modell die Analyse der Klickraten als potenziell personenbezogen ein und führt als Begründung die Nutzung der E‑Mail‑Adresse an. \texttt{Qwen3-235B-A22B-Thinking-2507} und einige weitere Modelle bewerteten diesen Schritt ebenfalls als kritisch, während \texttt{Mistral‑7B‑\linebreak~Instruct‑v0.3} in zwei von fünf Wiederholungen und die Gemma‑Modelle in keiner der Wiederholungen eine kritische Klassifikation vornahmen. Der Prozess inklusive farblich hervorgehobener Aktivitäten ist in Abbildung \ref{fig:gptoss-fall} zu sehen.
-
-Dieses Beispiel zeigt, dass ohne genaue Kontextangaben zur Anonymisierung selbst scheinbar unbedenkliche Auswertungen als datenschutzrelevant erscheinen können. Es unterstreicht, dass die \acp{LLM} im Zweifel eher ein kritisches Label vergeben, um \acp{FN} zu vermeiden, wie es das Hauptziel der Klassifikation aus Abschnitt \ref{sec:qualitatsziele} vorsieht.
+Im deutschen Testfall \enquote{Marketing-Kampagne}, aus dem Datensatz \enquote{Kleine Szenarien}, sind drei Aktivitäten als kritisch gelabelt: \enquote{Leads sammeln}, \enquote{Newsletter versenden} und \enquote{CRM aktualisieren}. \texttt{GPT-OSS-20B} identifiziert diese korrekt, markiert aber zusätzlich die Aktivität \enquote{Klickraten auswerten} als kritisch. Im Prozessmodell wird davon ausgegangen, dass die Klickdaten vollständig anonymisiert werden, jedoch ist diese Information nicht explizit hinterlegt. Mehrere Modelle – darunter \texttt{Qwen3-235B-A22B-Thinking-2507} – stufen diesen Schritt daher als potenziell personenbezogen ein, wie in Abbildung \ref{fig:gptoss-fall} zu sehen ist. Die Anonymisierung der Daten wurde nur von \texttt{Mistral-7B-Instruct-v0.3} in zwei von fünf und von den Gemma-Modellen in allen Wiederholungen korrekt antizipiert und die Aktivität als unkritisch klassifiziert. Dieses Beispiel zeigt, wie fehlende Kontextinformationen zu vorsichtiger Klassifikation und damit zu \ac{FP} führen können.
 
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{images/results/examples/oss-20b-run-1-small-marketing}
     \caption{Ergebnis des Testfalls \enquote{Marketing-Kampagne} mit farblich hervorgehobenen Aktivitäten. Die Aktivität \enquote{Klickraten auswerten} wurde als zusätzliches kritisches Element markiert.}
-\label{fig:gptoss-fall}
+    \label{fig:gptoss-fall}
 \end{figure}
 
-\subsection*{Karten App - Standort Erfassen}
+Dieses Beispiel zeigt, dass ohne genaue Kontextangaben zur Anonymisierung selbst scheinbar unbedenkliche Auswertungen als datenschutzrelevant erscheinen können. Es unterstreicht, dass die \acp{LLM} im Zweifel eher ein kritisches Label vergeben, um \acp{FN} zu vermeiden, wie es das Hauptziel der Klassifikation aus Abschnitt \ref{sec:qualitatsziele} vorsieht.
 
-Im Fall \enquote{Karten-App – Standort Erfassen}, ebenfalls aus dem Testdatensatz \enquote{Kleine Szenarien}, treten zwei Aktivitäten auf: \enquote{Standort erfassen} und \enquote{Route berechnen}. Beide sollten als kritisch gekennzeichnet werden, da im zweiten Schritt der zuvor erfasste Benutzerstandort zur Berechnung der Route verwendet wird. \texttt{Mistral-Large} erkennt jedoch in drei von fünf Läufen nur die erste Aktivität als kritisch und die Aktivität \enquote{Route berechnen} wird trotz der Datenassoziation nicht als kritisch eingestuft. Die Begründung des Modells erklärt zwar, dass \enquote{Standort erfassen} personenbezogene Daten verarbeitet, überträgt diese Argumentation aber nicht auf den unmittelbar folgenden Schritt. Dieses \ac{FN} ist problematisch, da es dem gewünschten hohen Recall entgegensteht und dieser Testfall zeigt, dass selbst mit vorhandenen Datenobjekten manche Modelle Schwierigkeiten haben, Datenflüsse über mehrere Aktivitäten hinweg zu erfassen. Es verdeutlicht auch, dass unterschiedliche Seeds zu unterschiedlichen Klassifikationen führen können. Der Prozess inklusive farblich hervorgehobener Aktivitäten ist in Abbildung \ref{fig:mistral-fall} zu sehen.
+\subsection*{Karten-App – Standort erfassen}
+
+Der Testfall \enquote{Karten-App – Standort erfassen} besteht aus zwei Aktivitäten: \enquote{Standort erfassen} und \enquote{Route berechnen}. Beide sollten als kritisch klassifiziert werden, da im zweiten Schritt der erfasste Standort zur Berechnung der Route genutzt wird. \texttt{Mistral-Large-Instruct-2411} kennzeichnet jedoch in drei von fünf Wiederholungen nur die erste Aktivität als kritisch, wie in Abbildung \autoref{fig:mistral-fall} zu sehen. In der Begründung wird zwar die Verarbeitung personenbezogener Daten beim Erfassen des Standorts erkannt, dieser Zusammenhang aber nicht auf die nachfolgende Aktivität übertragen. Dieses \ac{FN} steht dem angestrebten hohen Recall entgegen und zeigt, dass einige Modelle Schwierigkeiten haben, Datenflüsse über mehrere Schritte hinweg zu verfolgen.
 
 \begin{figure}
     \centering
