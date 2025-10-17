@@ -1,10 +1,6 @@
 \chapter{Problemdefinition und Zielkriterien}\label{ch:problemdefinition-und-zielkriterien}
 
-\textcolor{orange}{// TODO Hier Hier fehlt noch etwas der Bezug zu der vorher gut vorgestellten Domäne. Wahrscheinlich schafft das Kapitel "Verwandte Arbeiten" da noch einen besseren Übergang}
-
-Dieses Kapitel präzisiert die Aufgabe der Arbeit, die Qualitätsziele der Klassifikation und steckt den fachlichen Geltungsbereich ab. Außerdem wird das Experimentdesign beschrieben, um die Forschungsfragen systematisch zu beantworten. Damit schafft es die Grundlage für die in Kapitel~\ref{ch:klassifizierungsalgorithmus-(design-und-implementierung)} beschriebene Klassifizierungspipeline sowie für die späteren Experimente und deren Auswertung.
-
-Abbildung \ref{fig:running_example} zeigt einen Beispielprozess, der in den folgenden Abschnitten als laufendes Beispiel dient. Er modelliert den Versand eines Statusberichts eines Onlineshops an Kunden. Dabei werden personenbezogene Daten in den Aktivitäten \enquote{Tracking-id generieren} und \enquote{Status Update senden} verarbeitet, die die stabilen \texttt{ids} \texttt{Activity\_generate} und \texttt{Activity\_send} besitzen. Die Aktivität \enquote{Benachrichtigungsvorlage laden}, mit der \texttt{id} \texttt{Activity\_template}, dient als Negativbeispiel.
+Ausgehend von den in Kapitel \ref{ch:einleitung} beschriebenen unternehmensweiten, kundenbezogenen Geschäftsprozessen mit personenbezogenen Daten und hohem manuellem Prüfaufwand sowie den Grundlagen zu \ac{DSGVO}, \ac{BPMN} und \acp{LLM} führt dieses Kapitel zur Kernaufgabe: der binären Klassifikation einzelner \ac{BPMN}-Aktivitäten in \emph{kritisch} und \emph{unkritisch} mithilfe von \acp{LLM}. Es definiert die Qualitätsziele und den fachlichen Geltungsbereich und beschreibt das Experimentdesign zur systematischen Beantwortung der Forschungsfragen. Damit legt es die Grundlage für die in Kapitel~\ref{ch:klassifizierungsalgorithmus-(design-und-implementierung)} dargestellte Klassifizierungspipeline sowie für die anschließenden Experimente und deren Auswertung.
 
 \begin{figure}[h]
     \centering
@@ -12,6 +8,8 @@ Abbildung \ref{fig:running_example} zeigt einen Beispielprozess, der in den folg
     \caption{Beispielprozess zur Veranschaulichung der Aufgabenstellung}
     \label{fig:running_example}
 \end{figure}
+
+Abbildung \ref{fig:running_example} zeigt einen Beispielprozess, der in den folgenden Abschnitten als laufendes Beispiel dient. Er modelliert den Versand eines Statusberichts eines Onlineshops an Kunden. Dabei werden personenbezogene Daten in den Aktivitäten \enquote{Tracking-id generieren} und \enquote{Status Update senden} verarbeitet, die die stabilen \texttt{ids} \texttt{Activity\_generate} und \texttt{Activity\_send} besitzen. Die Aktivität \enquote{Benachrichtigungsvorlage laden}, mit der \texttt{id} \texttt{Activity\_template}, dient als Negativbeispiel.
 
 \input{de/chapters/3-problemdefinition/aufgabenstellung}
 \input{de/chapters/3-problemdefinition/qualitaetsziele}
