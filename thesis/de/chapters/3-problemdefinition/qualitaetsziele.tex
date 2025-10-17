@@ -19,7 +19,7 @@ Zur Bewertung des Hauptziels wird eine Konfusionsmatrix verwendet. Im vorliegend
 
 Aus diesen Größen leiten sich die Evaluationsmetriken ab. Relevante Metriken für eine aussagekräftige Evaluierung sind \emph{Accuracy}, \emph{Precision}, \emph{Recall}, \emph{F1-Score} sowie die Konfusionsmatrix-Zahlen (\acp{TP}, \acp{FP}, \acp{TN}, \acp{FN}) und die Anzahl korrekt/inkorrekt klassifizierter Testfälle. Technische Fehler (z.\,B. Parsing-Fehler oder überschrittene Token Limits) werden separat ausgewiesen.
 
-Diese Metriken sind in Information Retrieval und Maschinellem Lernen seit langem etabliert und bilden den De-facto-Standard zur Bewertung von Klassifikatoren \cite{manning2008ir, sokolova2009measureclassification, nake2023towards}. Für das hier betrachtete binäre Problem gelten:
+Diese Metriken sind in Information Retrieval und maschinellem Lernen seit langem etabliert und bilden den De-facto-Standard zur Bewertung von Klassifikatoren \cite{manning2008ir, sokolova2009measureclassification, nake2023towards}. Für das hier betrachtete binäre Problem gelten:
 
 \[
     \mathrm{Accuracy}=\frac{\mathrm{TP}+\mathrm{TN}}{\mathrm{TP}+\mathrm{FP}+\mathrm{TN}+\mathrm{FN}},\quad
@@ -42,8 +42,10 @@ Basierend darauf werden folgende Zielkorridore als \emph{pragmatische Abnahmekri
 \begin{itemize}
     \item \textbf{Recall} soll ein Mindestniveau von $\geq 0{,}80$ erreichen und ein \emph{angestrebter} Bereich ist $\geq 0{,}85$.
     \item \textbf{Precision} soll $\geq 0{,}75$ als Untergrenze zur Begrenzung des Prüfaufwands erreichen.
-    \item \textbf{F1-Score} soll $\geq 0{,}80$  erreichen.
+    \item \textbf{F1-Score} soll $\geq 0{,}80$ erreichen.
 \end{itemize}
+
+Im Kontext des laufenden Beispiels bedeutet dies u.\,a.: Eine Strategie \enquote{alles ist kritisch} liefert zwar Recall $=1{,}0$, unterschreitet mit Precision $\approx 0{,}67$ jedoch das Ziel. Stattdessen ist daher eine ausgewogene Erkennung gefordert, die \texttt{Activity\_\linebreak~template} korrekt als unkritisch belässt.
 
 Nake~et~al.\ \cite{nake2023towards} zeigen, dass selbst ein \emph{Recall} von $0{,}83$ für kritische Aufgaben ohne menschliche Nachkontrolle nicht ausreicht, da die Strafen für Nichteinhaltung der \ac{DSGVO} sehr hoch sind. Viel mehr eignet sich ein System mit diesem Recall-Wert für \emph{assistierte} Prüfungen, bei denen die Ergebnisse durch qualifizierte Experten validiert werden. Für ein Screening von Geschäftsprozessen, wie es in dieser Arbeit angestrebt wird, sind die genannten Zielwerte daher als realistisch und praxisrelevant einzuschätzen.
 
@@ -51,4 +53,6 @@ Zusammenfassend fixieren die Zielwerte die angestrebte Performance. Im nächsten
 
 \subsection*{Stabilität über Wiederholungen}
 
-Da \acp{LLM} nicht-deterministisch sind, ist das Berichten eines einzelnen Leistungswertes nicht ausreichend für den Vergleich von Modellen. Studien wie von Reimers et al. \cite{reimers2017reporting} zeigen, dass die Abhängigkeit vom Seed-Wert der \acp{LLM} zu statistisch signifikanten Unterschieden in der Performance führen kann. Diese Varianz kann dazu führen, dass ein modernes, leistungsfähiges Modell von sehr gut bis mittelmäßig abschneidet. Stattdessen wird vorgschlagen, Score-Verteilungen zu vergleichen, die auf mehreren Durchläufen basieren. Dadurch wird das Risiko reduziert, dass ein Modell nur aufgrund eines günstigen Seeds gut oder aufgrund eines ungünstigen Seeds schlecht abschneidet. In dieser Arbeit werden daher die Ergebnisse auf Basis von Widerholungen berichtet. Es wird der Mittelwert $\pm$ Standardabweichung ($\sigma$) je Metrik angegeben, da die Standardabweichung die Stabilität eines Modells über verschiedene Läufe hinweg darstellt. Modellvergleiche basieren am Ende auf diesen Verteilungen und nicht auf Einzelfällen, um eine fundierte Bewertung zu ermöglichen.
+Da \acp{LLM} nicht-deterministisch sind, ist das Berichten eines einzelnen Leistungswertes nicht ausreichend für den Vergleich von Modellen. Studien wie von Reimers et al. \cite{reimers2017reporting} zeigen, dass die Abhängigkeit vom Seed-Wert der \acp{LLM} zu statistisch signifikanten Unterschieden in der Performance führen kann. Diese Varianz kann dazu führen, dass ein modernes, leistungsfähiges Modell von sehr gut bis mittelmäßig abschneidet. Stattdessen wird vorgschlagen, Score-Verteilungen zu vergleichen, die auf mehreren Durchläufen basieren. Dadurch wird das Risiko reduziert, dass ein Modell nur aufgrund eines günstigen Seeds gut oder aufgrund eines ungünstigen Seeds schlecht abschneidet. Im laufenden Beispiel ist \enquote{Tracking-id generieren} grenzwertig und wird in der Praxis von Modellen gelegentlich fälschlich als \emph{nicht-kritisch} markiert (\ac{FN}) — Wiederholungen und das Berichten von Mittelwert $\pm$ Standardabweichung ($\sigma$) erfassen diese Instabilität.
+
+In dieser Arbeit werden daher die Ergebnisse auf Basis von Widerholungen berichtet. Es wird der Mittelwert $\pm$ Standardabweichung je Metrik angegeben. Modellvergleiche basieren am Ende auf diesen Verteilungen und nicht auf Einzelfällen.

@@ -1,17 +1,17 @@
 \chapter{Problemdefinition und Zielkriterien}\label{ch:problemdefinition-und-zielkriterien}
 
+\textcolor{orange}{// TODO Hier Hier fehlt noch etwas der Bezug zu der vorher gut vorgestellten Domäne. Wahrscheinlich schafft das Kapitel "Verwandte Arbeiten" da noch einen besseren Übergang}
+
 Dieses Kapitel präzisiert die Aufgabe der Arbeit, die Qualitätsziele der Klassifikation und steckt den fachlichen Geltungsbereich ab. Außerdem wird das Experimentdesign beschrieben, um die Forschungsfragen systematisch zu beantworten. Damit schafft es die Grundlage für die in Kapitel~\ref{ch:klassifizierungsalgorithmus-(design-und-implementierung)} beschriebene Klassifizierungspipeline sowie für die späteren Experimente und deren Auswertung.
 
-Abbildung~\ref{fig:running_example} zeigt einen Beispielprozess, der in den folgenden Abschnitten als durchgehende Referenz dient. Er modelliert den Versand eines Statusberichts eines Onlineshops an Kunden. Hierfür werden personenbezogene Daten in den Aktivitäten \enquote{Tracking-id generieren} und \enquote{Status Update senden} verarbeitet.
+Abbildung \ref{fig:running_example} zeigt einen Beispielprozess, der in den folgenden Abschnitten als laufendes Beispiel dient. Er modelliert den Versand eines Statusberichts eines Onlineshops an Kunden. Dabei werden personenbezogene Daten in den Aktivitäten \enquote{Tracking-id generieren} und \enquote{Status Update senden} verarbeitet, die die stabilen \texttt{ids} \texttt{Activity\_generate} und \texttt{Activity\_send} besitzen. Die Aktivität \enquote{Benachrichtigungsvorlage laden}, mit der \texttt{id} \texttt{Activity\_template}, dient als Negativbeispiel.
 
 \begin{figure}[h]
     \centering
-    \label{fig:running_example}
     \includegraphics[width=0.7\textwidth]{images/running_example}
     \caption{Beispielprozess zur Veranschaulichung der Aufgabenstellung}
+    \label{fig:running_example}
 \end{figure}
-
-\textcolor{orange}{// TODO Abbildung im Kapitel referenzieren wo es Sinn ergibt. Aktuell ist sie noch nirgends referenziert.}
 
 \input{de/chapters/3-problemdefinition/aufgabenstellung}
 \input{de/chapters/3-problemdefinition/qualitaetsziele}

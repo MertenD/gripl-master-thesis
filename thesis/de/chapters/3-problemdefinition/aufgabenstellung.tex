@@ -4,11 +4,19 @@ Ziel der Arbeit ist eine \emph{binäre Klassifikation} auf Ebene einzelner \ac{B
 
 \begin{itemize}
     \item \textbf{Eingabe} ist ein valides \ac{BPMN}-XML mit stabilen \texttt{id}-Attributen je Aktivität \cite{omgbpmn}.
-    \item \textbf{Ausgabe} ist eine Menge von Aktivitäts-\texttt{ids}, die als \emph{kritisch} klassifiziert wurden. Optional werden zusätzlich eine natürlichsprachige Begründung für einzelne Entscheidungen ausgegeben. Im Fall der Klassifizierungspipeline dieser Arbeit werden die Begründungen vom \ac{LLM} generiert. Die Erklärungen dienen ausschließlich der Nachvollziehbarkeit der gewählten Klassifizierungen, werden allerdings nicht in der Evaluation berücksichtigt.
+    \item \textbf{Ausgabe} ist eine Menge von Aktivitäts-\texttt{ids}, die als \emph{kritisch} klassifiziert wurden. Optional werden zusätzlich eine natürlichsprachige Begründung für einzelne Entscheidungen ausgegeben. Im Fall der Klassifizierungspipeline dieser Arbeit werden die Begründungen vom \ac{LLM} generiert. Diese dienen ausschließlich der Nachvollziehbarkeit der gewählten Klassifizierungen, werden allerdings nicht in der Evaluation berücksichtigt.
 \end{itemize}
+
+Zur Veranschaulichung zeigt Listing~\ref{lst:running-example-bpmn} einen vereinfachten  Auszug aus dem \ac{BPMN}-XML des laufenden Beispiels. Die erwartete Ausgabe ist \{\texttt{Activity\_generate}, \texttt{Activity\_send}\}.
+
+\begin{lstlisting}[caption={BPMN-XML-Auszug des laufenden Beispiels}, label={lst:running-example-bpmn}]
+<task id="Activity_generate"  name="Tracking-id generieren"/>
+<task id="Activity_template"  name="Benachrichtigungsvorlage laden"/>
+<task id="Activity_send"      name="Status Update senden"/>
+\end{lstlisting}
 
 \subsection*{Begriffsbestimmung \enquote{kritisch}}
 
-Eine Aktivität gilt in dieser Arbeit als \emph{kritisch}, wenn sie \emph{personenbezogene Daten} verarbeitet. Personenbezogene Daten sind, nach Art.~4~Abs.~1 \ac{DSGVO} \cite{GDPR2016}, alle Informationen, die sich auf eine identifizierte oder identifizierbare natürliche Person beziehen. Gemäß Art.~4~Abs.~2 \ac{DSGVO} \cite{GDPR2016} umfasst Verarbeitung jede mit personenbezogenen Daten vorgenommene Operation, wie z.\,B. Erheben, Speichern, Abrufen, Verwenden, Übermitteln und Löschen. Dies schließt auch die \emph{Nutzung bereits vorhandener Daten} (z.\,B. Lesen/Abgleichen) ein.
+Eine Aktivität gilt in dieser Arbeit als \emph{kritisch}, wenn sie \emph{personenbezogene Daten} verarbeitet. Personenbezogene Daten sind, nach Art.~4~Abs.~1 \ac{DSGVO} \cite{GDPR2016}, alle Informationen, die sich auf eine identifizierte oder identifizierbare natürliche Person beziehen. Gemäß Art.~4~Abs.~2 \ac{DSGVO} \cite{GDPR2016} umfasst Verarbeitung jede mit personenbezogenen Daten vorgenommene Operation, wie z.\,B. Erheben, Speichern, Abrufen, Verwenden, Übermitteln und Löschen. Dies schließt auch die \emph{Nutzung bereits vorhandener Daten} (z.\,B. Lesen/Abgleichen) ein. Am laufenden Beispiel bedeutet dies konkret: \texttt{Activity\_send} ist kritisch, da beim Versand typischerweise personenbezogene Daten (z.\,B. E-Mail-Adresse) verarbeitet werden. \texttt{Activity\_generate} ist kritisch, weil die Tracking-\texttt{id} im Kontext des Kundenkontakts einer Person zugeordnet werden kann. \texttt{Activity\_template} ist im Grundfall nicht kritisch, sofern lediglich eine generische Vorlage geladen wird und keine personenbezogenen Daten einfließen.
 
 Diese Aufgabenstellung reiht sich in Arbeiten zur Kennzeichnung kritischer/unkritischer Tätigkeiten in Prozessartefakten ein und bildet die Referenz für die Qualitätsziele im nächsten Abschnitt. \cite{nake2023towards}
