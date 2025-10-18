@@ -22,7 +22,7 @@ export default function BpmnUploadButton({ onFileLoaded }: FileUploadProps) {
 
   const processFile = (file: File) => {
     if (!file.name.endsWith(".bpmn") && !file.name.endsWith(".xml")) {
-      alert("Bitte laden Sie eine .bpmn oder .xml Datei hoch.")
+      alert("Please select a valid BPMN (.bpmn or .xml) file.")
       return
     }
 
@@ -32,11 +32,11 @@ export default function BpmnUploadButton({ onFileLoaded }: FileUploadProps) {
       if (content) {
         onFileLoaded(content)
       } else {
-        console.error("Fehler beim Lesen der Datei: Inhalt ist leer")
+        console.error("Error while reading file: content is empty")
       }
     }
     reader.onerror = (e) => {
-      console.error("Fehler beim Lesen der Datei:", e)
+      console.error("Error while reading file:", e)
     }
     reader.readAsText(file)
   }
@@ -54,7 +54,7 @@ export default function BpmnUploadButton({ onFileLoaded }: FileUploadProps) {
         title="Exportieren"
     >
       <Upload className="h-4 w-4 mr-1"/>
-      Importieren
+        Import
     </Button>
   </div>
 }

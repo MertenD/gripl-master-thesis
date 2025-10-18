@@ -51,7 +51,7 @@ export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = []
         try {
           modelerRef.current.destroy()
         } catch (err) {
-          console.error("Fehler bei m Zerstören des Modelers", err)
+          console.error("Error while destroying BPMN modeler", err)
         }
         modelerRef.current = null
         setIsLoaded(false)
@@ -98,7 +98,7 @@ export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = []
         try {
           modelerRef.current.destroy()
         } catch (err) {
-          console.error("Fehler beim Zerstören des vorherigen Modelers", err)
+          console.error("Error while destroying existing BPMN modeler", err)
         }
         modelerRef.current = null
       }
@@ -133,11 +133,11 @@ export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = []
                   onDiagramChanged(xml)
                 })
                 .catch((err: any) => {
-                  console.error("Fehler beim automatischen Speichern", err)
+                  console.error("Error while saving XML after command stack change", err)
                 })
           }
         } catch (err) {
-          console.error("Fehler beim Verarbeiten von Änderungen", err)
+          console.error("Error while handling command stack change", err)
         }
       })
 
@@ -155,18 +155,18 @@ export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = []
           setCanUndo(commandStack.canUndo())
           setCanRedo(commandStack.canRedo())
         } catch (err) {
-          console.error("Fehler beim Aktualisieren des Undo/Redo-Status", err)
+          console.error("Error while initializing command stack state", err)
         }
 
         if (highlightedActivityIds) {
           highlightActivities(modeler, highlightedActivityIds)
         }
       } catch (err) {
-        console.error("Fehler beim Importieren des BPMN-Diagramms", err)
+        console.error("Error while importing BPMN XML", err)
         setIsLoaded(false)
       }
     } catch (err) {
-      console.error("Fehler beim Initialisieren des BPMN-Modelers", err)
+      console.error("Error while initializing BPMN modeler", err)
     }
   }
 
@@ -203,7 +203,7 @@ export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = []
         styleElementRef.current = styleElement
       }
     } catch (err) {
-      console.error("Fehler beim Hervorheben der Aktivitäten", err)
+      console.error("Error while highlighting activities", err)
     }
   }
 
@@ -213,7 +213,7 @@ export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = []
     try {
       modelerRef.current.get("zoomScroll").stepZoom(1)
     } catch (err) {
-      console.error("Fehler beim Zoomen", err)
+      console.error("Error while zooming in", err)
     }
   }
 
@@ -223,7 +223,7 @@ export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = []
     try {
       modelerRef.current.get("zoomScroll").stepZoom(-1)
     } catch (err) {
-      console.error("Fehler beim Zoomen", err)
+      console.error("Error while zooming out", err)
     }
   }
 
@@ -233,7 +233,7 @@ export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = []
     try {
       modelerRef.current.get("canvas").zoom("fit-viewport")
     } catch (err) {
-      console.error("Fehler beim Zurücksetzen des Zooms", err)
+      console.error("Error while resetting zoom", err)
     }
   }
 
@@ -243,7 +243,7 @@ export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = []
     try {
       modelerRef.current.get("commandStack").undo()
     } catch (err) {
-      console.error("Fehler beim Rückgängig machen", err)
+      console.error("Error while undoing", err)
     }
   }
 
@@ -253,7 +253,7 @@ export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = []
     try {
       modelerRef.current.get("commandStack").redo()
     } catch (err) {
-      console.error("Fehler beim Wiederherstellen", err)
+      console.error("Error while redoing", err)
     }
   }
 
@@ -272,7 +272,7 @@ export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = []
       document.body.removeChild(a)
       URL.revokeObjectURL(url)
     } catch (err) {
-      console.error("Fehler beim Exportieren des BPMN-Diagramms", err)
+      console.error("Error while exporting BPMN diagram", err)
     }
   }
 
@@ -337,7 +337,7 @@ export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = []
               title="Neues Diagramm erstellen"
             >
               <PlusCircle className="h-4 w-4 mr-1" />
-              Neu erstellen
+                Create New
             </Button>
             <BpmnUploadButton onFileLoaded={handleFileLoaded} />
             <Button
@@ -347,7 +347,7 @@ export default function BpmnEditor({ title, bpmnXml, highlightedActivityIds = []
                 title="Exportieren"
             >
               <Download className="h-4 w-4 mr-1" />
-              Exportieren
+                Export
             </Button>
           </div>
         </div>
