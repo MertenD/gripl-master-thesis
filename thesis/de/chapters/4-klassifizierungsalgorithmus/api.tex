@@ -1,7 +1,5 @@
 \section{API-Design}\label{sec:api-design}
 
-\textcolor{orange}{// TODO Zu dem AnalysisReponse Schema noch amountOfRetries als optionale Zahl hinzufügen, die angibt, wie oft der LLM-Aufruf wiederholt wurde, falls ein Fehler aufgetreten ist. Die wird dann im Evaluationsframework ausgewertet, um zu sehen, ob manche Modelle öfter fehlschlagen.}
-
 Dieses Kapitel beschreibt das API-Design der Klassifizierungspipeline, die zur Erkennung \ac{DSGVO}-kritischer Elemente in \ac{BPMN}-Modellen dient. Das Ziel ist es eine standardisierte Schnittstelle zu definieren, die (1) die Einbindung in bestehende Werkzeuge und das Evaluationsframework vereinfacht, (2) die Austauschbarkeit unterschiedlicher Klassifizierungsalgorithmen - insbesondere im Evaluationsframework - ermöglicht, um verschiedene Ansätze der Klassifizierung vergleichen zu können, und (3) Erweiterbarkeit fördert, sodass zukünftige Arbeiten die Schnittstelle wiederverwenden können, um ihre eigenen Klassifizierungsalgorithmen zu integrieren.
 
 \subsection*{HTTP-Endpunkt}
@@ -33,7 +31,7 @@ Die Klassifizierungspipeline ist über einen standardisierten HTTP-Endpunkt nutz
 
 Die \texttt{llmProps} erlauben das Überschreiben von \ac{LLM}-Eigenschaften zur Laufzeit. Dadurch können unterschiedliche Modelle mit demselben Klassifizierungsalgorithmus flexibel getestet und verglichen werden, ohne die Anwendung neu starten zu müssen. Dieses Design wurde gewählt, um die Experimente wie in Kapitel \ref{sec:experimentdesign} beschrieben flexibel durchführen zu können.
 
-Die Antwort des Endpunkts wird als \texttt{application/json} geliefert und enthält eine Liste der als \ac{DSGVO}-kritisch klassifizierten Elemente, einschließlich einer optionalen Begründung für jede Klassifikation und einem optionalen Namen des Elements für bessere Lesbarkeit. Das JSON-Schema der API-Antwort ist in Listing \ref{lst:api-response-schema} dargestellt.
+Die Antwort des Endpunkts hat den Medientyp \texttt{application/json}. Sie enthält eine Liste der als \ac{DSGVO}-kritisch klassifizierten Elemente. Für jedes Element können optional eine Begründung der Klassifikation sowie ein Elementname zur besseren Lesbarkeit angegeben werden. Zusätzlich kann die Anzahl der Versuche ausgegeben werden, die zur erfolgreichen Validierung der Antwort nötig waren (z.\,B. nach einem Schema-Validierungsfehler mit anschließendem Retry-Mechanismus). Diese Informationen nutzt das Evaluationsframework später, um die Robustheit der eingesetzten \acp{LLM} sichtbar zu machen. Das JSON-Schema der Antwort ist in Listing \ref{lst:api-response-schema} dargestellt.
 
 \begin{lstlisting}[caption={JSON-Schema der API-Antwort.},label={lst:api-response-schema}]
 {
@@ -52,7 +50,8 @@ Die Antwort des Endpunkts wird als \texttt{application/json} geliefert und enth�
         },
         "required": ["id"]
       }
-    }
+    },
+    "amountOfRetries": { "type": "number" }
   },
   "required": ["criticalElements"]
 }
