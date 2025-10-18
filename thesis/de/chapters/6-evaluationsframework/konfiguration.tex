@@ -14,11 +14,13 @@ models:
       baseUrl: https://openrouter.ai/api/v1
       modelName: mistralai/mistral-medium-3.1
       apiKey: ${OPEN_ROUTER_API_KEY}
+      topP: 1
   - label: Deepseek Chat v3.1
     llmProps:
       baseUrl: https://openrouter.ai/api/v1
       modelName: deepseek/deepseek-chat-v3.1
       apiKey: ${OPEN_ROUTER_API_KEY}
+      temperature: 0.1
   - label: GPT oss 120b
     llmProps:
       baseUrl: https://openrouter.ai/api/v1
@@ -33,12 +35,12 @@ Die Evaluierungskonfiguration umfasst die folgenden Bausteine:
 
 \begin{itemize}
     \item \texttt{defaultEvaluationEndpoint} ist der Standardendpunkt für die Klassifizierung. Er wird verwendet, wenn für ein Modell kein eigener Endpunkt angegeben ist. Der Endpunkt muss die in Kapitel \ref{sec:api-design} beschriebene API-Spezifikation erfüllen und kann relativ (gegen die Basis-URL des Evaluationsframeworks) oder absolut (für einen externen Dienst) angegeben werden.
-    \item \texttt{maxConcurrent} gibt die maximale Anzahl parallel auszuführender Testfälle an. So lassen sich beispielsweise Rate-Limits von \acp{LLM} einhalten.
+    \item \texttt{maxConcurrent} gibt die maximale Anzahl parallel auszuführender Testfälle an. So lassen sich beispielsweise Rate-Limits \textcolor{orange}{// Noch darauf eingehen was Rate Limits sind und warum das wichtig ist} von \acp{LLM} einhalten.
     \item \texttt{seed} legt einen Startwert (Seed) für reproduzierbare Evaluationsläufe fest. Er wird bei jedem Modell an die \texttt{llmProps} weitergereicht und bei der Kommunikation mit den \acp{LLM} verwendet, sofern diese einen Seed unterstützen.
     \item \texttt{models} enthält die zu evaluierenden Modelle. Jedes Modell besitzt ein \texttt{label} zur Identifikation und optional spezifische \texttt{llmProps}, um die Eigenschaften des verwendeten \acp{LLM} zu definieren.
-    \item \texttt{datasets} ist eine Liste von Datensatz-\texttt{ids}, die in der Evaluierung verwendet werden. Die \texttt{ids} referenzieren die Datensätze, die in der Datenbank verwaltet werden und jeweils eine Menge von Testfällen beinhalten.
+    \item \texttt{datasets} ist eine Liste von Datensatz-\texttt{ids}, die jeweils eine Menge von Testfällen beinhalten.
 \end{itemize}
 
 Wie im Schema in Listing \ref{lst:evaluation-config-schema} gezeigt, kann jedem Modell optional ein eigener \texttt{evaluationEndpoint} zugewiesen werden, der den in \texttt{defaultEvaluationEndpoint} definierten Standard überschreibt. Dadurch lassen sich unterschiedliche Klassifizierungsalgorithmen oder -versionen gezielt pro Modell vergleichen. Ist kein spezifischer Endpunkt angegeben, greift automatisch der Standardendpunkt.
 
-API-Keys in den \texttt{llmProps} können optional als Umgebungsvariablen referenziert werden, wie im Beispiel in Listing \ref{lst:evaluation-config} gezeigt. So lassen sich sensible Daten sicher handhaben, ohne sie direkt in der Konfigurationsdatei zu speichern. Die Umgebungsvariablen werden zur Laufzeit aufgelöst und müssen daher im Kontext des Anwendung verfügbar sein.
+API-Keys in den \texttt{llmProps} können optional als Umgebungsvariablen referenziert werden, wie im Beispiel in Listing \ref{lst:evaluation-config} gezeigt. So lassen sich sensible Daten sicher handhaben, ohne sie direkt in der Konfigurationsdatei zu speichern. Die Umgebungsvariablen werden zur Laufzeit aufgelöst und müssen daher im Kontext der Anwendung verfügbar sein.

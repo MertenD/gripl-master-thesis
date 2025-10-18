@@ -1,4 +1,6 @@
 \section{Erweiterbarkeit}\label{sec:erweiterbarkeit}
 
+\textcolor{orange}{// TODO Das hier soll kein eigenes Kapitel mehr sein, sondern gekürzt in die Einleitung von Kapitel 6 als Kontext/Motivation rein. Einfach dort in den Einleitungstext mit rein. Die section "Erweiterbarkeit" soll entfernt werden}
+
 Das Evaluationsframework ist auf die Entkopplung von \emph{Modell}, \emph{Klassifizierungspipeline} und \emph{Testdaten} ausgelegt. Neue Modelle werden rein konfigurationsbasiert eingebunden, indem Endpunkt, Modellname und API-Key hinterlegt werden. Dadurch ist ein Austausch ohne Codeänderungen möglich. Klassifizierungsalgorithmen bzw.\ Pipelines werden über einen konfigurierbaren HTTP-Endpunkt ergänzt, sofern sie das in Abschnitt~\ref{sec:api-design} definierte Interface implementieren. Dadurch lassen sich verschiedene Varianten von Algorithmen unkompliziert unter identischen Rahmenbedingungen vergleichen. Die Testdatensätze werden zur Laufzeit aus der Datenbank geladen und pro Evaluierung können unterschiedliche Datensätze ausgewählt werden. Neue Datensätze lassen sich jederzeit hinzufügen, um weitere Domänen oder Schwierigkeitsgrade abzudecken. Diese Architektur ermöglicht es, die Umgebung schrittweise zu erweitern und aktuelle Modelle, Verfahren konsistent und reproduzierbar zu evaluieren.
 

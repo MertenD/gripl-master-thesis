@@ -1,13 +1,13 @@
 \section{Use-Cases und Anforderungen}\label{sec:anforderungen-und-use-cases}
 
-Das Evaluationsframework richtet sich an Forschende und Entwickler, die \acp{LLM} und Klassifizierungsalgorithmen für die Identifikation \ac{DSGVO}-kritischer \ac{BPMN}-Aktivitäten auswerten und miteinander vergleichen möchten. Es bietet eine einheitliche Ausführungs- und Auswertungsumgebung mit klar definierten Schnittstellen und standardisierten Berichten. In diesem Kapitel werden die Use-Cases udn Anforderungen des Evaluationsframeworks beschrieben.
+Das Evaluationsframework richtet sich an Forschende und Entwickler, die \acp{LLM} und Klassifizierungsalgorithmen für die Identifikation \ac{DSGVO}-kritischer \ac{BPMN}-\linebreak~Aktivitäten auswerten und miteinander vergleichen möchten. Es bietet eine einheitliche Ausführungs- und Auswertungsumgebung mit klar definierten Schnittstellen und standardisierten Berichten. In diesem Kapitel werden die Use-Cases und funktionale Anforderungen des Evaluationsframeworks beschrieben.
 
 \subsection*{Use-Cases}
 
 Die wichtigsten Anwendungsfälle des Evaluationsframeworks sind:
 
 \begin{itemize}
-    \item \textbf{Benchmarking von LLMs.} Systematischer Vergleich mehrerer \acp{LLM} auf denselben Datensätzen, mit identischem Algorithmus und identischen Parametern.
+    \item \textbf{Benchmarking von \acp{LLM}.} Systematischer Vergleich mehrerer \acp{LLM} auf denselben Datensätzen, mit identischem Algorithmus und identischen Parametern.
     \item \textbf{A/B-Vergleich von Algorithmen.} Gegenüberstellung verschiedener Klassifizierungspipelines, mit z.B.\ alternativen Prompts oder anderem Preprocessing, über eine standardisierte HTTP-Schnittstelle, die in Kapitel~\ref{sec:api-design} definiert ist.
     \item \textbf{Explorative Analyse.} Detaillierte Einsicht pro Modell und Testfall (inklusive Begründungen und Visualisierungen), um Fehlklassifikationen gezielt zu untersuchen.
     \item \textbf{Berichterstellung.} Die Ergebnisse lassen sich als JSON oder Markdown exportieren und später wieder importieren, um sie erneut untersuchen zu können. Sie eignen sich zudem für die Publikation. Die Diagramme werden automatisch erzeugt und stehen ebenfalls zum Download bereit.
@@ -15,9 +15,11 @@ Die wichtigsten Anwendungsfälle des Evaluationsframeworks sind:
 
 In dieser Arbeit werden keine A/B-Vergleiche unterschiedlicher Klassifizierungsalgorithmen durchgeführt, sondern lediglich verschiedene \acp{LLM} mit demselben Algorithmus verglichen. Das Framework ist jedoch so konzipiert, dass dies in zukünftigen Arbeiten möglich ist.
 
+\textcolor{orange}{// TODO In dem Absatz drüber noch erklären, warum keine A/B-Vergleiche unterschiedlicher Klassifizierungsalgorithmen durchgeführt, sondern lediglich verschiedene \acp{LLM} mit demselben Algorithmus verglichen werden.}
+
 \subsection*{Funktionale Anforderungen}
 
-In der folgenden Tabelle sind die funktionalen Anforderungen an das Evaluationsframework aufgelistet, die notwendig sind um Use-Cases zu erfüllen:
+In der folgenden Tabelle sind die funktionalen Anforderungen an das Evaluationsframework aufgelistet, die notwendig sind um die definierten Use-Cases zu erfüllen:
 
 \begin{center}
     \reqTable{01}
@@ -36,7 +38,7 @@ In der folgenden Tabelle sind die funktionalen Anforderungen an das Evaluationsf
 \begin{center}
     \reqTable{03}
     {Deklarative Konfiguration}
-    {Ein Evaluationslauf ist vollständig über eine YAML-Datei konfigurierbar. Dazu zöhlen Modelle, Klassifizierungsendpunkte, Testdatensätze, Seed. Experimente werden dadurch portabel und wiederholbar.}
+    {Ein Evaluationslauf ist vollständig über eine YAML-Datei konfigurierbar. Dazu zählen Modelle, Klassifizierungsendpunkte, Testdatensätze und Seed. Experimente werden dadurch portabel und wiederholbar.}
     {02}
 \end{center}
 
