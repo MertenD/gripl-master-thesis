@@ -30,6 +30,7 @@ export default function AnalysisToolCard({ bpmnXml, analysisResult, setAnalysisR
     const [apiKey, setApiKey] = useState<string>("")
     const [seed, setSeed] = useState<number | null>(null)
     const [temperature, setTemperature] = useState<number | null>(null)
+    const [topP, setTopP] = useState<number | null>(null)
     const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false)
 
     function handleAnalyzeClick() {
@@ -46,6 +47,7 @@ export default function AnalysisToolCard({ bpmnXml, analysisResult, setAnalysisR
             apiKey: apiKey || null,
             seed: seed || null,
             temperature: temperature || null,
+            topP: topP || null
         } as LlmPropsOverride
         const jsonBlob = new Blob([JSON.stringify(llmProps)], { type: "application/json" });
         formData.append("llmProps", jsonBlob);
@@ -138,6 +140,11 @@ export default function AnalysisToolCard({ bpmnXml, analysisResult, setAnalysisR
                 <Label>Temperature</Label>
                 <Input type="number" placeholder="1.0" value={temperature ?? ""}
                        onChange={(e) => setTemperature(safeFloatOrNull(e.target.value))}/>
+            </div>
+            <div className="space-y-2">
+                <Label>Top P</Label>
+                <Input type="number" placeholder="1.0" value={topP ?? ""}
+                       onChange={(e) => setTopP(safeFloatOrNull(e.target.value))}/>
             </div>
             <div className="py-2">
                 <Separator/>
