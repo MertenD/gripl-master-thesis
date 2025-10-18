@@ -21,7 +21,7 @@ export default function TestResultDistributionPieSingle({ summary }: { summary: 
                      label={({ name, value, percent }) => `${name}: ${value} (${((percent||0)*100).toFixed(0)}%)`}>
                     {data.map((e,i)=><Cell key={i} fill={e.color} />)}
                 </Pie>
-                <Tooltip content={<UniversalTooltip />} />
+                <Tooltip content={<UniversalTooltip />} wrapperStyle={{ zIndex: 100 }} />
             </PieChart>
         </ResponsiveContainer>
     </ChartContainer>

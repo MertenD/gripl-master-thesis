@@ -22,7 +22,7 @@ export default function PerformanceMetricsOverviewRadarSingle({ summary }: { sum
                 <PolarAngleAxis dataKey="metric" />
                 <PolarRadiusAxis angle={90} domain={[0, 100]} tick={{ fontSize: 12 }} tickFormatter={(v)=>`${v}%`} />
                 <Radar name="Metrics" dataKey="value" stroke={colors.accuracy} fill={colors.accuracy} fillOpacity={0.3} strokeWidth={2} />
-                <Tooltip content={<UniversalTooltip isPercentage={true}/>} />
+                <Tooltip content={<UniversalTooltip isPercentage={true}/>} wrapperStyle={{ zIndex: 100 }} />
             </RadarChart>
         </ResponsiveContainer>
     </ChartContainer>

@@ -10,7 +10,7 @@ export default function UniversalTooltip({ isPercentage, active, payload, label 
     if (!active || !payload || payload.length === 0) return null;
 
     return (
-        <div className="bg-popover border border-border rounded-md shadow-md p-3 min-w-40">
+        <div className="bg-popover border border-border rounded-md shadow-md p-3 min-w-40 z-9999">
             <p className="font-medium text-popover-foreground mb-1">{label}</p>
             <div className="space-y-1">
                 {payload.filter((p: any) => p && p.value != null).map((p: any) => (

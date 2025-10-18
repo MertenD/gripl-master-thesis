@@ -23,8 +23,7 @@ export default function ConfusionMatrixBarsMulti({
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />
                 <YAxis />
-                <Tooltip content={<UniversalTooltip />} cursor={{ fill: "hsl(var(--card-foreground))", fillOpacity: 0.1 }}/>
-                <Legend />
+                <Tooltip content={<UniversalTooltip />} wrapperStyle={{ zIndex: 100 }} cursor={{ fill: "hsl(var(--card-foreground))", fillOpacity: 0.1 }}/>
                 {items.map(({ label }, idx) => (
                     <Bar key={label} dataKey={label} name={label} radius={[4,4,0,0]} fill={modelPalette[idx % modelPalette.length]} />
                 ))}

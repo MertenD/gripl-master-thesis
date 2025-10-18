@@ -25,8 +25,13 @@ export default function PerformanceMetricsBarsMulti({
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="metric" />
                 <YAxis domain={[0, 1]} tickFormatter={(v) => `${(v * 100).toFixed(0)}%`} />
-                <Tooltip content={<UniversalTooltip isPercentage={true}/>} cursor={{ fill: "hsl(var(--card-foreground))", fillOpacity: 0.1 }}/>
-                <Legend />
+                <Tooltip content={<UniversalTooltip isPercentage={true}/>} wrapperStyle={{ zIndex: 100 }} cursor={{ fill: "hsl(var(--card-foreground))", fillOpacity: 0.1 }}/>
+                // Legens entrysh should have the same order than bars
+                // itemSorter Type: itemSorter?: 'value' | 'dataKey' | ((item: LegendPayload) => number | string);
+                // itemSorter usage: (itemSorter ? sortBy(payload, itemSorter) : payload)
+                <Legend itemSorter={(item) => {
+                    return items.findIndex(({ label }) => label === item.value);
+                }} />
                 {items.map(({ label }, idx) => (
                     <Bar key={label} dataKey={label} name={label} radius={[4,4,0,0]} fill={modelPalette[idx % modelPalette.length]} />
                 ))}
