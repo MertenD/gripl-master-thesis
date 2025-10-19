@@ -26,9 +26,6 @@ export default function PerformanceMetricsBarsMulti({
                 <XAxis dataKey="metric" />
                 <YAxis domain={[0, 1]} tickFormatter={(v) => `${(v * 100).toFixed(0)}%`} />
                 <Tooltip content={<UniversalTooltip isPercentage={true}/>} wrapperStyle={{ zIndex: 100 }} cursor={{ fill: "hsl(var(--card-foreground))", fillOpacity: 0.1 }}/>
-                // Legens entrysh should have the same order than bars
-                // itemSorter Type: itemSorter?: 'value' | 'dataKey' | ((item: LegendPayload) => number | string);
-                // itemSorter usage: (itemSorter ? sortBy(payload, itemSorter) : payload)
                 <Legend itemSorter={(item) => {
                     return items.findIndex(({ label }) => label === item.value);
                 }} />
