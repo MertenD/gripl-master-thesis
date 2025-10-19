@@ -423,6 +423,7 @@ methodological issues related to training on large web corpora.},
   urldate = {2025-06-20}
 }
 
+
 @article{blake2025datasetdiversity,
   author = {Blake, Harrison and Esther, Dorcas},
   title = {Impact of Dataset Diversity on Model Evaluation Metrics},
@@ -808,4 +809,122 @@ methodological issues related to training on large web corpora.},
   publisher = {Springer},
   url = {https://link.springer.com/article/10.1007/s10844-024-00898-1},
   abstract= {AI-Augmented Business Process Management Systems blend flexibility, autonomy, and conversational capability. Large Language Models (LLMs) boost such systems but empirical validations are scarce. We propose the Business Process Large Language Model (BPLLM) framework, coupling Retrieval-Augmented Generation with fine-tuning and process-aware chunking. Experiments show promising performance in identifying activities and sequence flows in process models, suggesting potential for process-aware DSSs.}
+}
+
+@misc{chatgpt,
+  title        = {ChatGPT ist da},
+  author       = {{OpenAI}},
+  year         = {2022},
+  month = {11},
+  day = {30},
+  url          = {https://openai.com/de-DE/index/chatgpt/},
+  urldate      = {2025-10-19},
+}
+
+@misc{MMLU,
+    title={Measuring Massive Multitask Language Understanding},
+    author={Dan Hendrycks and Collin Burns and Steven Basart and Andy Zou and Mantas Mazeika and Dawn Song and Jacob Steinhardt},
+    year={2021},
+    eprint={2009.03300},
+    archivePrefix={arXiv},
+    primaryClass={cs.CY},
+    url={https://arxiv.org/abs/2009.03300},
+}
+
+@misc{MMLU-Pro,
+    title={MMLU-Pro: A More Robust and Challenging Multi-Task Language Understanding Benchmark},
+    author={Yubo Wang and Xueguang Ma and Ge Zhang and Yuansheng Ni and Abhranil Chandra and Shiguang Guo and Weiming Ren and Aaran Arulraj and Xuan He and Ziyan Jiang and Tianle Li and Max Ku and Kai Wang and Alex Zhuang and Rongqi Fan and Xiang Yue and Wenhu Chen},
+    year={2024},
+    eprint={2406.01574},
+    archivePrefix={arXiv},
+    primaryClass={cs.CL},
+    url={https://arxiv.org/abs/2406.01574},
+}
+
+@misc{BBH,
+    title={Challenging BIG-Bench Tasks and Whether Chain-of-Thought Can Solve Them},
+    author={Mirac Suzgun and Nathan Scales and Nathanael Schaerli and Sebastian Gehrmann and Yi Tay and Hyung Won Chung and Aakanksha Chowdhery and Quoc V. Le and Ed H. Chi and Denny Zhou and Jason Wei},
+    year={2022},
+    eprint={2210.09261},
+    archivePrefix={arXiv},
+    primaryClass={cs.CL},
+    url={https://arxiv.org/abs/2210.09261},
+}
+
+@inproceedings{hellaswag,
+    title = "{H}ella{S}wag: Can a Machine Really Finish Your Sentence?",
+    author = "Zellers, Rowan  and
+      Holtzman, Ari  and
+      Bisk, Yonatan  and
+      Farhadi, Ali  and
+      Choi, Yejin",
+    editor = "Korhonen, Anna  and
+      Traum, David  and
+      M{\`a}rquez, Llu{\'i}s",
+    booktitle = "Proceedings of the 57th Annual Meeting of the Association for Computational Linguistics",
+    month = jul,
+    year = "2019",
+    address = "Florence, Italy",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/P19-1472/",
+    doi = "10.18653/v1/P19-1472",
+    pages = "4791--4800",
+    abstract = "Recent work by Zellers et al. (2018) introduced a new task of commonsense natural language inference: given an event description such as ``A woman sits at a piano,'' a machine must select the most likely followup: ``She sets her fingers on the keys.'' With the introduction of BERT, near human-level performance was reached. Does this mean that machines can perform human level commonsense inference? In this paper, we show that commonsense inference still proves difficult for even state-of-the-art models, by presenting HellaSwag, a new challenge dataset. Though its questions are trivial for humans ({\ensuremath{>}}95{\%} accuracy), state-of-the-art models struggle ({\ensuremath{<}}48{\%}). We achieve this via Adversarial Filtering (AF), a data collection paradigm wherein a series of discriminators iteratively select an adversarial set of machine-generated wrong answers. AF proves to be surprisingly robust. The key insight is to scale up the length and complexity of the dataset examples towards a critical `Goldilocks' zone wherein generated text is ridiculous to humans, yet often misclassified by state-of-the-art models. Our construction of HellaSwag, and its resulting difficulty, sheds light on the inner workings of deep pretrained models. More broadly, it suggests a new path forward for NLP research, in which benchmarks co-evolve with the evolving state-of-the-art in an adversarial way, so as to present ever-harder challenges.",
+}
+
+@article{winogrande,
+    author = {Sakaguchi, Keisuke and Bras, Ronan Le and Bhagavatula, Chandra and Choi, Yejin},
+    title = {WinoGrande: an adversarial winograd schema challenge at scale},
+    year = {2021},
+    issue_date = {September 2021},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    volume = {64},
+    number = {9},
+    issn = {0001-0782},
+    url = {https://doi.org/10.1145/3474381},
+    doi = {10.1145/3474381},
+    abstract = {Commonsense reasoning remains a major challenge in AI, and yet, recent progresses on benchmarks may seem to suggest otherwise. In particular, the recent neural language models have reported above 90\% accuracy on the Winograd Schema Challenge (WSC), a commonsense benchmark originally designed to be unsolvable for statistical models that rely simply on word associations. This raises an important question---whether these models have truly acquired robust commonsense capabilities or they rely on spurious biases in the dataset that lead to an overestimation of the true capabilities of machine commonsense.To investigate this question, we introduce WinoGrande, a large-scale dataset of 44k problems, inspired by the original WSC, but adjusted to improve both the scale and the hardness of the dataset. The key steps of the dataset construction consist of (1) large-scale crowdsourcing, followed by (2) systematic bias reduction using a novel AFLITE algorithm that generalizes human-detectable word associations to machine-detectable embedding associations. Our experiments demonstrate that state-of-the-art models achieve considerably lower accuracy (59.4\%-79.1\%) on WINOGRANDE compared to humans (94\%), confirming that the high performance on the original WSC was inflated by spurious biases in the dataset.Furthermore, we report new state-of-the-art results on five related benchmarks with emphasis on their dual implications. On the one hand, they demonstrate the effectiveness of WINOGRANDE when used as a resource for transfer learning. On the other hand, the high performance on all these benchmarks suggests the extent to which spurious biases are prevalent in all such datasets, which motivates further research on algorithmic bias reduction.},
+    journal = {Commun. ACM},
+    month = aug,
+    pages = {99–106},
+    numpages = {8},
+}
+
+@misc{Mistral_Large_Bench,
+    title        = {Au Large: Announcing Mistral Large},
+    author       = {{Mistral AI}},
+    howpublished = {\url{https://mistral.ai/news/mistral-large}},
+    year         = {2024},
+    month = {2},
+    day = {26},
+    urldate = {2025-10-09}
+}
+
+@misc{mistral_models_benchmarks,
+    title        = {Models Benchmarks},
+    author       = {{Mistral AI}},
+    year         = {2025},
+    url          = {https://docs.mistral.ai/getting-started/models/benchmark/},
+    urldate      = {2025-10-09},
+}
+
+@misc{Qwen2p5_TechReport_2025,
+    title={Qwen2.5 Technical Report},
+    author={Qwen and : and An Yang and Baosong Yang and Beichen Zhang and Binyuan Hui and Bo Zheng and Bowen Yu and Chengyuan Li and Dayiheng Liu and Fei Huang and Haoran Wei and Huan Lin and Jian Yang and Jianhong Tu and Jianwei Zhang and Jianxin Yang and Jiaxi Yang and Jingren Zhou and Junyang Lin and Kai Dang and Keming Lu and Keqin Bao and Kexin Yang and Le Yu and Mei Li and Mingfeng Xue and Pei Zhang and Qin Zhu and Rui Men and Runji Lin and Tianhao Li and Tianyi Tang and Tingyu Xia and Xingzhang Ren and Xuancheng Ren and Yang Fan and Yang Su and Yichang Zhang and Yu Wan and Yuqiong Liu and Zeyu Cui and Zhenru Zhang and Zihan Qiu},
+    year={2025},
+    eprint={2412.15115},
+    archivePrefix={arXiv},
+    primaryClass={cs.CL},
+    url={https://arxiv.org/abs/2412.15115},
+}
+
+@misc{MAA_AIME_2025,
+    author       = "{Mathematical Association of America}",
+    title        = "{MAA Invitational Competitions: American Invitational Mathematics Examination (AIME)}",
+    year         = {2025},
+    howpublished = {\url{https://maa.org/maa-invitational-competitions/}},
+    note         = {Zugriff: 2025-10-19},
+    organization = {MAA American Mathematics Competitions},
+    urldate      = {2025-10-07},
 }
