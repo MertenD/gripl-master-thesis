@@ -1,16 +1,18 @@
 \section{Analyse nach Modellkategorien}\label{sec:analyse-nach-modellkategorien}
 
-Für ein besseres Verständnis der Leistungsunterschiede werden die Modelle im Folgenden nach verschiedenen Kriterien gruppiert und verglichen. Dabei wird jeweils diskutiert, wie sich die Gruppen in Bezug auf die Qualitätsziele unterscheiden und welche Trends sich beobachten lassen.
+Für ein besseres Verständnis der Leistungsunterschiede werden die Modelle im Folgenden nach verschiedenen Kriterien gruppiert und verglichen. Dabei wird jeweils diskutiert, wie sich die Gruppen in Bezug auf die Qualitätsziele unterscheiden und welche Trends sich beobachten lassen. Die Implikationen für Praxis und Forschungsfragen werden am Ende dieses Kapitels in Abschnitt~\ref{sec:antworten-auf-forschungsfragen} gebündelt beantwortet.
 
 \subsection*{Proprietäre versus Open-Weight Modelle}
 
 Die beiden proprietären Modelle \texttt{GPT-4o} und \texttt{Mistral Medium 3.1} erreichen F1-Scores von $0{,}822$ bzw.\ $0{,}843$. Trotz seiner exzellenten Precision von $0{,}892$ verfehlt \texttt{GPT-4o} aufgrund des niedrigen Recalls von $0{,}762$ das Mindestziel und übersieht damit relativ viele kritische Aktivitäten. \texttt{Mistral Medium 3.1} bietet mit einem Recall von $0{,}877$ eine bessere Balance und erfüllt alle Qualitätsziele.
 
-Die offene Kategorie zeigt ein heterogenes Bild. Mehrere Modelle wie \texttt{Qwen3-235B-\linebreak~A22B-Thinking-2507} mit einem F1-Score $= 0{,}874$, \texttt{GPT-OSS-20B} mit F1-Score $= 0{,}866$ und \texttt{DeepSeek-R1-Distill-Qwen-14B} mit F1-Score $= 0{,}848$ übertreffen die proprietären Modelle. Gleichzeitig gibt es mit \texttt{Mixtral-8x7B-Instruct-v0.1}, das F1-Score $= 0{,}596$ erzielte, auch klare Ausreißer nach unten. Insgesamt zeigt sich, dass hochwertige offene Modelle ein besseres Verhältnis von Recall und Precision aufweisen und die Qualitätsziele häufig klar erfüllen.
+Die offene Kategorie zeigt ein heterogenes Bild. Mehrere Modelle wie \texttt{Qwen3-235B-\linebreak~A22B-Thinking-2507} mit einem F1-Score $= 0{,}874$, \texttt{GPT-OSS-20B} mit F1-Score $= 0{,}866$ und \texttt{DeepSeek-R1-Distill-Qwen-14B} mit F1-Score $= 0{,}848$ übertreffen die proprietären Modelle. Sie erkennen kritische Aktivitäten sehr zuverlässig und klassifizieren nur wenige unkritische Aktivitäten fälschlich als kritisch. Gleichzeitig gibt es mit \texttt{Mixtral-8x7B-Instruct-v0.1}, das F1-Score $= 0{,}596$ erzielte, auch klare Ausreißer nach unten, die weder genug kritische Aktivitäten erkennen noch eine akzeptable Precision bieten.
+
+Insgesamt zeigt sich, dass hochwertige offene Modelle ein besseres Verhältnis von Recall und Precision aufweisen und die Qualitätsziele häufig klar erfüllen. Für die Praxis bedeutet dies, dass offene Modelle eine attraktive Alternative zu proprietären Lösungen darstellen, jedoch ist die Auswahl des Modells entscheidend, da die Leistungsunterschiede innerhalb der offenen Kategorie erheblich sind.
 
 \subsection*{Kleine versus Große Modelle}
 
-Tabelle \ref{tab:small-vs-large} vergleicht die Mittelwerte der Metriken für kleine Modelle ($\leq 25$\,B Parameter) und große Modelle ($>25$\,B Parameter). Im Durchschnitt unterscheiden sich die Gruppen nur geringfügig. Die kleinen Modelle erreichen einen mittleren F1-Score von $0{,}805$ und die großen Modelle $0{,}806$, wobei die großen Modelle ohne den Ausreißer \texttt{Mixtral-8x7B-Instruct-v0.1} einen leicht höheren Durchschnitt von $0{,}836$ erreichen. Der beste F1-Score unter den kleinen Modellen stammt von \texttt{GPT-OSS-20B} mit $0{,}866$, bei den großen Modellen führt \texttt{Qwen3-235B-A22B-\linebreak~Thinking-2507} mit $0{,}874$. Bemerkenswert ist der leicht höhere durchschnittliche Recall der kleinen Modelle von $0{,}843$ gegenüber den großen mit $0{,}839$, wohingegen Precision und Accuracy annähernd identisch sind. Diese Ergebnisse bestätigen, dass die Modellgröße allein kein Garant für eine bessere Klassifikationsleistung ist.
+Tabelle \ref{tab:small-vs-large} vergleicht die Mittelwerte der Metriken für kleine Modelle ($\leq 25$\,B Parameter) und große Modelle ($>25$\,B Parameter). Im Durchschnitt unterscheiden sich die Gruppen nur geringfügig. Die kleinen Modelle erreichen einen mittleren F1-Score von $0{,}805$ und die großen Modelle $0{,}806$, wobei die großen Modelle ohne den Ausreißer \texttt{Mixtral-8x7B-Instruct-v0.1} einen leicht höheren Durchschnitt von $0{,}836$ erreichen. Der beste F1-Score unter den kleinen Modellen stammt von \texttt{GPT-OSS-20B} mit $0{,}866$, bei den großen Modellen führt \texttt{Qwen3-235B-A22B-\linebreak~Thinking-2507} mit $0{,}874$. Bemerkenswert ist der leicht höhere durchschnittliche Recall der kleinen Modelle von $0{,}843$ gegenüber den großen mit $0{,}839$, wohingegen Precision und Accuracy annähernd identisch sind.
 
 \begin{table}[htbp]
  \centering
@@ -46,6 +48,9 @@ Tabelle \ref{tab:small-vs-large} vergleicht die Mittelwerte der Metriken für kl
  \end{adjustbox}
 \end{table}
 
+Diese Ergebnisse bestätigen, dass die Modellgröße allein kein Garant für eine bessere Klassifikationsleistung ist. Kleinere Modelle wie \texttt{GPT-OSS-20B} liefern sehr starke Screening-Leistung bei geringeren Kosten und lassen sich leichter On-\linebreak~Premises\footnote{
+On-Premises bezeichnet den Betrieb von IT-Systemen im eigenen Rechenzentrum statt in der Cloud.
+} betreiben. In der Praxis sollte daher das Auswahlkriterium für ein Modell die \emph{Balance aus Recall, Precision und Betriebskosten} sein, nicht die Parameterzahl.
 
 \subsection*{Europäische vs. internationale Modelle}
 
@@ -84,4 +89,4 @@ Tabelle \ref{tab:eu-vs-international} stellt die Mittelwerte der europäischen M
  \end{adjustbox}
 \end{table}
 
-Diese Vergleiche belegen, dass ein europäischer Ursprung nicht zwangsläufig mit einer geringeren Leistung einhergeht – \texttt{Mistral Medium 3.1} erreicht gute Werte, dicht gefolgt von \texttt{Mistral-Large-Instruct-2411}. Allerdings zeigen die Ergebnisse auch, dass einige europäische Modelle hinter den internationalen Konkurrenten zurückbleiben. Insgesamt sind die internationalen Modelle im Durchschnitt leistungsfähiger und stabiler.
+Diese Vergleiche belegen, dass ein europäischer Ursprung nicht zwangsläufig mit einer geringeren Leistung einhergeht – \texttt{Mistral Medium 3.1} erreicht gute Werte, dicht gefolgt von \texttt{Mistral-Large-Instruct-2411}. Allerdings zeigen die Ergebnisse auch, dass einige europäische Modelle hinter den internationalen Konkurrenten zurückbleiben. Insgesamt sind die internationalen Modelle im Durchschnitt leistungsfähiger und stabiler, da sie die europäischen Modelle in jeder Metrik im durchschnitt übertreffen und eine geringere Varianz aufweisen. Zudem ist in jeder Metrik ein internationales Modell führend.
