@@ -19,6 +19,8 @@ BCOR15mm               % Bindekorrektur
 \usepackage[T1]{fontenc}
 \usepackage[printonlyused]{acronym}
 
+\usepackage{abstract}
+
 % table design
 \usepackage[table]{xcolor}
 
@@ -183,6 +185,18 @@ pdfborder=0 0 0	% keine Box um die Links!
   Satz: PDF-\LaTeXe
 }
 
+\begin{abstract}
+    In der EU ist die Einhaltung der Datenschutz-Grundverordnung (DSGVO) in Geschäftsprozessen essenziell, da bei Nichteinhaltung hohe Bußgelder drohen können. Jedoch ist eine manuelle Prüfung von Prozessmodellen in der Praxis aufwendig und fehleranfällig. Diese Arbeit untersucht daher, wie Large Language Models (LLMs) DSGVO-kritische Aktivitäten in BPMN-Prozessmodellen automatisiert identifizieren können, da sie großes Potenzial im Umgang mit komplexen Texten und Zusammenhängen zeigen. Hierzu wird (1) eine Klassifizierungspipeline mit Zero-Shot-Prompting und strikt strukturiertem JSON-Output, ergänzt um \emph{id}-Validierung/-Vervollständigung und einem automatischen Retry-Mechanismus, (2) ein Labeling-Tool für gelabelte BPMN-Testfälle sowie (3) ein Evaluationsframework mit deklarativer Konfiguration, standardisierter HTTP-Schnittstelle und Frontend für reproduzierbare, vergleichbare Experimente entwickelt. Diese Infrastruktur ermöglicht belastbare Modellvergleiche über mehrere Domänen und Sprachen hinweg.
+
+    In einer empirischen Studie werden 13 LLMs (Europäische vs. Internationale, Offene vs. Proprietäre, Große vs. Kleine) auf 25 Testfälle über fünf Wiederholungen evaluiert. Daraufhin werden die Mittelwerte und Standardabweichungen für Precision, Recall, F1-Score und Accuracy berichtet. Neun von dreizehn Modellen erreichen einen F1-Score von $\ge 0{,}80$. Spitzenreiter sind \texttt{Qwen3-235B-A22B-Thinking-2507} (F1-Score $=0{,}874$, Recall $=0{,}932$), \emph{GPT-OSS-20B} (F1-Score $=0{,}866$, Recall $=0{,}918$) und \texttt{DeepSeek-R1-Distill-Qwen-14B} (F1-Score $=0{,}848$, Precision $=0{,}829$). Unter den EU-Modellen stechen \texttt{Mistral Medium 3.1} und \texttt{Mistral-\linebreak~Large-Instruct-2411} mit F1-Scores von $0{,}843$ bzw. $0{,}823$ heraus.
+
+    Die Ergebnisse zeigen zudem unterschiedliche Trade-offs: \texttt{GPT-4o} erzielt die höchste Precision ($0{,}892$), verfehlt jedoch mit einem Recall von $0{,}762$ die Mindestanforderung für ein Recall-orientiertes Screening. \texttt{Gemma-3-27B-it} erreicht umgekehrt einen sehr hohen Recall ($0{,}916$) bei niedriger Precision ($0{,}687$). Insgesamt ist die Varianz über Seeds für die meisten Modelle gering ($\text{SD}_{\text{F1-Score}}\le 0{,}02$).
+
+    Fehleranalysen zeigen vor allem (1) False Positives bei fehlendem Kontext (z.\,B. nicht explizit modellierte Anonymisierung von Daten) und (2) False Negatives, wenn personenbezogene Datenflüsse über mehrere Schritte nicht sicher erkannt werden.
+
+    Insgesamt eignen sich aktuelle LLMs gut für ein automatisiertes, Recall-orientiertes Vorscreening von BPMN-Prozessen, jedoch bleibt eine nachgelagerte fachliche Prüfung erforderlich.
+\end{abstract}
+
 % ab hier Zeilenabstand etwas größer 
 \setstretch{1.2}
 
@@ -192,7 +206,6 @@ pdfborder=0 0 0	% keine Box um die Links!
 
 \mainmatter
 
-% TODO Hier kommen die Kapitel (\input{chapters/...}) hin
 \input{de/chapters}
 
 \appendix
