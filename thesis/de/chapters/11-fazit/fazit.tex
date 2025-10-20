@@ -1,10 +1,18 @@
 \chapter{Fazit}\label{ch:fazit}
 
-Hier neben der allgemeinen Zusammenfassung unbedingt noch die erste Forschungsfrage explizit beantworten
+Diese Arbeit untersuchte, inwieweit moderne \acp{LLM} \ac{DSGVO}-kritische Aktivitäten in \ac{BPMN}-Prozessmodellen zuverlässig identifizieren können. Als Qualitätsziele galten Recall-Priorität und ein angestrebter F1-Score von $\geq 0{,}80$. In einer systematischen Evaluation mit 13 Modellen, 25 Testfällen und jeweils fünf Wiederholungen erreichten \emph{neun} Modelle die Zielwerte. Offene Modelle wie \texttt{Qwen3-235B-A22B-\linebreak~Thinking-2507} und \texttt{GPT-OSS-20B} kombinierten hohen Recall mit solider Precision. Das proprietäre Benchmark-Modell \texttt{GPT-4o} erzielte zwar die höchste Precision, verfehlte jedoch das Recall-Mindestziel. Kleinere Modelle (\,$\leq 25$B\,) hielten mit größeren mit und sind für On-Premises-Szenarien attraktiv. Europäische Modelle wie das proprietäre \texttt{Mistral Medium 3.1} und das offene \texttt{Mistral-Large-\linebreak~Instruct-2411} erwiesen sich als wettbewerbsfähig, lagen jedoch im Mittel im Vergleich zu internationale Spitzenmodellen zurück. Die Robustheitsanalyse zeigte über die meisten Modelle hinweg geringe Seed-Varianzen und damit praxisrelevante Stabilität.
 
-Unter anderem das hier, evtl noch mehr:
-\begin{itemize}
-    \item Jetzt gibt es ein einheitliches Evaluationsframework mit einer einheitlich definierten Schnittstelle für Klassifizierungsalgorithmen -> Zukünftige Arbeiten können sich mit der Entwicklung besserer Klassifizierungsalgorithmen/Pipelines (Bspw. noch RAG einbauen) beschäftigen und diese mit diesem Framework vergleichen/benchmarken
-    \item Außerdem können in Zukunft auch noch mehr Modelle vergleichen werden, da sich die Welt der LLMs rasant weiterentwickelt
-    \item Auch Finetunen ist etwas was interessant gewesen wäre für diese Masterarbeit, aber den Rahmen gesprengt hätte
-\end{itemize}
+Ermöglicht wurden diese Ergebnisse durch die in dieser Arbeit entwickelte Infrastruktur: (1) eine Klassifizierungspipeline mit strukturiertem JSON-Output, \texttt{id}-\linebreak~Validierung/-Vervollständigung und automatischem Retry zur Erhöhung der Formattreue und Reduzierung von Fehlern, (2) ein Labeling-Tool zur Erstellung und Pflege gelabelter \ac{BPMN}-Testfälle über mehrere Domänen und Sprachen, sowie (3) ein Evaluationsframework mit deklarativer YAML-Konfiguration, standardisierter HTTP-Schnittstelle für Klassifizierungsalgorithmen und Frontend zur Visualisierung der Ergebnisse und Metriken. Diese Bausteine unterstützen belastbare, wiederholbare Experimente und einen fairen Modellvergleich und erlauben künftigen Arbeiten, neue Modelle, Prompting-Strategien, Klassifizierungsalgorithmen oder Testdaten nahtlos zu integrieren.
+
+Die Fallstudien machten zwei wiederkehrende Fehlerbilder sichtbar: (1) konservative \emph{FP}, wenn wesentlicher Kontext im Modell nicht explizit ist und (2) \emph{FN}, wenn Datenflüsse über Aktivitätsketten nicht vollständig verfolgt werden. Für die Praxis folgt daraus, dass der Kontext und die Datenflüsse in \ac{BPMN}-Modellen explizit modelliert werden sollten und ein Recall-orientiertes Vorscreening stets durch eine nachgelagerte fachliche Prüfung zu ergänzen ist.
+
+Offen bleiben vor allem fünf Punkte:
+\begin{enumerate}
+    \item Ausbau und Qualitätssteigerung der Testdaten durch weitere Domänen, Sprachen und Prozessvielfalt sowie robustere Labels (z.\,B.\ durch mehrere Personen),
+    \item systematische A/B-Vergleiche alternativer Pipeline-Varianten über die bestehende Schnittstelle, in denen z.\,B. andere Prompting-Strategien, Pre-\linebreak~processing-Methoden oder andere graphbasierte Kontextrepräsentationen getestet werden,
+    \item Integration von wissens- und regelgestützter Komponenten, wie z.\,B.\ nachgelagerte Konsistenz-/Entailment-Prüfungen oder \ac{RAG}, zur Reduktion von Fehlklassifikationen,
+    \item Strategien für sehr große Prozesse, um Token-Limits zu umgehen - etwa durch Prozesssegmentierung - und
+    \item betriebliche Aspekte wie die Modellwahl unter Datenschutz- und Hostingvorgaben.
+\end{enumerate}
+
+In Summe zeigt die Arbeit: \acp{LLM} bilden in Kombination mit einer robusten Pipeline ein wirksames, reproduzierbares Screening-Werkzeug und eine tragfähige Grundlage für weiterführende Forschung und Anwendungen. Internationale Spitzenmodelle lieferten die besten Ergebnisse; dennoch sind europäische sowie kleinere Modelle konkurrenzfähig - insbesondere unter On-Premises- und Datenschutzanforderungen. Die bereitgestellte Infrastruktur aus Pipeline, Labeling- und Evaluationsframework schafft eine belastbare Basis, auf der zukünftige Arbeiten aufbauen können und die den Einsatz von \acp{LLM} im Datenschutzkontext weiter voranbringen kann.
