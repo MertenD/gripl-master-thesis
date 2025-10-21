@@ -14,7 +14,7 @@ Nach erfolgreichem Parsing werden alle Elemente mit \texttt{isRelevant = false} 
 
 Ohne das \texttt{isRelevant}-Flag hat das \ac{LLM} in der Praxis des Öfteren Aktivitäten als kritisch ausgegeben, deren Begründung jedoch ausdrücklich darlegte, \emph{warum} sie \emph{nicht} kritisch seien. Das Modell erkannte die Unkritikalität also korrekt, hielt sich aber nicht strikt an die Vorgabe, ausschließlich \texttt{ids} kritischer Aktivitäten in die Antwort aufzunehmen. Als pragmatische Absicherung wurde daher das boolesche \texttt{isRelevant}-Flag eingeführt. Das \ac{LLM} muss zusätzlich neben der Ausgabe der \texttt{ids} auch explizit angeben, ob die jeweilige Aktivität kritisch ist oder nicht. In der Summe reduziert diese Filterung die Anzahl widersprüchlicher Ausgaben.
 
-\texttt{isRelevant} dient ausschließlich einer internen Validierung und wird in der finalen Ausgabe der Klassifizierungs-Pipeline nicht berücksichtigt.
+\texttt{isRelevant} dient ausschließlich einer internen Validierung und wird in der finalen Ausgabe der Klassifizierungspipeline nicht berücksichtigt.
 
 \subsection*{\texttt{id}-Validierung und -Vervollständigung}
 
