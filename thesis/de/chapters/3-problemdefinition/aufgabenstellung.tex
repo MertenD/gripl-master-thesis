@@ -4,7 +4,7 @@ Ziel der Arbeit ist eine \emph{binäre Klassifikation} auf Ebene einzelner \ac{B
 
 \begin{itemize}
     \item \textbf{Eingabe} ist ein valides \ac{BPMN}-XML mit stabilen \texttt{id}-Attributen je Aktivität \cite{omgbpmn}.
-    \item \textbf{Ausgabe} ist eine Menge von Aktivitäts-\texttt{ids}, die als \emph{kritisch} klassifiziert wurden. Optional werden zusätzlich eine natürlichsprachige Begründung für einzelne Entscheidungen ausgegeben. Im Fall der Klassifizierungspipeline dieser Arbeit werden die Begründungen vom \ac{LLM} generiert. Diese dienen ausschließlich der Nachvollziehbarkeit der gewählten Klassifizierungen, werden allerdings nicht in der Evaluation berücksichtigt.
+    \item \textbf{Ausgabe} ist eine Menge von Aktivitäts-\texttt{ids}, die als \emph{kritisch} klassifiziert wurden. Optional wird zusätzlich eine natürlichsprachige Begründung für einzelne Entscheidungen ausgegeben. Im Fall der Klassifizierungspipeline dieser Arbeit werden die Begründungen vom \ac{LLM} generiert. Diese dienen ausschließlich der Nachvollziehbarkeit der gewählten Klassifizierungen, werden allerdings nicht in der Evaluation berücksichtigt.
 \end{itemize}
 
 Zur Veranschaulichung zeigt Listing~\ref{lst:running-example-bpmn} einen vereinfachten  Auszug aus dem \ac{BPMN}-XML des laufenden Beispiels. Die erwartete Ausgabe ist \{\texttt{Activity\_generate}, \texttt{Activity\_send}\}.
