@@ -1,6 +1,3 @@
-% Functional-Requirement Table Design
-%
-% Oberhalb und unterhalb des Zeilen Contents muss noch irgendwie Platzeingefügt werden
 \newcounter{linkcount}
 \newcounter{linktotal}
 
@@ -12,45 +9,70 @@
 }
 
 \newcommand{\createHyperlinks}[1]{%
-    \ifthenelse{\equal{#1}{-}}%
-    {-}%
-    {%
+    \ifthenelse{\equal{#1}{-}}{-}{%
         \countLinks{#1}%
         \renewcommand*{\do}[1]{%
             \stepcounter{linkcount}%
             \hyperlink{FA##1}{FA##1}%
-            \ifnum\value{linkcount}<\value{linktotal}%
-            ,\ %
-            \fi%
+            \ifnum\value{linkcount}<\value{linktotal},\ \fi%
         }%
         \docsvlist{#1}%
     }%
 }
 
-\newcommand{\reqTable}[4]{
-        {\rowcolors{2}{gray!50!white!20}{gray!40!white!10}
-    \phantomsection\hypertarget{FA#1}{}
-    \begin{tabular}{ p{3cm} p{10.2cm} }
-        \rowcolor{darkgray}\textcolor{white}{\textbf{ID:}} & \textcolor{white}{\textbf{FA#1}} \\
-        Titel: & #2 \\
-        Beschreibung: & #3 \\
-        Abhängigkeit: & \createHyperlinks{#4} \\
-    \end{tabular}
-    }
-}
-
+% Optional: für NFA-Referenzen
 \newcommand{\createHyperlinksNFA}[1]{%
-    \ifthenelse{\equal{#1}{-}}%
-    {-}%
-    {%
+    \ifthenelse{\equal{#1}{-}}{-}{%
         \countLinks{#1}%
         \renewcommand*{\do}[1]{%
             \stepcounter{linkcount}%
             \hyperlink{NFA##1}{NFA##1}%
-            \ifnum\value{linkcount}<\value{linktotal}%
-            ,\ %
-            \fi%
+            \ifnum\value{linkcount}<\value{linktotal},\ \fi%
         }%
         \docsvlist{#1}%
     }%
 }
+
+% Helfer: Abhängigkeits-Zeile nur bei Inhalt rendern
+\newcommand{\MaybeDepsRow}[1]{%
+    \ifstrempty{#1}{%
+        Abhängigkeiten: & -
+    }{%
+        \ifdefstrequal{#1}{-}{}{%
+            Abhängigkeiten: & \createHyperlinks{#1} \\
+        }%
+    }%
+}
+
+% ======= Layout für die Requirement-Box =======
+\makeatletter
+\newlength{\reqLabelWidth}
+\setlength{\reqLabelWidth}{3cm}
+
+\newsavebox{\req@box}
+\newcommand{\reqTable}[4]{%
+    \par\smallskip\noindent
+    \setlength{\fboxsep}{6pt}%
+    \setlength{\fboxrule}{0.6pt}%
+    \begin{lrbox}{\req@box}%
+    \begin{minipage}{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}
+    \phantomsection\hypertarget{FA#1}{}
+    {\large\textbf{\textcolor{accent}{\faIcon{tasks}}\,FA#1 — #2}}\par
+    \vspace{4pt}{\color{accent}\hrule height 0.6pt}\vspace{4pt}
+
+    \renewcommand{\arraystretch}{1}%
+    \setlength{\extrarowheight}{2pt}%
+    {\rowcolors{1}{background}{muted}
+    \begin{tabularx}{\linewidth}{>{\bfseries}p{\reqLabelWidth} X}
+    %ID:             & \texttt{FA#1} \\
+    %Titel:          & #2 \\
+    Beschreibung:   & #3 \\
+    \MaybeDepsRow{#4}
+    \end{tabularx}
+    }
+    \end{minipage}
+    \end{lrbox}%
+    \fcolorbox{accent}{background}{\usebox{\req@box}}%
+    \par\smallskip
+}
+\makeatother

@@ -22,9 +22,37 @@ BCOR15mm               % Bindekorrektur
 \newenvironment{abstract}{}{}
 \usepackage{abstract}
 
-% table design
 \usepackage[table]{xcolor}
 
+\usepackage{fontawesome5}
+\usepackage{ifthen}            % für \ifthenelse
+\usepackage{etoolbox}          % für \docsvlist
+\usepackage{array}             % p-/m-Spalten etc.
+
+\definecolor{accent}{HTML}{005BBB} % EU-Flaggenblau
+\colorlet{background}{accent!4}
+\colorlet{muted}{accent!10}
+
+\makeatletter
+\newsavebox{\hauptziel@box}
+\newenvironment{hauptzielbox}[1][Hauptziel]{%
+    \par\smallskip\noindent
+    \setlength{\fboxsep}{6pt}%
+    \setlength{\fboxrule}{0.6pt}%
+    \begin{lrbox}{\hauptziel@box}%
+    \begin{minipage}{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}
+    % Titelzeile mit vorhandenem Icon
+    \textbf{\textcolor{accent}{\faIcon{bullseye}}\,#1}\par\par\par
+    \vspace{4pt}{\color{accent}\hrule height 0.6pt}\vspace{6pt}
+}{%
+    \end{minipage}%
+    \end{lrbox}%
+    \fcolorbox{accent}{accent!4}{\usebox{\hauptziel@box}}%
+    \par\smallskip
+}
+\makeatother
+
+% table design
 \usepackage{booktabs}
 \usepackage{threeparttable}
 \usepackage{rotating}
