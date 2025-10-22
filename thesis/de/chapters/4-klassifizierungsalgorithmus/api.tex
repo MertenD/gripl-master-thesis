@@ -8,7 +8,7 @@ Die Klassifizierungspipeline ist über einen standardisierten HTTP-Endpunkt nutz
 
 \begin{description}
     \item[\texttt{bpmnFile} (Pflicht)] Eine BPMN-2.0-XML-Datei (\texttt{.bpmn} oder \texttt{text/xml}), die den zu analysierenden Prozess beinhaltet.
-    \item[\texttt{llmProps} (Optional)] Ein JSON-Objekt zur Überschreibung von \ac{LLM}-Eigenschaften zur Laufzeit. Siehe Listing \ref{lst:api-request-schema} für das JSON-Schema. Wird nichts angegeben, nutzt die Pipeline Standardwerte.
+    \item[\texttt{llmProps} (Optional)] Ein JSON-Objekt zur Überschreibung von \ac{LLM}-Eigen-\linebreak~schaften zur Laufzeit. Siehe Listing \ref{lst:api-request-schema} für das JSON-Schema. Wird nichts angegeben, nutzt die Pipeline Standardwerte.
 \end{description}
 
 \begin{lstlisting}[caption={JSON-Schema der \texttt{llmProps}.},label={lst:api-request-schema}]
@@ -57,4 +57,5 @@ Die Antwort des Endpunkts hat den Medientyp \texttt{application/json}. Sie enth�
 }
 \end{lstlisting}
 
+\newpage
 Im nächsten Kapitel wird die Webapp-Sandbox beschrieben, die als Beispielanwendung dient, um die Klassifizierungspipeline intuitiv nutzen zu können. Sie verwendet das hier beschriebene API, um die Klassifizierung durchzuführen.

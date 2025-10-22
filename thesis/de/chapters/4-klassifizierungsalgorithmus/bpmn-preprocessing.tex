@@ -20,4 +20,4 @@ data class BpmnElement(
 )
 \end{lstlisting}
 
-Dadurch entsteht für jedes Flow-Element ein umfassender Kontext, der später im Prompt genutzt wird, um dem \ac{LLM} alle notwendigen Informationen strukturiert bereitzustellen. Außerdem werden durch das Format Tokens eingespart, da irrelevante Informationen, wie die Positionen der Elemente im XML, weggelassen werden. In Abbildung \ref{fig:architecture-diagram} ist dieser Schritt über die Aktivität \enquote{Kontext aller Elemente aufbauen} dargestellt.
+Dadurch entsteht für jedes Flow-Element ein umfassender Kontext, der später im Prompt genutzt wird, um dem \ac{LLM} alle notwendigen Informationen strukturiert bereitzustellen. Außerdem werden durch das Format Tokens eingespart, da irrelevante Informationen, wie die Positionen der Elemente im XML, weggelassen werden. In Abbildung \ref{fig:architecture-diagram} ist dieser Schritt über die Aktivität \enquote{Build context for all elements} dargestellt.

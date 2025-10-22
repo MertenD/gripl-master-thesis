@@ -1,6 +1,6 @@
 \section{Validierung der Ausgabe}\label{sec:validierung-der-ausgabe}
 
-Zusätzlich zu den in Kapitel \ref{sec:prompt-engineering} beschriebenen Maßnahmen stellt die Pipeline mehrere Validierungs- und Korrekturschritte bereit, die in Abbildung \ref{fig:architecture-diagram} direkt auf \enquote{Antwort JSON deserialisieren} folgen. Diese Schritte dienen dazu, die Qualität und Korrektheit der Ausgabe des \ac{LLM} zu gewährleisten. Im Folgenden werden die einzelnen Validierungsmechanismen erläutert.
+Zusätzlich zu den in Kapitel \ref{sec:prompt-engineering} beschriebenen Maßnahmen stellt die Pipeline mehrere Validierungs- und Korrekturschritte bereit, die in Abbildung \ref{fig:architecture-diagram} direkt auf \enquote{Deserialize JSON response} folgen. Diese Schritte dienen dazu, die Qualität und Korrektheit der Ausgabe des \ac{LLM} zu gewährleisten. Im Folgenden werden die einzelnen Validierungsmechanismen erläutert.
 
 \subsection*{Schema-Parsing und Retry-Mechanismus}
 
@@ -30,7 +30,7 @@ In der Praxis liefert das \ac{LLM} mitunter unvollständige oder fehlerhafte \te
 
 Gibt das \ac{LLM} beispielsweise die \texttt{id} \texttt{Activity\_1} aus, existiert im Prozess jedoch nur \texttt{Activity\_12345}, wird die Ausgabe automatisch auf die korrekte \texttt{id} vervollständigt. Existieren hingegen sowohl \texttt{Activity\_123} als auch \texttt{Activity\_124} im Prozess, bleibt die Ausgabe unvollständig und wird entfernt, da keine eindeutige Zuordnung möglich ist.
 
-Dieser Schritt fängt typische \ac{LLM}-Ausgabefehler ab – etwa Halluzinationen oder abgeschnittene Bezeichner – und stellt die Konsistenz mit dem Eingabemodell sicher. Im Diagramm \ref{fig:architecture-diagram} ist er als \enquote{\texttt{ids} validieren und vervollständigen} markiert. Ein fokussierter Code-Auszug findet sich in Listing \ref{lst:activity-id-resolution}.
+Dieser Schritt fängt typische \ac{LLM}-Ausgabefehler ab – etwa Halluzinationen oder abgeschnittene Bezeichner – und stellt die Konsistenz mit dem Eingabemodell sicher. Im Diagramm \ref{fig:architecture-diagram} ist er als \enquote{Validate and complete \texttt{ids}} markiert. Ein fokussierter Code-Auszug findet sich in Listing \ref{lst:activity-id-resolution}.
 
 Nach der Validierung besteht \texttt{BpmnAnalysisResult} nur noch aus Aktivitäten, die vom \ac{LLM} als kritisch eingestuft wurden (\texttt{isRelevant = true}) und deren \texttt{ids} im Prozess existieren.
 
