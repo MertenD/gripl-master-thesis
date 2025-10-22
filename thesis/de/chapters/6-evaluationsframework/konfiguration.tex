@@ -4,6 +4,12 @@ Die funktionale Anforderung \hyperlink{FA03}{FA03} fordert, dass Evaluationsläu
 Erstens bietet die Weboberfläche, die in \ref{sec:visualisierung-im-frontend} gezeigt wird, die Möglichkeit, Evaluationsläufe interaktiv zu konfigurieren und zu starten.
 Zweitens lässt sich eine Evaluierung über eine YAML-Datei beschreiben, die entweder in der Weboberfläche hochgeladen oder per CLI an das Evaluationsframework übergeben wird. Auf diese Weise werden Reproduzierbarkeit und Versionierung der Evaluationsläufe sichergestellt. Listing \ref{lst:evaluation-config} zeigt ein Beispiel für eine solche YAML-Konfiguration. Ein ausführliches JSON-Schema ist im Anhang (Listing \ref{lst:evaluation-config-schema}) zu finden.
 
+Die Evaluierungskonfiguration umfasst die folgenden Bausteine:
+
+\begin{itemize}
+    \item \texttt{defaultEvaluationEndpoint} ist der Standardendpunkt für die Klassifizierung. Er wird verwendet, wenn für ein Modell kein eigener Endpunkt angegeben ist. Der Endpunkt muss die in Kapitel \ref{sec:api-design} beschriebene API-Spezifikation erfüllen und kann relativ (gegen die Basis-URL des Evaluationsframeworks) oder absolut (für einen externen Dienst) angegeben werden.
+\end{itemize}
+
 \begin{lstlisting}[caption={Beispiel einer Evaluierungskonfiguration in YAML.},label={lst:evaluation-config}]
 defaultEvaluationEndpoint: /gdpr/analysis/prompt-engineering
 maxConcurrent: 10
@@ -32,10 +38,7 @@ datasets:
   - 7
 \end{lstlisting}
 
-Die Evaluierungskonfiguration umfasst die folgenden Bausteine:
-
 \begin{itemize}
-    \item \texttt{defaultEvaluationEndpoint} ist der Standardendpunkt für die Klassifizierung. Er wird verwendet, wenn für ein Modell kein eigener Endpunkt angegeben ist. Der Endpunkt muss die in Kapitel \ref{sec:api-design} beschriebene API-Spezifikation erfüllen und kann relativ (gegen die Basis-URL des Evaluationsframeworks) oder absolut (für einen externen Dienst) angegeben werden.
     \item \texttt{maxConcurrent} gibt die maximale Anzahl parallel auszuführender Testfälle an. So lassen sich beispielsweise \emph{Rate Limits}\footnote{Providerseitige Begrenzungen, etwa \enquote{Requests pro Minute} oder maximale Parallelität. Bei Überschreitung antworten viele Anbieter mit HTTP~429 (\enquote{Too Many Requests}). Zudem drohen strengere Drosselungen.} der angebundenen \acp{LLM} einhalten, um technische Fehler in den Ergebnissen zu vermeiden.
     \item \texttt{repetitions} bestimmt, wie oft die Evaluierung pro Modell wiederholt wird. Die Ergebnisse werden später über alle Wiederholungen aggregiert (siehe Abschnitt~\ref{sec:generierte-resultate}).
     \item \texttt{seed} legt einen Startwert (Seed) für reproduzierbare Evaluationsläufe fest. Auf Basis des Seeds und der Wiederholungsnummer wird für jede Wiederholung deterministisch ein eigener Seed generiert, um unterschiedliche, aber reproduzierbare Ergebnisse zu erzielen. Er wird bei jedem Modell an die \texttt{llmProps} weitergereicht und bei der Kommunikation mit den \acp{LLM} verwendet, sofern diese einen Seed unterstützen.
