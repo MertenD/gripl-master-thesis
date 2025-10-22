@@ -7,6 +7,7 @@ Zweitens lässt sich eine Evaluierung über eine YAML-Datei beschreiben, die ent
 \begin{lstlisting}[caption={Beispiel einer Evaluierungskonfiguration in YAML.},label={lst:evaluation-config}]
 defaultEvaluationEndpoint: /gdpr/analysis/prompt-engineering
 maxConcurrent: 10
+repetitions: 3
 seed: 42
 models:
   - label: Mistral Medium 3.1
@@ -37,11 +38,11 @@ Die Evaluierungskonfiguration umfasst die folgenden Bausteine:
     \item \texttt{defaultEvaluationEndpoint} ist der Standardendpunkt für die Klassifizierung. Er wird verwendet, wenn für ein Modell kein eigener Endpunkt angegeben ist. Der Endpunkt muss die in Kapitel \ref{sec:api-design} beschriebene API-Spezifikation erfüllen und kann relativ (gegen die Basis-URL des Evaluationsframeworks) oder absolut (für einen externen Dienst) angegeben werden.
     \item \texttt{maxConcurrent} gibt die maximale Anzahl parallel auszuführender Testfälle an. So lassen sich beispielsweise \emph{Rate Limits}\footnote{Providerseitige Begrenzungen, etwa \enquote{Requests pro Minute} oder maximale Parallelität. Bei Überschreitung antworten viele Anbieter mit HTTP~429 (\enquote{Too Many Requests}). Zudem drohen strengere Drosselungen.} der angebundenen \acp{LLM} einhalten, um technische Fehler in den Ergebnissen zu vermeiden.
     \item \texttt{repetitions} bestimmt, wie oft die Evaluierung pro Modell wiederholt wird. Die Ergebnisse werden später über alle Wiederholungen aggregiert (siehe Abschnitt~\ref{sec:generierte-resultate}).
-    \item \texttt{seed} legt einen Startwert (Seed) für reproduzierbare Evaluationsläufe fest. Er wird bei jedem Modell an die \texttt{llmProps} weitergereicht und bei der Kommunikation mit den \acp{LLM} verwendet, sofern diese einen Seed unterstützen.
+    \item \texttt{seed} legt einen Startwert (Seed) für reproduzierbare Evaluationsläufe fest. Auf Basis des Seeds und der Wiederholungsnummer wird für jede Wiederholung deterministisch ein eigener Seed generiert, um unterschiedliche, aber reproduzierbare Ergebnisse zu erzielen. Er wird bei jedem Modell an die \texttt{llmProps} weitergereicht und bei der Kommunikation mit den \acp{LLM} verwendet, sofern diese einen Seed unterstützen.
     \item \texttt{models} enthält die zu evaluierenden Modelle. Jedes Modell besitzt ein \texttt{label} zur Identifikation und optional spezifische \texttt{llmProps}, um die Eigenschaften des verwendeten \acp{LLM} zu definieren. Diese sind identisch zu den in Kapitel \ref{sec:api-design} beschriebenen \texttt{llmProps}.
     \item \texttt{datasets} ist eine Liste von Datensatz-\texttt{ids}, die jeweils eine Menge von Testfällen beinhalten.
 \end{itemize}
 
-Wie im Schema in Listing \ref{lst:evaluation-config-schema} gezeigt, kann jedem Modell optional ein eigener \texttt{evaluationEndpoint} zugewiesen werden, der den in \texttt{defaultEvaluationEndpoint} definierten Standard überschreibt. Dadurch lassen sich unterschiedliche Klassifizierungsalgorithmen oder -versionen gezielt pro Modell vergleichen. Ist kein spezifischer Endpunkt angegeben, greift automatisch der Standardendpunkt.
+Wie im Schema in Listing \ref{lst:evaluation-config-schema} gezeigt, kann jedem Modell optional ein eigener\linebreak~\texttt{evaluationEndpoint} zugewiesen werden, der den in \texttt{defaultEvaluation-\linebreak~Endpoint} definierten Standard überschreibt. Dadurch lassen sich unterschiedliche Klassifizierungsalgorithmen oder -versionen gezielt pro Modell vergleichen. Ist kein spezifischer Endpunkt angegeben, greift automatisch der Standardendpunkt.
 
 API-Keys in den \texttt{llmProps} können optional als Umgebungsvariablen referenziert werden, wie im Beispiel in Listing \ref{lst:evaluation-config} gezeigt. So lassen sich sensible Daten sicher handhaben, ohne sie direkt in der Konfigurationsdatei zu speichern. Die Umgebungsvariablen werden zur Laufzeit aufgelöst und müssen daher im Kontext der Anwendung verfügbar sein.
