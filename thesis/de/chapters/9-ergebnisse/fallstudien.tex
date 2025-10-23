@@ -30,16 +30,16 @@ Im deutschen Testfall \enquote{Marketing-Kampagne}, aus dem Datensatz \enquote{K
     \label{fig:gptoss-fall}
 \end{figure}
 
-Dieses Beispiel zeigt, dass ohne genaue Kontextangaben zur Anonymisierung selbst scheinbar unbedenkliche Auswertungen als datenschutzrelevant erscheinen können. Es unterstreicht, dass die \acp{LLM} im Zweifel eher ein kritisches Label vergeben, um \acp{FN} zu vermeiden, wie es das Hauptziel der Klassifikation aus Abschnitt \ref{sec:qualitatsziele} vorsieht.
+Dieses Beispiel zeigt, dass ohne genaue Kontextangaben zur Anonymisierung\linebreak~selbst scheinbar unbedenkliche Auswertungen als datenschutzrelevant erscheinen können. Es unterstreicht, dass die \acp{LLM} im Zweifel eher ein kritisches Label vergeben, um \acp{FN} zu vermeiden, wie es das Hauptziel der Klassifikation aus Abschnitt \ref{sec:qualitatsziele} vorsieht.
 
-\subsection*{Karten-App – Standort erfassen}
+\subsection*{Karten-App - Standort erfassen}
 
-Der Testfall \enquote{Karten-App – Standort erfassen} besteht aus zwei Aktivitäten: \enquote{Standort erfassen} und \enquote{Route berechnen}. Beide sollten als kritisch klassifiziert werden, da im zweiten Schritt der erfasste Standort zur Berechnung der Route genutzt wird. \texttt{Mistral-Large-Instruct-2411} kennzeichnet jedoch in drei von fünf Wiederholungen nur die erste Aktivität als kritisch, wie in Abbildung \ref{fig:mistral-fall} zu sehen. In der Begründung wird zwar die Verarbeitung personenbezogener Daten beim Erfassen des Standorts erkannt, dieser Zusammenhang aber nicht auf die nachfolgende Aktivität übertragen. Dieses \ac{FN} steht dem angestrebten hohen Recall entgegen und zeigt, dass einige Modelle Schwierigkeiten haben, Datenflüsse über mehrere Schritte hinweg zu verfolgen.
+Der Testfall \enquote{Karten-App - Standort erfassen} besteht aus zwei Aktivitäten: \enquote{Standort erfassen} und \enquote{Route berechnen}. Beide sollten als kritisch klassifiziert werden, da im zweiten Schritt der erfasste Standort zur Berechnung der Route genutzt wird. \texttt{Mistral-Large-Instruct-2411} kennzeichnet jedoch in drei von fünf Wiederholungen nur die erste Aktivität als kritisch, wie in Abbildung \ref{fig:mistral-fall} zu sehen. In der Begründung wird zwar die Verarbeitung personenbezogener Daten beim Erfassen des Standorts erkannt, dieser Zusammenhang aber nicht auf die nachfolgende Aktivität übertragen. Dieses \ac{FN} steht dem angestrebten hohen Recall entgegen und zeigt, dass einige Modelle Schwierigkeiten haben, Datenflüsse über mehrere Schritte hinweg zu verfolgen.
 
 \begin{figure}
     \centering
     \includegraphics[width=.55\textwidth]{images/results/examples/mistral-large-run-3-small-maps-app}
-    \caption{Ergebnis des Testfalls \enquote{Karten-App – Standort Erfassen} mit farblich hervorgehobenen Aktivitäten. Die Aktivität \enquote{Route berechnen} wurde fälschlicherweise nicht als kritisch markiert.}
+    \caption{Ergebnis des Testfalls \enquote{Karten-App - Standort Erfassen} mit farblich hervorgehobenen Aktivitäten. Die Aktivität \enquote{Route berechnen} wurde fälschlicherweise nicht als kritisch markiert.}
     \label{fig:mistral-fall}
 \end{figure}
 

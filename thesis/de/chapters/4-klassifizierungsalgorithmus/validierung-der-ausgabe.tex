@@ -18,7 +18,7 @@ Ohne das \texttt{isRelevant}-Flag hat das \ac{LLM} in der Praxis des Öfteren Ak
 
 \subsection*{\texttt{id}-Validierung und -Vervollständigung}
 
-In der Praxis liefert das \ac{LLM} mitunter unvollständige oder fehlerhafte \texttt{id}-Werte, die im Prozess nicht existieren. Zur Erhöhung der Robustheit werden die vom \ac{LLM} ausgegebenen \texttt{id}s daher gegen die tatsächlich im Prozess vorhandenen Aktivitäts-\texttt{id}s geprüft und – wenn möglich – automatisch vervollständigt. Der Ablauf ist:
+In der Praxis liefert das \ac{LLM} mitunter unvollständige oder fehlerhafte \texttt{id}-Werte, die im Prozess nicht existieren. Zur Erhöhung der Robustheit werden die vom \ac{LLM} ausgegebenen \texttt{id}s daher gegen die tatsächlich im Prozess vorhandenen Aktivitäts-\texttt{id}s geprüft und - wenn möglich - automatisch vervollständigt. Der Ablauf ist:
 
 \begin{enumerate}
     \item Ermittlung der Grundmenge aller gültigen Aktivitäts-\texttt{id}s aus der \texttt{BpmnElement}-Liste, die beim Preprocessing erstellt wurde.
@@ -30,7 +30,7 @@ In der Praxis liefert das \ac{LLM} mitunter unvollständige oder fehlerhafte \te
 
 Gibt das \ac{LLM} beispielsweise die \texttt{id} \texttt{Activity\_1} aus, existiert im Prozess jedoch nur \texttt{Activity\_12345}, wird die Ausgabe automatisch auf die korrekte \texttt{id} vervollständigt. Existieren hingegen sowohl \texttt{Activity\_123} als auch \texttt{Activity\_124} im Prozess, bleibt die Ausgabe unvollständig und wird entfernt, da keine eindeutige Zuordnung möglich ist.
 
-Dieser Schritt fängt typische \ac{LLM}-Ausgabefehler ab – etwa Halluzinationen oder abgeschnittene Bezeichner – und stellt die Konsistenz mit dem Eingabemodell sicher. Im Diagramm \ref{fig:architecture-diagram} ist er als \enquote{Validate and complete \texttt{ids}} markiert. Ein fokussierter Code-Auszug findet sich in Listing \ref{lst:activity-id-resolution}.
+Dieser Schritt fängt typische \ac{LLM}-Ausgabefehler ab - etwa Halluzinationen oder abgeschnittene Bezeichner - und stellt die Konsistenz mit dem Eingabemodell sicher. Im Diagramm \ref{fig:architecture-diagram} ist er als \enquote{Validate and complete \texttt{ids}} markiert. Ein fokussierter Code-Auszug findet sich in Listing \ref{lst:activity-id-resolution}.
 
 Nach der Validierung besteht \texttt{BpmnAnalysisResult} nur noch aus Aktivitäten, die vom \ac{LLM} als kritisch eingestuft wurden (\texttt{isRelevant = true}) und deren \texttt{ids} im Prozess existieren.
 
