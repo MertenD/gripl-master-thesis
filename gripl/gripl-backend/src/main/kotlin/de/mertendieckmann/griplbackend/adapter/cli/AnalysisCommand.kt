@@ -32,6 +32,8 @@ class AnalysisCommand(
     @Option(names = ["--modelName"], description = ["Model name for the LLM"], required = false) var modelName: String? = null
     @Option(names = ["--apiKey"], description = ["API key for the LLM"], required = false) var apiKey: String? = null
     @Option(names = ["--timeoutSeconds"], description = ["Timeout in seconds for the LLM requests"], required = false) var timeoutSeconds: Long? = null
+    @Option(names = ["--temperature"], description = ["Temperature setting for the LLM"], required = false) var temperature: Double? = null
+    @Option(names = ["--topP"], description = ["Top-p setting for the LLM"], required = false) var topP: Double? = null
 
     override fun run() {
         log.info { "Running analysis on BPMN file: $bpmnFilePath with output format: $outputFormat" }
@@ -41,7 +43,9 @@ class AnalysisCommand(
             baseUrl = baseUrl,
             modelName = modelName,
             apiKey = apiKey,
-            timeoutSeconds = timeoutSeconds
+            timeoutSeconds = timeoutSeconds,
+            temperature = temperature,
+            topP = topP
         ))
 
         val analyzer = analyzerFactory.createPromptEngineeringAnalyzer(llm)
