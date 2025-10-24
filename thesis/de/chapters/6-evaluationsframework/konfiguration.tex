@@ -43,7 +43,7 @@ datasets:
     \item \texttt{repetitions} bestimmt, wie oft die Evaluierung pro Modell wiederholt wird. Die Ergebnisse werden später über alle Wiederholungen aggregiert (siehe Abschnitt~\ref{sec:generierte-resultate}).
     \item \texttt{seed} legt einen Startwert (Seed) für reproduzierbare Evaluationsläufe fest. Auf Basis des Seeds und der Wiederholungsnummer wird für jede Wiederholung deterministisch ein eigener Seed generiert, um unterschiedliche, aber reproduzierbare Ergebnisse zu erzielen. Er wird bei jedem Modell an die \texttt{llmProps} weitergereicht und bei der Kommunikation mit den \acp{LLM} verwendet, sofern diese einen Seed unterstützen.
     \item \texttt{models} enthält die zu evaluierenden Modelle. Jedes Modell besitzt ein \texttt{label} zur Identifikation und optional spezifische \texttt{llmProps}, um die Eigenschaften des verwendeten \acp{LLM} zu definieren. Diese sind identisch zu den in Kapitel \ref{sec:api-design} beschriebenen \texttt{llmProps}.
-    \item \texttt{datasets} ist eine Liste von Datensatz-\texttt{ids}, die jeweils eine Menge von Testfällen beinhalten.
+    \item \texttt{datasets} ist eine Liste von Datensatz-\texttt{id}s, die jeweils eine Menge von Testfällen beinhalten.
 \end{itemize}
 
 Wie im Schema in Listing \ref{lst:evaluation-config-schema} gezeigt, kann jedem Modell optional ein eigener\linebreak~\texttt{evaluationEndpoint} zugewiesen werden, der den in \texttt{defaultEvaluation-\linebreak~Endpoint} definierten Standard überschreibt. Dadurch lassen sich unterschiedliche Klassifizierungsalgorithmen oder -versionen gezielt pro Modell vergleichen. Ist kein spezifischer Endpunkt angegeben, greift automatisch der Standardendpunkt.

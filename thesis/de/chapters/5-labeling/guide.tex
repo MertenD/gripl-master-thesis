@@ -4,7 +4,7 @@ Nachfolgend wird beschrieben, nach welchen Richtlinien die Daten für die Klassi
 
 Die Aktivitäten in den Testfällen sollen mit dem Label \enquote{kritisch} versehen werden, wenn sie potenziell personenbezogene Daten verarbeiten und somit im Sinne der \ac{DSGVO} relevant sein könnten. Die wichtigsten Begriffe der \ac{DSGVO} wurden bereits in Abschnitt \ref{sec:dsgvo} definiert.
 
-Beim Labeln einer Aktivität können Grenzfälle auftreten - etwa wenn kein Datenobjekt vorhanden ist, der Name aber auf Datenverarbeitung hindeutet (z.\,B. \enquote{Verträge archivieren}). Solche Verträge können personenbezogen sein (z.\,B. Arbeitsverträge) oder rein geschäftlich zwischen Unternehmen. In diesen Fällen wird zunächst der Kontext geprüft: Gibt es Hinweise auf personenbezogene Daten, z.\,B. über Pools/Lanes oder angrenzende Aktivitäten im Prozess? Fehlen eindeutige Hinweise, wird die Aktivität als unkritisch gelabelt. Deutet der Kontext hingegen auf die Verarbeitung personenbezogener Daten hin, z.\,B. durch einen Prozessnamen wie \enquote{Mitarbeiterverwaltung} oder vorangehende Aktivitäten wie \enquote{Mitarbeiterdaten erfassen}, erhält die Aktivität das Label kritisch. Im Zweifel wird kritisch gelabelt, um eine höhere Sensitivität zu gewährleisten.
+Beim Labeln einer Aktivität können Grenzfälle auftreten - etwa, wenn kein Datenobjekt vorhanden ist, der Name aber auf Datenverarbeitung hindeutet (z.\,B. \enquote{Verträge archivieren}). Solche Verträge können personenbezogen sein (z.\,B. Arbeitsverträge) oder rein geschäftlich zwischen Unternehmen. In diesen Fällen wird zunächst der Kontext geprüft: Gibt es Hinweise auf personenbezogene Daten, z.\,B. über Pools/Lanes oder angrenzende Aktivitäten im Prozess? Fehlen eindeutige Hinweise, wird die Aktivität als unkritisch gelabelt. Deutet der Kontext hingegen auf die Verarbeitung personenbezogener Daten hin, z.\,B. durch einen Prozessnamen wie \enquote{Mitarbeiterverwaltung} oder vorangehende Aktivitäten wie \enquote{Mitarbeiterdaten erfassen}, erhält die Aktivität das Label kritisch. Im Zweifel wird kritisch gelabelt, um eine höhere Sensitivität zu gewährleisten.
 
 Tabelle \ref{tab:labeling-examples} listet beispielhaft einige Aktivitäten mit ihrer Klassifikation und der zugehörigen Begründung auf.
 
@@ -18,9 +18,9 @@ Tabelle \ref{tab:labeling-examples} listet beispielhaft einige Aktivitäten mit 
         Lieferadresse eingeben & Ja & Name, Anschrift des Kunden werden aufgenommen. \\
         Rückfrage an Kunden senden & Ja & Kontaktinformationen werden verwendet. \\
         Fall anlegen & Ja & Aktivität befindet sich im Kundenservice-Kontext, personenbezogene Daten wahrscheinlich. \\
-        Sprache zu Text verarbeiten & Ja & Im Kontext eines Sprachassistenten werden biometrische Daten des nutzers verarbeitet. \\
-        Produkt versenden & Nein\textsuperscript{*} & Logistik und Sachvorgänge sind nicht per se Datenschutzkritisch, solange keine neue Datenverarbeitung, wie ein Labeldruck stattfindet. \\
-        Systemprotokoll auslesen & Ja & Im Kontext einer technischen Wartung können personenbezogene Daten (z.\,B. Nutzer-\texttt{ids}) enthalten sein. \\
+        Sprache zu Text verarbeiten & Ja & Im Kontext eines Sprachassistenten werden biometrische Daten des Nutzers verarbeitet. \\
+        Produkt versenden & Nein\textsuperscript{*} & Logistik und Sachvorgänge sind nicht per se datenschutzkritisch, solange keine neue Datenverarbeitung, wie ein Labeldruck stattfindet. \\
+        Systemprotokoll auslesen & Ja & Im Kontext einer technischen Wartung können personenbezogene Daten (z.\,B. Nutzer-\texttt{id}s) enthalten sein. \\
         Logdaten archivieren (anonym) & Nein & Keine personenbezogenen Daten enthalten. \\
         Gerät kalibrieren & Nein & Im Kontext einer technischen Wartung werden keine personenbezogenen Daten verarbeitet. \\
         \bottomrule
