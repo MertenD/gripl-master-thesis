@@ -85,7 +85,7 @@ private fun resolveActivityIdUniquely(partialId: String, existingActivityIds: Se
                     "type": "string"
                 },
                 "maxConcurrent": { "type": "integer" },
-                "repititions": { "type": "integer" },
+                "repetitions": { "type": "integer" },
                 "models": {
                     "type": "array",
                     "items": { "$ref": "#/definitions/Model" }
@@ -98,7 +98,7 @@ private fun resolveActivityIdUniquely(partialId: String, existingActivityIds: Se
             },
             "required": [
                 "defaultEvaluationEndpoint",
-                "models"
+                "models",
                 "datasets",
             ],
             "title": "Configuration"

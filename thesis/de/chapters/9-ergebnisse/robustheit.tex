@@ -2,7 +2,7 @@
 
 Die Robustheit der Modelle wird anhand zweier Kriterien bewertet: der Varianz der F1-Scores über die verschiedenen Seeds und der Anzahl der Retries, die erforderlich waren, um eine formatkorrekte JSON-Antwort von den \acp{LLM} in der Klassifizierungspipeline zu erhalten. Beide Größen geben Aufschluss darüber, wie stabil ein Modell im produktiven Einsatz ist.
 
-Abbildung \ref{fig:results-evaluation-robustness-f1-std} zeigt die Standardabweichungen der F1‑Scores über fünf unabhängige Läufe mit unterschiedlichen Seeds. Die Mehrzahl der Modelle weisen Werte von deutlich unter $0{,}02$ auf. Sie liefern damit weitgehend gleiche Ergebnisse, unabhängig vom gewählten Seed, und gelten als stabil. Dazu zählen \texttt{Gemma-3-12B-it}, \texttt{Mistral-Large-Instruct-2411}, \texttt{GPT-OSS-120B} und \texttt{DeepSeek-R1-Distill-\linebreak~Qwen-14B}.
+Abbildung \ref{fig:results-evaluation-robustness-f1-std} zeigt die Standardabweichungen der F1‑Scores über fünf unabhängige Läufe mit unterschiedlichen Seeds. Die Mehrzahl der Modelle weist Werte von deutlich unter $0{,}02$ auf. Sie liefern damit weitgehend gleiche Ergebnisse, unabhängig vom gewählten Seed, und gelten als stabil. Dazu zählen \texttt{Gemma-3-12B-it}, \texttt{Mistral-Large-Instruct-2411}, \texttt{GPT-OSS-120B} und \texttt{DeepSeek-R1-Distill-\linebreak~Qwen-14B}.
 
 \begin{figure}[h]
     \centering

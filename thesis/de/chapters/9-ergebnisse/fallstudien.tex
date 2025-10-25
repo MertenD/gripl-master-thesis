@@ -17,11 +17,11 @@ Der englische Prozess \enquote{Sales Warehouse} aus dem Datensatz \enquote{Unive
     \label{fig:qwen3-fall}
 \end{figure}
 
-Das Beispiel verdeutlicht eine grundsätzliche Limitierung der Klassifizierung. Wenn in einem \ac{BPMN}-Modell explizite Informationen über Datenverarbeitungen fehlen, ist es für das das \ac{LLM} schwierig, eine eindeutige Klassifikation vorzunehmen.
+Das Beispiel verdeutlicht eine grundsätzliche Limitierung der Klassifizierung. Wenn in einem \ac{BPMN}-Modell explizite Informationen über Datenverarbeitungen fehlen, ist es für das \ac{LLM} schwierig, eine eindeutige Klassifikation vorzunehmen.
 
 \subsection*{Marketing-Kampagne}
 
-Im deutschen Testfall \enquote{Marketing-Kampagne}, aus dem Datensatz \enquote{Kleine Szenarien}, sind drei Aktivitäten als kritisch gelabelt: \enquote{Leads sammeln}, \enquote{Newsletter versenden} und \enquote{CRM aktualisieren}. \texttt{GPT-OSS-20B} identifiziert diese korrekt, markiert aber zusätzlich die Aktivität \enquote{Klickraten auswerten} als kritisch. Im Prozessmodell wird davon ausgegangen, dass die Klickdaten vollständig anonymisiert werden, jedoch ist diese Information nicht explizit hinterlegt. Mehrere Modelle, darunter \texttt{Qwen3-235B-A22B-Thinking-2507}, stufen diesen Schritt daher als potenziell personenbezogen ein, wie in Abbildung \ref{fig:gptoss-fall} zu sehen ist. Die Anonymisierung der Daten wurde nur von \texttt{Mistral-7B-Instruct-v0.3} in zwei von fünf und von den Gemma-Modellen in allen Wiederholungen korrekt antizipiert und die Aktivität als unkritisch klassifiziert. Dieses Beispiel zeigt, wie fehlende Kontextinformationen zu vorsichtiger Klassifikation und damit zu \ac{FP} führen können.
+Im deutschen Testfall \enquote{Marketing-Kampagne} aus dem Datensatz \enquote{Kleine Szenarien} sind drei Aktivitäten als kritisch gelabelt: \enquote{Leads sammeln}, \enquote{Newsletter versenden} und \enquote{CRM aktualisieren}. \texttt{GPT-OSS-20B} identifiziert diese korrekt, markiert aber zusätzlich die Aktivität \enquote{Klickraten auswerten} als kritisch. Im Prozessmodell wird davon ausgegangen, dass die Klickdaten vollständig anonymisiert werden, jedoch ist diese Information nicht explizit hinterlegt. Mehrere Modelle, darunter \texttt{Qwen3-235B-A22B-Thinking-2507}, stufen diesen Schritt daher als potenziell personenbezogen ein, wie in Abbildung \ref{fig:gptoss-fall} zu sehen ist. Die Anonymisierung der Daten wurde nur von \texttt{Mistral-7B-Instruct-v0.3} in zwei von fünf und von den Gemma-Modellen in allen Wiederholungen korrekt antizipiert und die Aktivität als unkritisch klassifiziert. Dieses Beispiel zeigt, wie fehlende Kontextinformationen zu vorsichtiger Klassifikation und damit zu \ac{FP} führen können.
 
 \begin{figure}
     \centering
