@@ -6,7 +6,7 @@ Abbildung \ref{fig:results-evaluation-robustness-f1-std} zeigt die Standardabwei
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.88\textwidth]{images/results/evaluation_robustness_f1_std_en}
+    \includegraphics[width=0.7\textwidth]{images/results/evaluation_robustness_f1_std_en}
     \caption{Robustheit der Modelle gemessen an der Standardabweichung des F1-Scores über alle Wiederholungen hinweg.}
     \label{fig:results-evaluation-robustness-f1-std}
 \end{figure}
@@ -15,9 +15,9 @@ Demgegenüber weisen \texttt{Mistral Medium 3.1}, \texttt{Qwen2.5-7B-Instruct} u
 
 Neben der Varianz des F1-Scores ist auch entscheidend, wie oft das Modell nachgefragt werden muss, bis eine gültige JSON-Struktur zurückgegeben wird. Abbildung \ref{fig:results_evaluation_amount_of_retries} zeigt die durchschnittliche Anzahl notwendiger Retries pro Modell über 25 Testfälle. Die meisten Modelle lieferten bereits im ersten Versuch oder nach maximal einem zusätzlichen Aufruf eine korrekte Antwort. Hervorzuheben sind\linebreak~\texttt{DeepSeek-R1-Distill-Qwen-14B}, \texttt{GPT-4o}, \texttt{Gemma-3-12B-it} und \texttt{Mistral-\linebreak~Large-Instruct-2411}, die keinerlei Retries benötigten.
 
-\begin{figure}[htbp]
+\begin{figure}[h]
     \centering
-    \includegraphics[width=0.95\textwidth]{images/results/evaluation_amount_of_retries_en}
+    \includegraphics[width=0.7\textwidth]{images/results/evaluation_amount_of_retries_en}
     \caption{Durchschnittliche Anzahl der Retries, die notwendig waren, um für alle 25 Testfälle eine formatkorrekte JSON-Antwort zu erhalten.}
     \label{fig:results_evaluation_amount_of_retries}
 \end{figure}

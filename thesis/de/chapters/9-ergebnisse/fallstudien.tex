@@ -23,7 +23,7 @@ Das Beispiel verdeutlicht eine grundsätzliche Limitierung der Klassifizierung. 
 
 Im deutschen Testfall \enquote{Marketing-Kampagne} aus dem Datensatz \enquote{Kleine Szenarien} sind drei Aktivitäten als kritisch gelabelt: \enquote{Leads sammeln}, \enquote{Newsletter versenden} und \enquote{CRM aktualisieren}. \texttt{GPT-OSS-20B} identifiziert diese korrekt, markiert aber zusätzlich die Aktivität \enquote{Klickraten auswerten} als kritisch. Im Prozessmodell wird davon ausgegangen, dass die Klickdaten vollständig anonymisiert werden, jedoch ist diese Information nicht explizit hinterlegt. Mehrere Modelle, darunter \texttt{Qwen3-235B-A22B-Thinking-2507}, stufen diesen Schritt daher als potenziell personenbezogen ein, wie in Abbildung \ref{fig:gptoss-fall} zu sehen ist. Die Anonymisierung der Daten wurde nur von \texttt{Mistral-7B-Instruct-v0.3} in zwei von fünf und von den Gemma-Modellen in allen Wiederholungen korrekt antizipiert und die Aktivität als unkritisch klassifiziert. Dieses Beispiel zeigt, wie fehlende Kontextinformationen zu vorsichtiger Klassifikation und damit zu \ac{FP} führen können.
 
-\begin{figure}
+\begin{figure}[h]
     \centering
     \includegraphics[width=\textwidth]{images/results/examples/oss-20b-run-1-small-marketing}
     \caption{Ergebnis des Testfalls \enquote{Marketing-Kampagne} mit farblich hervorgehobenen Aktivitäten. Die Aktivität \enquote{Klickraten auswerten} wurde als zusätzliches kritisches Element markiert.}
@@ -34,13 +34,15 @@ Dieses Beispiel zeigt, dass ohne genaue Kontextangaben zur Anonymisierung\linebr
 
 \subsection*{Karten-App - Standort erfassen}
 
-Der Testfall \enquote{Karten-App - Standort erfassen} besteht aus zwei Aktivitäten: \enquote{Standort erfassen} und \enquote{Route berechnen}. Beide sollten als kritisch klassifiziert werden, da im zweiten Schritt der erfasste Standort zur Berechnung der Route genutzt wird. \texttt{Mistral-Large-Instruct-2411} kennzeichnet jedoch in drei von fünf Wiederholungen nur die erste Aktivität als kritisch, wie in Abbildung \ref{fig:mistral-fall} zu sehen. In der Begründung wird zwar die Verarbeitung personenbezogener Daten beim Erfassen des Standorts erkannt, dieser Zusammenhang aber nicht auf die nachfolgende Aktivität übertragen. Dieses \ac{FN} steht dem angestrebten hohen Recall entgegen und zeigt, dass einige Modelle Schwierigkeiten haben, Datenflüsse über mehrere Schritte hinweg zu verfolgen.
+Der Testfall \enquote{Karten-App - Standort erfassen} besteht aus zwei Aktivitäten: \enquote{Standort erfassen} und \enquote{Route berechnen}. Beide sollten als kritisch klassifiziert werden, da im zweiten Schritt der erfasste Standort zur Berechnung der Route genutzt wird. \texttt{Mistral-Large-Instruct-2411} kennzeichnet jedoch in drei von fünf Wiederholungen nur die erste Aktivität als kritisch, wie in Abbildung \ref{fig:mistral-fall} zu sehen.
 
-\begin{figure}
+\begin{figure}[h]
     \centering
     \includegraphics[width=.55\textwidth]{images/results/examples/mistral-large-run-3-small-maps-app}
     \caption{Ergebnis des Testfalls \enquote{Karten-App - Standort Erfassen} mit farblich hervorgehobenen Aktivitäten. Die Aktivität \enquote{Route berechnen} wurde fälschlicherweise nicht als kritisch markiert.}
     \label{fig:mistral-fall}
 \end{figure}
+
+In der Begründung wird zwar die Verarbeitung personenbezogener Daten beim Erfassen des Standorts erkannt, dieser Zusammenhang aber nicht auf die nachfolgende Aktivität übertragen. Dieses \ac{FN} steht dem angestrebten hohen Recall entgegen und zeigt, dass einige Modelle Schwierigkeiten haben, Datenflüsse über mehrere Schritte hinweg zu verfolgen.
 
 Auf Basis der Erkenntnisse dieses gesamten Kapitels werden im folgenden Abschnitt die formulierten Forschungsfragen beantwortet. Dabei wird untersucht welches Modell sich insgesamt am besten für die Identifikation \ac{DSGVO}‑kritischer Aktivitäten eignet.

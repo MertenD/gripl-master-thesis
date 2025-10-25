@@ -14,7 +14,7 @@ Die in Abbildung~\ref{fig:sandbox-frontend-analyzed-model} markierten Bereiche s
 
 \begin{enumerate}
     \item \textbf{BPMN-Editor} (linke Hauptfläche): Vollwertiger Editor zum Modellieren, Importieren und Exportieren von \ac{BPMN}-Prozessen. Nach einer Analyse werden als kritisch eingestufte Aktivitäten unmittelbar im Diagramm farblich markiert.
-    \item \textbf{Analyse-Panel} (rechte Seitenleiste): Konfiguration der \ac{LLM}-Eigenschaften und Start der Analyse. Neben Modell, Basis-URL und API-Schlüssel können u.\,a. Seed, \texttt{temperature} und \texttt{topP} gesetzt werden. Diese Parameter sind identisch zu den in Kapitel \ref{sec:api-design} beschriebenen \texttt{llmProps} und werden beim Starten der Analyse in die API-Anfrage überführt. Über Schaltflächen lassen sich die Ergebnisse als JSON herunterladen oder vorherige Markierungen löschen.
+    \item \textbf{Analyse-Panel} (rechte Seitenleiste): Konfiguration der \ac{LLM}-Eigenschaften und Start der Analyse. Neben Modell, Basis-URL und API-Schlüssel können u.\,a. \texttt{seed}, \texttt{temperature} und \texttt{topP} gesetzt werden. Diese Parameter sind identisch zu den in Kapitel \ref{sec:api-design} beschriebenen \texttt{llmProps} und werden beim Starten der Analyse in die API-Anfrage überführt. Über Schaltflächen lassen sich die Ergebnisse als JSON herunterladen oder vorherige Markierungen löschen.
     \item \textbf{\ac{LLM}-Begründungen} (untere, aufklappbare Karte): Begründungen des \ac{LLM} zu jeder als kritisch erkannten Aktivität. Die Karte kann ein- und ausgeklappt werden. Eine geöffnete Ansicht ist in Abbildung~\ref{fig:sandbox-frontend-ai-reasoning} dargestellt.
 \end{enumerate}
 

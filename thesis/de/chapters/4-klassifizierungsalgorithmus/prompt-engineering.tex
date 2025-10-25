@@ -11,7 +11,7 @@ Für die Klassifikation \emph{\ac{DSGVO}-kritisch vs.\ unkritisch} wird ein \tex
 
 \subsection*{System-Prompt}
 
-Der System-Prompt definiert das Verhalten des \ac{LLM}, zusätzlichen Kontext und das gewünschte Ausgabeformat. Der vollständige System-Prompt befindet sich im Anhang, siehe \ref{lst:system-prompt}. Im Kern legt der genutzte System-Prompt Folgendes fest:
+Der System-Prompt definiert das Verhalten des \ac{LLM}, zusätzlichen Kontext und das gewünschte Ausgabeformat. Der vollständige System-Prompt befindet sich im Anhang, siehe Listing \ref{lst:system-prompt}. Im Kern legt der genutzte System-Prompt Folgendes fest:
 
 \begin{enumerate}
     \item \textbf{Rolle und Auftrag des Modells.} Das Modell agiert als Experte für das Analysieren von \ac{BPMN}-Modellen auf \ac{DSGVO}-konformität und prüft sämtliche Aktivitäten eines Prozesses auf Datenschutzrelevanz. Jede Aktivität wird berücksichtigt und die Entscheidung erfolgt auf Basis sämtlicher verfügbarer Kontextinformationen wie Name, Beschreibung, Annotationen sowie Daten- und Nachrichtenassoziationen.

@@ -30,7 +30,7 @@ In der Praxis liefert das \ac{LLM} mitunter unvollständige oder fehlerhafte \te
 
 Gibt das \ac{LLM} beispielsweise die \texttt{id} \texttt{Activity\_1} aus, existiert im Prozess jedoch nur \texttt{Activity\_12345}, wird die Ausgabe automatisch auf die korrekte \texttt{id} vervollständigt. Existieren hingegen sowohl \texttt{Activity\_123} als auch \texttt{Activity\_124} im Prozess, bleibt die Ausgabe unvollständig und wird entfernt, da keine eindeutige Zuordnung möglich ist.
 
-Dieser Schritt fängt typische \ac{LLM}-Ausgabefehler ab - etwa Halluzinationen oder abgeschnittene Bezeichner - und stellt die Konsistenz mit dem Eingabemodell sicher. Im Diagramm \ref{fig:architecture-diagram} ist er als \enquote{Validate and complete \texttt{id}s} markiert. Ein fokussierter Code-Auszug findet sich in Listing \ref{lst:activity-id-resolution}.
+Dieser Schritt fängt typische \ac{LLM}-Ausgabefehler ab - etwa Halluzinationen oder abgeschnittene Bezeichner - und stellt die Konsistenz mit dem Eingabemodell sicher. Im Diagramm \ref{fig:architecture-diagram} ist er als \enquote{Validate and complete \texttt{id}s} dargestellt. Ein fokussierter Code-Auszug findet sich in Listing \ref{lst:activity-id-resolution}.
 
 Nach der Validierung besteht \texttt{BpmnAnalysisResult} nur noch aus Aktivitäten, die vom \ac{LLM} als kritisch eingestuft wurden (\texttt{isRelevant = true}) und deren \texttt{id}s im Prozess existieren.
 
