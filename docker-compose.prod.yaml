@@ -2,8 +2,10 @@
 # This configuration adds Traefik reverse proxy with automatic SSL certificates
 # Usage: docker compose -f docker-compose.yaml -f docker-compose.prod.yaml up -d
 # 
-# Note: In production with Traefik, you may want to remove direct port exposure.
-# To do so, comment out the 'ports' sections in the base docker-compose.yaml file.
+# Note: This production overlay keeps the port mappings from the base configuration.
+# In production with Traefik, these ports are still accessible directly but traffic
+# typically goes through Traefik on ports 80/443. If you want to prevent direct access,
+# use firewall rules to block ports 3000, 8080, and 5050 from external access.
 
 services:
   gripl-frontend:
