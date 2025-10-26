@@ -4,54 +4,38 @@ services:
       context: ./gripl/gripl-frontend
       dockerfile: Dockerfile
       args:
-        API_BASE_URL: https://gripl.mertendieckmann.de/api
-    image: mertend/gripl-frontend:latest
+        API_BASE_URL: ${PROTOCOL:-http}://${DOMAIN:-localhost}:8080
+    image: ${DOCKER_REGISTRY_USERNAME:+${DOCKER_REGISTRY_USERNAME}/}gripl-frontend:${DOCKER_IMAGE_TAG:-latest}
     container_name: gripl-frontend
     restart: unless-stopped
+    ports:
+      - "3000:3000"
     environment:
-      - NEXT_PUBLIC_API_BASE_URL=https://gripl.mertendieckmann.de/api
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.gripl-frontend.rule=Host(`www.gripl.mertendieckmann.de`) || Host(`gripl.mertendieckmann.de`)
-      - traefik.http.routers.gripl-frontend.entrypoints=websecure
-      - traefik.http.routers.gripl-frontend.tls=true
-      - traefik.http.routers.gripl-frontend.tls.certresolver=lets-encrypt
-      - traefik.docker.network=web
-      - traefik.http.services.gripl-frontend.loadbalancer.server.port=3000
-      - com.centurylinklabs.watchtower.enable=true
+      - NEXT_PUBLIC_API_BASE_URL=${PROTOCOL:-http}://${DOMAIN:-localhost}:8080
     networks:
-      - web
+      - gripl-network
 
   gripl-backend:
     build:
       context: ./gripl/gripl-backend
       dockerfile: Dockerfile
-    image: mertend/gripl-backend:latest
+    image: ${DOCKER_REGISTRY_USERNAME:+${DOCKER_REGISTRY_USERNAME}/}gripl-backend:${DOCKER_IMAGE_TAG:-latest}
     container_name: gripl-backend
     restart: unless-stopped
+    ports:
+      - "8080:8080"
     depends_on:
       - gripl-postgres
     environment:
       - SPRING_PROFILES_ACTIVE=prod
       - PLAYWRIGHT_BROWSERS_PATH=/root/.cache/ms-playwright
-      - FRONTEND_BASE_URL=https://gripl.mertendieckmann.de
+      - FRONTEND_BASE_URL=${PROTOCOL:-http}://${DOMAIN:-localhost}:3000
     env_file:
       - ./gripl/gripl-backend/.env
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.gripl-backend.rule=Host(`www.gripl.mertendieckmann.de`) && PathPrefix(`/api/`) || Host(`gripl.mertendieckmann.de`) && PathPrefix(`/api/`)
-      - traefik.http.routers.gripl-backend.entrypoints=websecure
-      - traefik.http.routers.gripl-backend.tls=true
-      - traefik.http.routers.gripl-backend.tls.certresolver=lets-encrypt
-      - traefik.docker.network=web
-      - traefik.http.middlewares.gripl-backend-strip-prefix.stripprefix.prefixes=/api
-      - traefik.http.routers.gripl-backend.middlewares=gripl-backend-strip-prefix
-      - traefik.http.services.gripl-backend.loadbalancer.server.port=8080
-      - com.centurylinklabs.watchtower.enable=true
     volumes:
       - playwright-browsers:/root/.cache/ms-playwright
     networks:
-      - web
+      - gripl-network
 
   gripl-postgres:
     image: postgres:15
@@ -64,33 +48,26 @@ services:
     volumes:
       - gripl-postgres-data:/var/lib/postgresql/data
     networks:
-      - web
+      - gripl-network
 
   pgadmin:
     image: dpage/pgadmin4:7
     container_name: gripl-pgadmin
     restart: unless-stopped
+    ports:
+      - "5050:80"
     env_file:
       - .env
     depends_on:
       - gripl-postgres
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.gripl-pgadmin.rule=Host(`pgadmin.gripl.mertendieckmann.de`)
-      - traefik.http.routers.gripl-pgadmin.entrypoints=websecure
-      - traefik.http.routers.gripl-pgadmin.tls=true
-      - traefik.http.routers.gripl-pgadmin.tls.certresolver=lets-encrypt
-      - traefik.docker.network=web
-      - traefik.http.services.gripl-pgadmin.loadbalancer.server.port=80
-      - com.centurylinklabs.watchtower.enable=true
     volumes:
       - gripl-pgadmin-data:/var/lib/pgadmin
     networks:
-      - web
+      - gripl-network
 
 networks:
-  web:
-    external: true
+  gripl-network:
+    driver: bridge
 
 volumes:
   playwright-browsers:

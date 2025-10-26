@@ -1,0 +1,52 @@
+# Production Docker Compose Configuration with Traefik
+# This configuration adds Traefik reverse proxy with automatic SSL certificates
+# Usage: docker-compose -f docker-compose.yaml -f docker-compose.prod.yaml up -d
+
+services:
+  gripl-frontend:
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.gripl-frontend.rule=Host(`${DOMAIN}`) || Host(`www.${DOMAIN}`)
+      - traefik.http.routers.gripl-frontend.entrypoints=websecure
+      - traefik.http.routers.gripl-frontend.tls=true
+      - traefik.http.routers.gripl-frontend.tls.certresolver=lets-encrypt
+      - traefik.docker.network=web
+      - traefik.http.services.gripl-frontend.loadbalancer.server.port=3000
+    networks:
+      - web
+      - gripl-network
+    ports: []  # Remove port mapping when using Traefik
+
+  gripl-backend:
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.gripl-backend.rule=Host(`${DOMAIN}`) && PathPrefix(`/api/`) || Host(`www.${DOMAIN}`) && PathPrefix(`/api/`)
+      - traefik.http.routers.gripl-backend.entrypoints=websecure
+      - traefik.http.routers.gripl-backend.tls=true
+      - traefik.http.routers.gripl-backend.tls.certresolver=lets-encrypt
+      - traefik.docker.network=web
+      - traefik.http.middlewares.gripl-backend-strip-prefix.stripprefix.prefixes=/api
+      - traefik.http.routers.gripl-backend.middlewares=gripl-backend-strip-prefix
+      - traefik.http.services.gripl-backend.loadbalancer.server.port=8080
+    networks:
+      - web
+      - gripl-network
+    ports: []  # Remove port mapping when using Traefik
+
+  pgadmin:
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.gripl-pgadmin.rule=Host(`pgadmin.${DOMAIN}`)
+      - traefik.http.routers.gripl-pgadmin.entrypoints=websecure
+      - traefik.http.routers.gripl-pgadmin.tls=true
+      - traefik.http.routers.gripl-pgadmin.tls.certresolver=lets-encrypt
+      - traefik.docker.network=web
+      - traefik.http.services.gripl-pgadmin.loadbalancer.server.port=80
+    networks:
+      - web
+      - gripl-network
+    ports: []  # Remove port mapping when using Traefik
+
+networks:
+  web:
+    external: true

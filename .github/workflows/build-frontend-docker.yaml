@@ -1,5 +1,13 @@
 name: Build and Push Frontend Docker Image
 
+# This workflow builds and publishes the frontend Docker image to Docker Hub
+# To use this in your own fork:
+# 1. Set up GitHub repository secrets:
+#    - DOCKERHUB_USERNAME: Your Docker Hub username
+#    - DOCKERHUB_TOKEN: Your Docker Hub access token
+# 2. Update the 'tags' field below with your Docker Hub username
+# 3. Update the API_BASE_URL build arg if you want to use a different default
+
 on:
   push:
     branches: [ main ]
@@ -30,7 +38,8 @@ jobs:
         with:
           context: ./gripl/gripl-frontend
           push: true
+          # Update 'mertend' with your Docker Hub username
           tags: mertend/gripl-frontend:latest
           platforms: linux/amd64
           build-args: |
-            API_BASE_URL=https://gripl.mertendieckmann.de/api
+            API_BASE_URL=http://localhost:8080

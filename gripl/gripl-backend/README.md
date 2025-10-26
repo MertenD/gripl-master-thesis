@@ -92,13 +92,18 @@ The backend provides several CLI commands for BPMN analysis and dataset evaluati
 
 ## API Documentation
 
-Swagger API documentation is available at:
-[https://gripl.mertendieckmann.de/api-docs](https://gripl.mertendieckmann.de/api-docs)
+The backend provides a Swagger/OpenAPI interface for exploring and testing the REST API.
 
-This documentation reflects the latest **main branch deployment**.
+When running locally, access the API documentation at:
 
-For the most up-to-date version, run the backend (and frontend) locally, then access it at:
+```
+http://localhost:8080/api-docs
+```
+
+Or if you're accessing through the frontend:
 
 ```
 http://localhost:3000/api-docs
 ```
+
+For production deployments, the API documentation will be available at your configured domain.

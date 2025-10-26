@@ -1,5 +1,12 @@
 name: Build and Push Backend Docker Image
 
+# This workflow builds and publishes the backend Docker image to Docker Hub
+# To use this in your own fork:
+# 1. Set up GitHub repository secrets:
+#    - DOCKERHUB_USERNAME: Your Docker Hub username
+#    - DOCKERHUB_TOKEN: Your Docker Hub access token
+# 2. Update the 'tags' field below with your Docker Hub username
+
 on:
   push:
     branches: [ main ]
@@ -30,5 +37,6 @@ jobs:
         with:
           context: ./gripl/gripl-backend
           push: true
+          # Update 'mertend' with your Docker Hub username
           tags: mertend/gripl-backend:latest
           platforms: linux/amd64
