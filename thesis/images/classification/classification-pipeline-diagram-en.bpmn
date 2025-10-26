@@ -142,7 +142,7 @@
     </bpmn:receiveTask>
     <bpmn:dataObjectReference id="DataObjectReference_1hgqefh" name="Error message" dataObjectRef="DataObject_1r1mtc3" />
     <bpmn:dataObject id="DataObject_1r1mtc3" />
-    <bpmn:dataStoreReference id="DataStoreReference_01njnhn" name="Nachrichten-&#10;speicher" />
+    <bpmn:dataStoreReference id="DataStoreReference_01njnhn" name="Message storage" />
     <bpmn:boundaryEvent id="Event_1sk8unj" name="OutputParsing&#10;Error" attachedToRef="Activity_0smdakb">
       <bpmn:outgoing>Flow_0lva5kc</bpmn:outgoing>
       <bpmn:dataOutputAssociation id="DataOutputAssociation_07bpejh">
@@ -288,7 +288,7 @@
       <bpmndi:BPMNShape id="DataStoreReference_01njnhn_di" bpmnElement="DataStoreReference_01njnhn">
         <dc:Bounds x="895" y="407" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="888" y="376.5" width="63" height="27" />
+          <dc:Bounds x="877" y="384" width="85" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="DataObjectReference_0lt71l0_di" bpmnElement="DataObjectReference_0lt71l0">
