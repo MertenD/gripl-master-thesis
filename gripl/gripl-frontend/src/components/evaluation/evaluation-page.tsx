@@ -20,7 +20,13 @@ import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {Card, CardContent, CardDescription, CardHeader} from "@/components/ui/card";
 import EvaluationConfig from "@/components/evaluation/config/evaluation-config";
 import {Dataset} from "@/models/dto/Dataset";
-import {FileText, Play} from "lucide-react";
+import {ChevronDown, ChevronRight, FileText, Play} from "lucide-react";
+import TestcaseResultsStacked from "@/components/evaluation/charts/aggregated/testcase-results-stacked";
+import {AggregatedEvaluationResults} from "@/models/evaluation/AggregatedEvaluationResult";
+import MetricChart from "@/components/evaluation/charts/aggregated/metric-chart";
+import {Collapsible, CollapsibleContent, CollapsibleTrigger} from "@/components/ui/collapsible";
+import {useColors} from "@/components/evaluation/charts/common/color-context";
+import MetricsTable from "@/components/evaluation/charts/aggregated/metrics-table";
 
 type ModelReportEnvelope = {
     modelLabel: string;
@@ -46,6 +52,10 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
     const [selectedRun, setSelectedRun] = useState<number>(1);
     const [selectedModel, setSelectedModel] = useState<string | undefined>(undefined);
     const [selectedDataset, setSelectedDataset] = useState<string | undefined>(undefined);
+
+    const [isMetricsSummaryOpen, setIsMetricsSummaryOpen] = useState<boolean>(false);
+
+    const { colors, setColors } = useColors()
 
     const handleEvaluationStart = async () => {
         if (!evaluationRequest) return;
@@ -157,35 +167,10 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
     const summary = summaryByRun.get(selectedRun) || new Map();
     const errors = errorsByRun.get(selectedRun) || [];
 
-    const aggregateStats = useMemo(() => {
+    const aggregateStats = useMemo<AggregatedEvaluationResults | null>(() => {
         if (summaryByRun.size === 0 || !metadata?.modelLabels) return null;
 
-        const stats = new Map<string, {
-            avgPrecision: number;
-            stdPrecision: number;
-            avgRecall: number;
-            stdRecall: number;
-            avgF1Score: number;
-            stdF1Score: number;
-            avgAccuracy: number;
-            stdAccuracy: number;
-            avgPassed: number;
-            stdPassed: number;
-            avgFailed: number;
-            stdFailed: number;
-            avgErrors: number;
-            stdErrors: number;
-            stdAmountOfRetries?: number;
-            avgAmountOfRetries?: number;
-            avgTruePositives: number;
-            stdTruePositives: number;
-            avgFalsePositives: number;
-            stdFalsePositives: number;
-            avgFalseNegatives: number;
-            stdFalseNegatives: number;
-            avgTrueNegatives: number;
-            stdTrueNegatives: number;
-        }>();
+        const stats = {} as AggregatedEvaluationResults;
 
         for (const modelLabel of metadata.modelLabels) {
             const precisions: number[] = [];
@@ -251,7 +236,7 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
                 const stdFalseNegatives = Math.sqrt(falseNegatives.reduce((sum, val) => sum + Math.pow(val - avgFalseNegatives, 2), 0) / falseNegatives.length);
                 const stdTrueNegatives = Math.sqrt(trueNegatives.reduce((sum, val) => sum + Math.pow(val - avgTrueNegatives, 2), 0) / trueNegatives.length);
 
-                stats.set(modelLabel, {
+                stats[modelLabel] = {
                     avgPrecision,
                     stdPrecision,
                     avgRecall,
@@ -276,7 +261,7 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
                     stdFalseNegatives,
                     avgTrueNegatives,
                     stdTrueNegatives
-                });
+                }
             }
         }
 
@@ -298,7 +283,7 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
 
         if (aggregateStats && summaryByRun.size >= 1) {
             sections.push("# Aggregate Statistics Across All Runs");
-            for (const [modelLabel, stats] of aggregateStats.entries()) {
+            for (const [modelLabel, stats] of Object.entries(aggregateStats)) {
                 sections.push(`## Model: ${modelLabel}`);
                 sections.push(`- Precision: ${stats.avgPrecision.toFixed(3)} ± ${stats.stdPrecision.toFixed(3)}`);
                 sections.push(`- Recall: ${stats.avgRecall.toFixed(3)} ± ${stats.stdRecall.toFixed(3)}`);
@@ -373,7 +358,8 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
             testCasesByRun: testCasesByRunObj,
             summariesByRun: summariesByRunObj,
             errorsByRun: errorsByRunObj,
-            aggregateStats: aggregateStats ? Object.fromEntries(aggregateStats.entries()) : null
+            aggregateStats: aggregateStats || null,
+            colors: colors
         };
 
         const blob = new Blob([JSON.stringify(report, null, 2)], { type: "application/json" });
@@ -422,6 +408,10 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
                     errorsMap.set(parseInt(runNum), errs as any);
                 }
                 setErrorsByRun(errorsMap);
+
+                if (parsed.colors) {
+                    setColors(parsed.colors);
+                }
             } catch (err) {
                 console.error("Failed to load report:", err);
                 alert("Failed to load report: " + (err as Error).message);
@@ -502,9 +492,28 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
                             <>{ metadata && <CardDescription>
                                 <table>
                                     <tbody>
-                                    <tr><td>Models:</td><td className="pl-4">{metadata.modelLabels.join(", ")}</td></tr>
-                                    <tr><td>Temperatures:</td><td className="pl-4">{metadata.modelTemperatures.map(t => t || "default").join(", ")}</td></tr>
-                                    <tr><td>Top-p Values:</td><td className="pl-4">{metadata.modelTopPs?.map(p => p || "default").join(", ") || "n.a."}</td></tr>
+                                    <tr>
+                                        <td className="align-top">Models:</td>
+                                        <td className="pl-4 pb-2">
+                                            <div className="flex flex-wrap gap-2">
+                                                {metadata.modelLabels.map((label, index) => (
+                                                    <div
+                                                        key={label}
+                                                        className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-card border-2 text-secondary-foreground text-sm`}
+                                                        style={{
+                                                            borderColor: colors[label]
+                                                        }}
+                                                    >
+                                                        <span className="font-medium">{label}</span>
+                                                        <span className="text-muted-foreground">•</span>
+                                                        <span>temp: {metadata.modelTemperatures[index] ?? "default"}</span>
+                                                        <span className="text-muted-foreground">•</span>
+                                                        <span>topP: {metadata.modelTopPs?.[index] ?? "default"}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </td>
+                                    </tr>
                                     <tr><td>Datasets:</td><td className="pl-4">{metadata.datasets.map(d => d.name).join(", ")}</td></tr>
                                     <tr><td>Total Test Cases:</td><td className="pl-4">{metadata.totalTestCases}</td></tr>
                                     <tr><td>Default Evaluation Endpoint:</td><td className="pl-4">{metadata.defaultEvaluationEndpoint}</td></tr>
@@ -516,78 +525,58 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
                             </CardDescription> }</>
                         </CardContent>
                     </Card>
+                    {aggregateStats && metadata && metadata.totalRepetitions && <h2 className="text-2xl font-semibold mb-2">Aggregated Results Across  {metadata.totalRepetitions} Runs</h2> }
                     <div className="space-y-6 mb-8">
                         {/* Aggregate Statistics across all runs */}
-                        {aggregateStats && metadata && metadata.totalRepetitions && metadata.totalRepetitions >= 1 && (
-                            <Card>
-                                <CardHeader><h3 className="text-xl font-semibold">Aggregate Statistics Across {metadata.totalRepetitions} Runs</h3></CardHeader>
-                                <CardContent className="space-y-4">
-                                    {Array.from(aggregateStats.entries()).map(([modelLabel, stats]) => (
-                                        <div key={modelLabel} className="border-b pb-4 last:border-b-0">
-                                            <h4 className="font-semibold mb-2">{modelLabel}</h4>
-                                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                                <div>
-                                                    <p className="text-sm text-muted-foreground">Precision</p>
-                                                    <p className="font-mono">{stats.avgPrecision.toFixed(3)} ± {stats.stdPrecision.toFixed(3)}</p>
-                                                </div>
-                                                <div>
-                                                    <p className="text-sm text-muted-foreground">Recall</p>
-                                                    <p className="font-mono">{stats.avgRecall.toFixed(3)} ± {stats.stdRecall.toFixed(3)}</p>
-                                                </div>
-                                                <div>
-                                                    <p className="text-sm text-muted-foreground">F1-Score</p>
-                                                    <p className="font-mono">{stats.avgF1Score.toFixed(3)} ± {stats.stdF1Score.toFixed(3)}</p>
-                                                </div>
-                                                <div>
-                                                    <p className="text-sm text-muted-foreground">Accuracy</p>
-                                                    <p className="font-mono">{stats.avgAccuracy.toFixed(3)} ± {stats.stdAccuracy.toFixed(3)}</p>
-                                                </div>
-                                                <div>
-                                                    <p className="text-sm text-muted-foreground">True Positives</p>
-                                                    <p className="font-mono">{stats.avgTruePositives.toFixed(3)} ± {stats.stdTruePositives.toFixed(3)}</p>
-                                                </div>
-                                                <div>
-                                                    <p className="text-sm text-muted-foreground">False Positives</p>
-                                                    <p className="font-mono">{stats.avgFalsePositives.toFixed(3)} ± {stats.stdFalsePositives.toFixed(3)}</p>
-                                                </div>
-                                                <div>
-                                                    <p className="text-sm text-muted-foreground">False Negatives</p>
-                                                    <p className="font-mono">{stats.avgFalseNegatives.toFixed(3)} ± {stats.stdFalseNegatives.toFixed(3)}</p>
-                                                </div>
-                                                <div>
-                                                    <p className="text-sm text-muted-foreground">True Negatives</p>
-                                                    <p className="font-mono">{stats.avgTrueNegatives.toFixed(3)} ± {stats.stdTrueNegatives.toFixed(3)}</p>
-                                                </div>
-                                                <div>
-                                                    <p className="text-sm text-muted-foreground">Passed</p>
-                                                    <p className="font-mono">{stats.avgPassed.toFixed(3)} ± {stats.stdPassed.toFixed(3)} {metadata && `/ ${metadata.totalTestCases}`}</p>
-                                                </div>
-                                                <div>
-                                                    <p className="text-sm text-muted-foreground">Failed</p>
-                                                    <p className="font-mono">{stats.avgFailed.toFixed(3)} ± {stats.stdFailed.toFixed(3)} {metadata && `/ ${metadata.totalTestCases}`}</p>
-                                                </div>
-                                                <div>
-                                                    <p className="text-sm text-muted-foreground">Errors</p>
-                                                    <p className="font-mono">{stats.avgErrors.toFixed(3)} ± {stats.stdErrors.toFixed(3)} {metadata && `/ ${metadata.totalTestCases}`}</p>
-                                                </div>
-                                                {stats.avgAmountOfRetries !== undefined && stats.stdAmountOfRetries !== undefined && (
-                                                    <div>
-                                                        <p className="text-sm text-muted-foreground">Amount of Retries</p>
-                                                        <p className="font-mono">{stats.avgAmountOfRetries.toFixed(3)} ± {stats.stdAmountOfRetries.toFixed(3)}</p>
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </div>
-                                    ))}
-                                </CardContent>
-                            </Card>
-                        )}
+                        {aggregateStats && metadata && metadata.totalRepetitions && metadata.totalRepetitions >= 1 && (<>
+                            <MetricsTable aggregatedEvaluationResults={aggregateStats} />
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                <MetricChart
+                                    title="Precision"
+                                    description="Precision (mean ± SD)"
+                                    metricKey="avgPrecision"
+                                    stdKey="stdPrecision"
+                                    aggregatedEvaluationResults={aggregateStats}
+                                />
+                                <MetricChart
+                                    title="Recall"
+                                    description="Recall (mean ± SD)"
+                                    metricKey="avgRecall"
+                                    stdKey="stdRecall"
+                                    aggregatedEvaluationResults={aggregateStats}
+                                />
+                                <MetricChart
+                                    title="F1-Score"
+                                    description="F1-Score (mean ± SD)"
+                                    metricKey="avgF1Score"
+                                    stdKey="stdF1Score"
+                                    aggregatedEvaluationResults={aggregateStats}
+                                />
+                                <MetricChart
+                                    title="Accuracy"
+                                    description="Accuracy (mean ± SD)"
+                                    metricKey="avgAccuracy"
+                                    stdKey="stdAccuracy"
+                                    aggregatedEvaluationResults={aggregateStats}
+                                />
+                            </div>
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                <TestcaseResultsStacked aggregatedEvaluationResults={aggregateStats} repetisions={metadata.totalRepetitions} />
+                                <MetricChart
+                                    title="Retries"
+                                    description="Number of retries accross 25 test cases (mean ± SD)"
+                                    metricKey="avgAmountOfRetries"
+                                    stdKey="stdAmountOfRetries"
+                                    aggregatedEvaluationResults={aggregateStats}
+                                    xAxisMaxOffset={2}
+                                />
+                            </div>
+                        </>)}
                     </div>
                 </> : <Card className="p-4 mb-4">
                     <p className="text-muted-foreground">No results yet. Start an evaluation to see results here.</p>
                 </Card>}
 
-                {/* Run selection tabs (only show if multiple runs) */}
                 {metadata && metadata.totalRepetitions && metadata.totalRepetitions >= 1 && (
                     <>
                         <h2 className="text-2xl font-semibold mb-2">Results by Run</h2>
@@ -610,11 +599,6 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
 
                                     {summaryByRun.get(runNum) && (
                                         <div className="space-y-6 mb-6">
-                                            <EvaluationReportSummaryCard
-                                                reportSummaries={Array.from((summaryByRun.get(runNum) || new Map()).entries()).map(([label, s]) => ({
-                                                    label,
-                                                    summary: s
-                                                }))} metadata={metadata}/>
                                             <MetricsCharts
                                                 reportSummaries={Array.from((summaryByRun.get(runNum) || new Map()).entries()).map(([label, s]) => ({
                                                     label,

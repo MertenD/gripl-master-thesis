@@ -6,6 +6,7 @@ import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
 import {Spinner} from "@/components/ui/spinner";
 import {ImageDown} from "lucide-react";
+import ChartMenu from "@/components/evaluation/charts/common/chart-menu";
 
 interface ChartContainerProps {
     title: string
@@ -32,9 +33,7 @@ export default function ChartContainer({ title, children }: ChartContainerProps)
     return <Card>
         <CardHeader className="flex flex-row justify-between items-center">
             <CardTitle>{title}</CardTitle>
-            <Button variant="secondary" onClick={handleDownload} disabled={isLoading}>
-                {isLoading ? <Spinner /> : <ImageDown />}
-            </Button>
+            <ChartMenu onDownload={handleDownload} />
         </CardHeader>
         <CardContent>
             <div ref={ref}>
