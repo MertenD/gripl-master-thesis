@@ -27,8 +27,6 @@ import MetricChart from "@/components/evaluation/charts/aggregated/metric-chart"
 import {ColorProvider, useColors} from "@/components/evaluation/charts/common/color-context";
 import MetricsTable from "@/components/evaluation/charts/aggregated/metrics-table";
 
-export const dynamic = 'force-dynamic'
-
 type ModelReportEnvelope = {
     modelLabel: string;
     report: EvaluationReport;
