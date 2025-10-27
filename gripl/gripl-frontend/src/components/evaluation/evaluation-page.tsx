@@ -529,7 +529,6 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
                     <div className="space-y-6 mb-8">
                         {/* Aggregate Statistics across all runs */}
                         {aggregateStats && metadata && metadata.totalRepetitions && metadata.totalRepetitions >= 1 && (<>
-                            <MetricsTable aggregatedEvaluationResults={aggregateStats} />
                             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                                 <MetricChart
                                     title="Precision"
@@ -571,6 +570,7 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
                                     xAxisMaxOffset={2}
                                 />
                             </div>
+                            <MetricsTable aggregatedEvaluationResults={aggregateStats} />
                         </>)}
                     </div>
                 </> : <Card className="p-4 mb-4">
