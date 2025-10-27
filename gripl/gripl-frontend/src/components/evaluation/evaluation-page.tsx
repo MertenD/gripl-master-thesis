@@ -20,13 +20,14 @@ import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {Card, CardContent, CardDescription, CardHeader} from "@/components/ui/card";
 import EvaluationConfig from "@/components/evaluation/config/evaluation-config";
 import {Dataset} from "@/models/dto/Dataset";
-import {ChevronDown, ChevronRight, FileText, Play} from "lucide-react";
+import {FileText, Play} from "lucide-react";
 import TestcaseResultsStacked from "@/components/evaluation/charts/aggregated/testcase-results-stacked";
 import {AggregatedEvaluationResults} from "@/models/evaluation/AggregatedEvaluationResult";
 import MetricChart from "@/components/evaluation/charts/aggregated/metric-chart";
-import {Collapsible, CollapsibleContent, CollapsibleTrigger} from "@/components/ui/collapsible";
 import {ColorProvider, useColors} from "@/components/evaluation/charts/common/color-context";
 import MetricsTable from "@/components/evaluation/charts/aggregated/metrics-table";
+
+export const dynamic = 'force-dynamic'
 
 type ModelReportEnvelope = {
     modelLabel: string;
