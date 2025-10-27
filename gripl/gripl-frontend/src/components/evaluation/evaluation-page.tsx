@@ -429,7 +429,7 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
         [summary]
     );
 
-    return <ColorProvider>
+    return (
         <div className="w-full">
             <EvaluationConfig onMultiConfigChanged={setEvaluationRequest} datasets={datasets} className="mb-6">
                 <div className="flex flex-row justify-between items-start flex-wrap mb-4 gap-4">
@@ -689,7 +689,7 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
                 )}
             </section>
         </div>
-    </ColorProvider>;
+    );
 }
 
 function groupBy<T>(arr: T[], key: (t: T) => string) {

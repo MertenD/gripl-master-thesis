@@ -1,12 +1,25 @@
+"use client"
+
 import React from "react";
 import getDatasets from "@/actions/get-datasets";
 import EvaluationPage from "@/components/evaluation/evaluation-page";
+import {Dataset} from "@/models/dto/Dataset";
+import {ColorProvider} from "@/components/evaluation/charts/common/color-context";
 
-export const dynamic = 'force-dynamic'
+export default function Evaluation() {
 
-export default async function Evaluation() {
+    const [datasets, setDatasets] = React.useState<Dataset[]>([]);
 
-    const datasets = await getDatasets()
+    React.useEffect(() => {
+        async function fetchDatasets() {
+            const data = await getDatasets();
+            setDatasets(data);
+        }
 
-    return <EvaluationPage datasets={datasets} />
+        fetchDatasets();
+    }, []);
+
+    return <ColorProvider>
+        <EvaluationPage datasets={datasets} />
+    </ColorProvider>
 }
