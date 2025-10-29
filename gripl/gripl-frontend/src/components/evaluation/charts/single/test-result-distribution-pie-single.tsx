@@ -1,3 +1,5 @@
+"use client"
+
 import {Cell, Pie, PieChart, ResponsiveContainer, Tooltip} from "recharts";
 import {mergeEvalColors} from "../common/palettes";
 import {getEvaluationColors} from "@/lib/chart-colors";
