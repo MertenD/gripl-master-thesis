@@ -88,7 +88,7 @@ export default function TestcaseResultsStacked({ aggregatedEvaluationResults, re
         },
         yaxis: {
             title: {
-                text: "Number of test cases (mean ± SD)",
+                text: "Mean number of test cases",
                 style: { fontSize: "10px", fontWeight: 400 },
             },
             labels: { style: { fontSize: "10px" } },
