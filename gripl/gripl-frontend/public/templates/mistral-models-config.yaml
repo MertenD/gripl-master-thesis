@@ -1,0 +1,37 @@
+defaultEvaluationEndpoint: /gdpr/analysis/prompt-engineering
+seed: 24523833
+maxConcurrent: 10
+repetitions: 5
+models:
+  - label: Mistral-7B-Instruct-v0.3
+    llmProps:
+      baseUrl: https://openrouter.ai/api/v1
+      modelName: mistralai/mistral-7b-instruct-v0.3
+      apiKey: ${OPEN_ROUTER_API_KEY}
+      temperature: 0.1
+      topP: 1
+  - label: Mistral-8x7B-Instruct-v0.1
+    llmProps:
+      baseUrl: https://openrouter.ai/api/v1
+      modelName: mistralai/mixtral-8x7b-instruct
+      apiKey: ${OPEN_ROUTER_API_KEY}
+      temperature: 0.1
+      topP: 1
+  - label: Mistral-Large-Instruct-2411
+    llmProps:
+      baseUrl: https://openrouter.ai/api/v1
+      modelName: mistralai/mistral-large-2411
+      apiKey: ${OPEN_ROUTER_API_KEY}
+      temperature: 0.1
+      topP: 1
+  - label: Mistral Medium 3.1
+    llmProps:
+      baseUrl: https://openrouter.ai/api/v1
+      modelName: mistralai/mistral-medium-3.1
+      apiKey: ${OPEN_ROUTER_API_KEY}
+      temperature: 0.1
+      topP: 1
+datasets:
+  - 2
+  - 7
+  - 1

@@ -1,0 +1,23 @@
+defaultEvaluationEndpoint: /gdpr/analysis/prompt-engineering
+seed: 24523833
+maxConcurrent: 10
+repetitions: 5
+models:
+  - label: DeepSeek-V3.1
+    llmProps:
+      baseUrl: https://openrouter.ai/api/v1
+      modelName: deepseek/deepseek-chat-v3.1
+      apiKey: ${OPEN_ROUTER_API_KEY}
+      temperature: 0.1
+      topP: 1
+  - label: DeepSeek-R1-Distill-Qwen-14B
+    llmProps:
+      baseUrl: https://openrouter.ai/api/v1
+      modelName: deepseek/deepseek-r1-distill-qwen-14b
+      apiKey: ${OPEN_ROUTER_API_KEY}
+      temperature: 0.1
+      topP: 1
+datasets:
+  - 2
+  - 7
+  - 1

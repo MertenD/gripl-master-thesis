@@ -9,6 +9,7 @@ import EvaluationConfigHeader from "@/components/evaluation/config/evaluation-co
 import EvaluationConfigDefaultSettings from "@/components/evaluation/config/evaluation-config-default-settings";
 import EvaluationConfigDatasetSettings from "@/components/evaluation/config/evaluation-config-dataset-settings";
 import EvaluationConfigModelsSettings from "@/components/evaluation/config/evaluation-config-models-settings";
+import EvaluationConfigTemplateSelector from "@/components/evaluation/config/evaluation-config-template-selector";
 import {nextLabel} from "@/lib/evaluation-config-utils";
 
 interface EvaluationConfigCardMultiProps {
@@ -22,7 +23,7 @@ interface EvaluationConfigCardMultiProps {
 export default function EvaluationConfig({ className, children, topSlot, datasets, onMultiConfigChanged }: EvaluationConfigCardMultiProps) {
     const config = useEvaluationConfig(datasets, onMultiConfigChanged);
 
-    const { fileInputRef, onClickImportYaml, onFileChange, onClickExportYaml } = useYamlImportExport({
+    const { fileInputRef, onClickImportYaml, onFileChange, onClickExportYaml, applyYamlConfig } = useYamlImportExport({
         availableEvaluationEndpoints: config.availableEvaluationEndpoints,
         effectiveDefaultEndpoint: config.effectiveDefaultEndpoint,
         models: config.models,
@@ -49,12 +50,15 @@ export default function EvaluationConfig({ className, children, topSlot, dataset
                             <h1 className="text-2xl font-bold text-card-foreground">Evaluation Config</h1>
                             <p className="text-sm text-muted-foreground mt-1">Multiple Models</p>
                         </div>
-                        <EvaluationConfigHeader
-                            fileInputRef={fileInputRef}
-                            onFileChange={onFileChange}
-                            onClickImportYaml={onClickImportYaml}
-                            onClickExportYaml={onClickExportYaml}
-                        />
+                        <div className="flex gap-3 flex-wrap items-center">
+                            <EvaluationConfigTemplateSelector onApply={applyYamlConfig} />
+                            <EvaluationConfigHeader
+                                fileInputRef={fileInputRef}
+                                onFileChange={onFileChange}
+                                onClickImportYaml={onClickImportYaml}
+                                onClickExportYaml={onClickExportYaml}
+                            />
+                        </div>
                     </div>
                 </div>
             </div>

@@ -1,0 +1,30 @@
+defaultEvaluationEndpoint: /gdpr/analysis/prompt-engineering
+seed: 24523833
+maxConcurrent: 10
+repetitions: 5
+models:
+  - label: GPT-OSS-20B
+    llmProps:
+      baseUrl: https://openrouter.ai/api/v1
+      modelName: openai/gpt-oss-20b
+      apiKey: ${OPEN_ROUTER_API_KEY}
+      temperature: 0.1
+      topP: 1
+  - label: GPT-OSS-120B
+    llmProps:
+      baseUrl: https://openrouter.ai/api/v1
+      modelName: openai/gpt-oss-120b
+      apiKey: ${OPEN_ROUTER_API_KEY}
+      temperature: 0.1
+      topP: 1
+  - label: GPT-4o (2024-11-20)
+    llmProps:
+      baseUrl: https://openrouter.ai/api/v1
+      modelName: openai/gpt-4o-2024-11-20
+      apiKey: ${OPEN_ROUTER_API_KEY}
+      temperature: 0.1
+      topP: 1
+datasets:
+  - 2
+  - 7
+  - 1

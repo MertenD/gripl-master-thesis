@@ -1,0 +1,45 @@
+defaultEvaluationEndpoint: /gdpr/analysis/prompt-engineering
+seed: 24523833
+maxConcurrent: 10
+repetitions: 5
+models:
+  - label: Mistral-8x7B-Instruct-v0.1 (Temp=0.4)
+    llmProps:
+      baseUrl: https://openrouter.ai/api/v1
+      modelName: mistralai/mixtral-8x7b-instruct
+      apiKey: ${OPEN_ROUTER_API_KEY}
+      temperature: 0.4
+  - label: Mistral-Large-Instruct-2411 (Temp=0.4)
+    llmProps:
+      baseUrl: https://openrouter.ai/api/v1
+      modelName: mistralai/mistral-large-2411
+      apiKey: ${OPEN_ROUTER_API_KEY}
+      temperature: 0.4
+  - label: Mistral-8x7B-Instruct-v0.1 (Temp=0.1)
+    llmProps:
+      baseUrl: https://openrouter.ai/api/v1
+      modelName: mistralai/mixtral-8x7b-instruct
+      apiKey: ${OPEN_ROUTER_API_KEY}
+      temperature: 0.1
+  - label: Mistral-Large-Instruct-2411 (Temp=0.1)
+    llmProps:
+      baseUrl: https://openrouter.ai/api/v1
+      modelName: mistralai/mistral-large-2411
+      apiKey: ${OPEN_ROUTER_API_KEY}
+      temperature: 0.1
+  - label: Mistral-8x7B-Instruct-v0.1 (Temp=0.0)
+    llmProps:
+      baseUrl: https://openrouter.ai/api/v1
+      modelName: mistralai/mixtral-8x7b-instruct
+      apiKey: ${OPEN_ROUTER_API_KEY}
+      temperature: 0.0
+  - label: Mistral-Large-Instruct-2411 (Temp=0.0)
+    llmProps:
+      baseUrl: https://openrouter.ai/api/v1
+      modelName: mistralai/mistral-large-2411
+      apiKey: ${OPEN_ROUTER_API_KEY}
+      temperature: 0.0
+datasets:
+  - 2
+  - 7
+  - 1

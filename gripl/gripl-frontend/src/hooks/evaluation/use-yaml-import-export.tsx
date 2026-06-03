@@ -193,5 +193,5 @@ export function useYamlImportExport(props: {
         URL.revokeObjectURL(url);
     }
 
-    return { fileInputRef, onClickImportYaml, onFileChange, onClickExportYaml } as const;
+    return { fileInputRef, onClickImportYaml, onFileChange, onClickExportYaml, applyYamlConfig } as const;
 }
