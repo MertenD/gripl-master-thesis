@@ -6,7 +6,7 @@ The **GRIPL Backend** is a Spring Boot application that provides a REST API for 
 
 Before running the GRIPL Backend, ensure that you have a **PostgreSQL** database instance up and running. The application requires PostgreSQL, which you can set up via Docker or install directly on your system.
 
-Next, copy the `.env.example` file to `.env` and configure all required environment variables, such as database connection details and (optionally) an OpenAI API key for process analysis. The `.env` file is used to configure the backend.
+Next, copy the `.env.example` file to `.env` and configure the required database connection details. **The backend has no pre-configured LLM API key** — users must provide their own key in the app UI (or pass it via `--llm.api-key` for CLI usage). This prevents unexpected costs when the app is publicly accessible.
 
 ## Running Locally with Maven
 

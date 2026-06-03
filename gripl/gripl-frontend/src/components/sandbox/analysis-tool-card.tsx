@@ -2,7 +2,7 @@
 
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
-import {Download, FileText, RefreshCw} from "lucide-react";
+import {ChevronDown, ChevronUp, Download, FileText, RefreshCw} from "lucide-react";
 import {useState} from "react";
 import {AnalysisResponse} from "@/models/dto/AnalysisDto";
 import {Spinner} from "@/components/ui/spinner";
@@ -16,6 +16,8 @@ import LlmModelNameDatalist from "@/components/datalist/llm-model-name-datalist"
 import LlmApiKeyPlaceholderDatalist from "@/components/datalist/llm-api-key-placeholder-datalist";
 import {GenerateRandomInput} from "@/components/ui/input-generate-random";
 import {safeFloatOrNull} from "@/lib/evaluation-config-utils";
+import {useApiKeys} from "@/hooks/use-api-keys";
+import ApiKeysSection from "@/components/api-keys-section";
 
 interface AnalysisToolCardProps {
     bpmnXml: string;
@@ -32,6 +34,9 @@ export default function AnalysisToolCard({ bpmnXml, analysisResult, setAnalysisR
     const [temperature, setTemperature] = useState<number | null>(null)
     const [topP, setTopP] = useState<number | null>(null)
     const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false)
+    const [showSavedKeys, setShowSavedKeys] = useState<boolean>(false)
+
+    const { keys, updateKey, resolveString } = useApiKeys();
 
     function handleAnalyzeClick() {
         setAnalysisResult(null);
@@ -44,7 +49,7 @@ export default function AnalysisToolCard({ bpmnXml, analysisResult, setAnalysisR
         const llmProps = {
             baseUrl: llmBaseUrl || null,
             modelName: modelName || null,
-            apiKey: apiKey || null,
+            apiKey: resolveString(apiKey) || null,
             seed: seed || null,
             temperature: temperature || null,
             topP: topP || null
@@ -178,6 +183,22 @@ export default function AnalysisToolCard({ bpmnXml, analysisResult, setAnalysisR
                 <RefreshCw className="mr-2 h-4 w-4"/>
                 Clear Analysis Results
             </Button>
+
+            <div className="py-1">
+                <Separator/>
+            </div>
+            <Button
+                variant="ghost"
+                size="sm"
+                className="w-full justify-between text-muted-foreground text-xs"
+                onClick={() => setShowSavedKeys(!showSavedKeys)}
+            >
+                Saved API Keys (for {"${...}"} placeholders)
+                {showSavedKeys ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
+            </Button>
+            {showSavedKeys && (
+                <ApiKeysSection keys={keys} updateKey={updateKey} className="border-0 shadow-none p-0" />
+            )}
         </CardContent>
     </Card>
 }

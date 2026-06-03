@@ -14,11 +14,12 @@ import {nextLabel} from "@/lib/evaluation-config-utils";
 interface EvaluationConfigCardMultiProps {
     className?: string;
     children?: JSX.Element;
+    topSlot?: React.ReactNode;
     datasets: Dataset[];
     onMultiConfigChanged: (config: MultiEvaluationRequest) => void;
 }
 
-export default function EvaluationConfig({ className, children, datasets, onMultiConfigChanged }: EvaluationConfigCardMultiProps) {
+export default function EvaluationConfig({ className, children, topSlot, datasets, onMultiConfigChanged }: EvaluationConfigCardMultiProps) {
     const config = useEvaluationConfig(datasets, onMultiConfigChanged);
 
     const { fileInputRef, onClickImportYaml, onFileChange, onClickExportYaml } = useYamlImportExport({
@@ -82,6 +83,8 @@ export default function EvaluationConfig({ className, children, datasets, onMult
                         onChange={config.setSelectedDatasets}
                     />
                 </div>
+
+                {topSlot}
 
                 <EvaluationConfigModelsSettings
                     models={config.models}

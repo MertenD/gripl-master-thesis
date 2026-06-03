@@ -191,8 +191,8 @@ Output formats: `pretty` (default) or `json` via `--outputFormat`.
 | `SPRING_DATASOURCE_URL` | ✅ | PostgreSQL JDBC URL, e.g. `jdbc:postgresql://gripl-postgres:5432/gripl` |
 | `SPRING_DATASOURCE_USERNAME` | ✅ | Database user |
 | `SPRING_DATASOURCE_PASSWORD` | ✅ | Database password |
-| `OPENAI_API_KEY` | optional | Default LLM API key (usable as `${OPENAI_API_KEY}` in eval config) |
-| `OPEN_ROUTER_API_KEY` | optional | OpenRouter API key (usable as `${OPEN_ROUTER_API_KEY}` in eval config) |
+
+> **No server-side API key is configured.** LLM API keys must be provided by the user in the app UI (sandbox or evaluation config). They are saved in the browser's sessionStorage (cleared when the tab is closed) and resolved client-side before any request is sent. If you run the app privately and want to pre-configure a key, set `llm.api-key=sk-...` in `application.properties` — the backend still resolves `${OPENAI_API_KEY}` and `${OPEN_ROUTER_API_KEY}` placeholders from environment variables as a fallback.
 
 ---
 
@@ -265,7 +265,7 @@ datasets:
   - 2
 ```
 
-API keys can be referenced as environment variable placeholders (`${OPENAI_API_KEY}`, `${OPEN_ROUTER_API_KEY}`) — they are resolved server-side and never stored in the config file.
+API keys can be referenced as placeholders (`${OPENAI_API_KEY}`, `${OPEN_ROUTER_API_KEY}`). When you import this YAML into the UI, the placeholders stay as-is in the model rows. The frontend resolves them at submit time using the values you entered in the **API Keys** section of the evaluation config page — nothing is stored in the YAML file itself.
 
 ---
 

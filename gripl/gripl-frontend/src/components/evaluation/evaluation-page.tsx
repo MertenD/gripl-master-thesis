@@ -26,6 +26,8 @@ import {AggregatedEvaluationResults} from "@/models/evaluation/AggregatedEvaluat
 import MetricChart from "@/components/evaluation/charts/aggregated/metric-chart";
 import {ColorProvider, useColors} from "@/components/evaluation/charts/common/color-context";
 import MetricsTable from "@/components/evaluation/charts/aggregated/metrics-table";
+import {useApiKeys} from "@/hooks/use-api-keys";
+import ApiKeysSection from "@/components/api-keys-section";
 
 type ModelReportEnvelope = {
     modelLabel: string;
@@ -55,6 +57,7 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
     const [isMetricsSummaryOpen, setIsMetricsSummaryOpen] = useState<boolean>(false);
 
     const { colors, setColors } = useColors()
+    const { keys, updateKey, resolveObject } = useApiKeys();
 
     const handleEvaluationStart = async () => {
         if (!evaluationRequest) return;
@@ -68,12 +71,13 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
         setIsFinished(false);
         setSelectedRun(1);
 
-        console.log("Sending request", evaluationRequest)
+        const resolvedRequest = resolveObject(evaluationRequest);
+        console.log("Sending request", resolvedRequest)
 
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/gdpr/evaluation/stream`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(evaluationRequest)
+            body: JSON.stringify(resolvedRequest)
         });
 
         if (!res.ok || !res.body) {
@@ -431,7 +435,12 @@ export default function EvaluationPage({ datasets }: EvaluationPageProps) {
 
     return (
         <div className="w-full">
-            <EvaluationConfig onMultiConfigChanged={setEvaluationRequest} datasets={datasets} className="mb-6">
+            <EvaluationConfig
+            onMultiConfigChanged={setEvaluationRequest}
+            datasets={datasets}
+            className="mb-6"
+            topSlot={<ApiKeysSection keys={keys} updateKey={updateKey} />}
+        >
                 <div className="flex flex-row justify-between items-start flex-wrap mb-4 gap-4">
                     <div className="flex flex-row gap-4 flex-wrap">
                         <Button variant="secondary" disabled={!isFinished} onClick={handleDownloadMarkdownReport}>
