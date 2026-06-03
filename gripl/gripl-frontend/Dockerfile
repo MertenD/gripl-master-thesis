@@ -26,8 +26,6 @@ ENV NEXT_PUBLIC_API_BASE_URL=$API_BASE_URL
 RUN npm run build
 
 FROM node:18-alpine AS runner
-
-FROM node:18-alpine AS runner
 RUN apk update && apk add --no-cache \
     chromium \
     nss \

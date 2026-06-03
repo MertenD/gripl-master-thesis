@@ -9,6 +9,12 @@ import reactor.core.publisher.Mono
 
 object ControllerUtils {
 
+    // Only these env vars may be resolved via ${VAR} placeholders in request bodies.
+    // Prevents exfiltration of arbitrary secrets (e.g. DB credentials) by attackers who
+    // control the LLM endpoint and can receive the resolved value as an Authorization header.
+    private val RESOLVABLE_ENV_VARS = setOf("OPENAI_API_KEY", "OPEN_ROUTER_API_KEY")
+    private val PLACEHOLDER_REGEX = Regex("""\$\{([^}]+)}""")
+
     fun getBpmnXmlMono(file: FilePart): Mono<String> {
         return DataBufferUtils
             .join(file.content())
@@ -18,10 +24,14 @@ object ControllerUtils {
     }
 
     inline fun <reified T> resolveEnvironmentVariables(objectToResolve: T?, env: Environment): T? {
-        return objectToResolve.let {
-            jacksonObjectMapper().readValue<T>(
-                env.resolvePlaceholders(jacksonObjectMapper().writeValueAsString(it))
-            )
+        return objectToResolve?.let {
+            val json = jacksonObjectMapper().writeValueAsString(it)
+            val resolved = PLACEHOLDER_REGEX.replace(json) { match ->
+                val varName = match.groupValues[1]
+                if (varName in RESOLVABLE_ENV_VARS) env.getProperty(varName) ?: match.value
+                else match.value
+            }
+            jacksonObjectMapper().readValue<T>(resolved)
         }
     }
 }

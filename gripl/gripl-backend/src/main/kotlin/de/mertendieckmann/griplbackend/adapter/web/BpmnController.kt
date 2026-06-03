@@ -7,15 +7,18 @@ import org.springframework.core.io.buffer.DataBufferUtils
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.codec.multipart.FilePart
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestPart
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers
 
 @RestController
 @RequestMapping("/bpmn")
+@CrossOrigin(
+    origins = ["\${app.frontend.base-url}"],
+    allowCredentials = "true",
+    allowedHeaders = ["*"],
+    methods = [RequestMethod.POST, RequestMethod.OPTIONS]
+)
 class BpmnController() {
 
     @Operation(

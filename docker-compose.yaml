@@ -4,18 +4,18 @@ services:
       context: ./gripl/gripl-frontend
       dockerfile: Dockerfile
       args:
-        API_BASE_URL: https://gripl.mertendieckmann.de/api
+        API_BASE_URL: https://gripl.merten.tech/api
     image: mertend/gripl-frontend:latest
     container_name: gripl-frontend
     restart: unless-stopped
     environment:
-      - NEXT_PUBLIC_API_BASE_URL=https://gripl.mertendieckmann.de/api
+      - NEXT_PUBLIC_API_BASE_URL=https://gripl.merten.tech/api
     labels:
       - traefik.enable=true
-      - traefik.http.routers.gripl-frontend.rule=Host(`www.gripl.mertendieckmann.de`) || Host(`gripl.mertendieckmann.de`)
+      - traefik.http.routers.gripl-frontend.rule=Host(`www.gripl.merten.tech`) || Host(`gripl.merten.tech`)
       - traefik.http.routers.gripl-frontend.entrypoints=websecure
       - traefik.http.routers.gripl-frontend.tls=true
-      - traefik.http.routers.gripl-frontend.tls.certresolver=lets-encrypt
+      - traefik.http.routers.gripl-frontend.tls.certresolver=le-merten
       - traefik.docker.network=web
       - traefik.http.services.gripl-frontend.loadbalancer.server.port=3000
       - com.centurylinklabs.watchtower.enable=true
@@ -34,15 +34,15 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=prod
       - PLAYWRIGHT_BROWSERS_PATH=/root/.cache/ms-playwright
-      - FRONTEND_BASE_URL=https://gripl.mertendieckmann.de
+      - FRONTEND_BASE_URL=https://gripl.merten.tech
     env_file:
       - ./gripl/gripl-backend/.env
     labels:
       - traefik.enable=true
-      - traefik.http.routers.gripl-backend.rule=Host(`www.gripl.mertendieckmann.de`) && PathPrefix(`/api/`) || Host(`gripl.mertendieckmann.de`) && PathPrefix(`/api/`)
+      - traefik.http.routers.gripl-backend.rule=Host(`www.gripl.merten.tech`) && PathPrefix(`/api/`) || Host(`gripl.merten.tech`) && PathPrefix(`/api/`)
       - traefik.http.routers.gripl-backend.entrypoints=websecure
       - traefik.http.routers.gripl-backend.tls=true
-      - traefik.http.routers.gripl-backend.tls.certresolver=lets-encrypt
+      - traefik.http.routers.gripl-backend.tls.certresolver=le-merten
       - traefik.docker.network=web
       - traefik.http.middlewares.gripl-backend-strip-prefix.stripprefix.prefixes=/api
       - traefik.http.routers.gripl-backend.middlewares=gripl-backend-strip-prefix
@@ -57,8 +57,6 @@ services:
     image: postgres:15
     container_name: gripl-postgres
     restart: unless-stopped
-    ports:
-      - "5432:5432"
     env_file:
       - .env
     volumes:
@@ -76,12 +74,14 @@ services:
       - gripl-postgres
     labels:
       - traefik.enable=true
-      - traefik.http.routers.gripl-pgadmin.rule=Host(`pgadmin.gripl.mertendieckmann.de`)
+      - traefik.http.middlewares.gripl-pgadmin-auth.basicauth.users=${PGADMIN_BASIC_AUTH}
+      - traefik.http.routers.gripl-pgadmin.rule=Host(`pgadmin.gripl.merten.tech`)
       - traefik.http.routers.gripl-pgadmin.entrypoints=websecure
       - traefik.http.routers.gripl-pgadmin.tls=true
-      - traefik.http.routers.gripl-pgadmin.tls.certresolver=lets-encrypt
+      - traefik.http.routers.gripl-pgadmin.tls.certresolver=le-merten
       - traefik.docker.network=web
       - traefik.http.services.gripl-pgadmin.loadbalancer.server.port=80
+      - traefik.http.routers.gripl-pgadmin.middlewares=gripl-pgadmin-auth
       - com.centurylinklabs.watchtower.enable=true
     volumes:
       - gripl-pgadmin-data:/var/lib/pgadmin
