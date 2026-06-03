@@ -1,36 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# GRIPL Frontend
 
-## Getting Started
+The GRIPL frontend is a Next.js web app that provides three views:
 
-First, run the development server:
+- **Sandbox** (`/`) — interactive BPMN editor where you can model or import process diagrams and run the GDPR classification pipeline against them. Critical activities are highlighted directly in the diagram; the LLM's reasoning is shown in a collapsible panel.
+- **Labeling** (`/labeling`) — dataset management and annotation tool for building ground-truth datasets. Upload BPMN files, switch to labeling mode, and mark activities as GDPR-critical with optional justification text.
+- **Evaluation** (`/evaluation`) — multi-model evaluation framework UI. Configure which LLMs and datasets to compare, run evaluations with live streaming progress, and analyse results from overall summary down to individual test cases with BPMN overlays.
+
+An interactive Swagger API doc for the backend is available at `/api-docs`.
+
+## Tech stack
+
+| Layer | Choice |
+|---|---|
+| Framework | Next.js 15 (App Router) |
+| Language | TypeScript |
+| Styling | Tailwind CSS |
+| UI components | Radix UI + shadcn/ui |
+| BPMN | bpmn.js (editor + rendering) |
+| Charts | Recharts, ApexCharts |
+
+## Getting started
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev     # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The app expects the backend to be running on `http://localhost:8080`. All `/api/*` requests are rewritten to the backend via the Next.js rewrite config. Set `NEXT_PUBLIC_API_BASE_URL` to override the backend URL at build time.
 
-You can start editing the page by modifying `app/layout.tsx`. The page auto-updates as you edit the file.
+```bash
+# Optional: point at a different backend
+NEXT_PUBLIC_API_BASE_URL=https://gripl.merten.tech/api npm run build
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Environment variables
 
-## Learn More
+| Variable | Description |
+|---|---|
+| `NEXT_PUBLIC_API_BASE_URL` | Backend base URL (default: `http://localhost:8080`). Baked in at build time. |
 
-To learn more about Next.js, take a look at the following resources:
+## API documentation
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Deployed:** [https://gripl.merten.tech/api-docs](https://gripl.merten.tech/api-docs)
+- **Local:** [http://localhost:3000/api-docs](http://localhost:3000/api-docs) (requires backend running)

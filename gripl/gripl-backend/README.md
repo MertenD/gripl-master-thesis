@@ -93,7 +93,7 @@ The backend provides several CLI commands for BPMN analysis and dataset evaluati
 ## API Documentation
 
 Swagger API documentation is available at:
-[https://gripl.mertendieckmann.de/api-docs](https://gripl.mertendieckmann.de/api-docs)
+[https://gripl.merten.tech/api-docs](https://gripl.merten.tech/api-docs)
 
 This documentation reflects the latest **main branch deployment**.
 
