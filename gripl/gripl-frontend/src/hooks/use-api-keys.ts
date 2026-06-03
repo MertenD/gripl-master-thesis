@@ -1,22 +1,9 @@
 "use client";
 import { useState } from "react";
 
-const STORAGE_KEY = "gripl-api-keys";
+export type ApiKeys = { OPEN_ROUTER_API_KEY: string };
 
-export const API_KEY_NAMES = ["OPENAI_API_KEY", "OPEN_ROUTER_API_KEY"] as const;
-export type ApiKeyName = typeof API_KEY_NAMES[number];
-export type ApiKeys = Record<ApiKeyName, string>;
-
-const DEFAULT: ApiKeys = { OPENAI_API_KEY: "", OPEN_ROUTER_API_KEY: "" };
-
-function load(): ApiKeys {
-    try {
-        const raw = typeof window !== "undefined" ? sessionStorage.getItem(STORAGE_KEY) : null;
-        return raw ? { ...DEFAULT, ...JSON.parse(raw) } : DEFAULT;
-    } catch {
-        return DEFAULT;
-    }
-}
+const DEFAULT: ApiKeys = { OPEN_ROUTER_API_KEY: "" };
 
 function resolveValue(value: unknown, keys: Record<string, string>): unknown {
     if (typeof value === "string")
@@ -28,13 +15,9 @@ function resolveValue(value: unknown, keys: Record<string, string>): unknown {
 }
 
 export function useApiKeys() {
-    const [keys, setKeys] = useState<ApiKeys>(load);
+    const [keys, setKeys] = useState<ApiKeys>(DEFAULT);
 
-    const updateKey = (name: ApiKeyName, value: string) => {
-        const next = { ...keys, [name]: value };
-        setKeys(next);
-        if (typeof window !== "undefined") sessionStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-    };
+    const updateKey = (value: string) => setKeys({ OPEN_ROUTER_API_KEY: value });
 
     const resolveObject = <T>(obj: T): T => resolveValue(obj, keys) as T;
     const resolveString = (s: string | null | undefined): typeof s =>
