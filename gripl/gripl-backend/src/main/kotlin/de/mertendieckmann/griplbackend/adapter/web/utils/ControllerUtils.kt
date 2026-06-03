@@ -12,8 +12,8 @@ object ControllerUtils {
     // Only these env vars may be resolved via ${VAR} placeholders in request bodies.
     // Prevents exfiltration of arbitrary secrets (e.g. DB credentials) by attackers who
     // control the LLM endpoint and can receive the resolved value as an Authorization header.
-    private val RESOLVABLE_ENV_VARS = setOf("OPENAI_API_KEY", "OPEN_ROUTER_API_KEY")
-    private val PLACEHOLDER_REGEX = Regex("""\$\{([^}]+)}""")
+    val RESOLVABLE_ENV_VARS = setOf("OPENAI_API_KEY", "OPEN_ROUTER_API_KEY")
+    val PLACEHOLDER_REGEX = Regex("""\$\{([^}]+)}""")
 
     fun getBpmnXmlMono(file: FilePart): Mono<String> {
         return DataBufferUtils
