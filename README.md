@@ -138,16 +138,26 @@ cp .env.example .env  # fill in DB connection + LLM API key
 
 The backend starts on `http://localhost:8080`. The frontend rewrites `/api/*` → `http://localhost:8080/*` automatically.
 
-### Docker (full stack, no Traefik)
+### Docker (full stack, local)
+
+Use `docker-compose.local.yaml` — this variant defines its own bridge network and exposes all services on localhost ports. No Traefik required.
 
 ```bash
-cp .env.example .env    # root .env for postgres + pgadmin credentials
-cp gripl/gripl-backend/.env.example gripl/gripl-backend/.env
+cp .env.local.example .env   # pre-filled with local defaults; DB credentials are reused for the backend automatically
 
-docker compose up -d
+docker compose -f docker-compose.local.yaml build
+docker compose -f docker-compose.local.yaml up -d
 ```
 
-This starts frontend, backend, PostgreSQL and pgAdmin. The frontend is available at `http://localhost:3000`.
+| Service | URL |
+|---|---|
+| Frontend | `http://localhost:3000` |
+| Backend API | `http://localhost:8080` |
+| API Docs | `http://localhost:8080/api-docs` |
+| pgAdmin | `http://localhost:5050` |
+| PostgreSQL | `localhost:5432` |
+
+> `PGADMIN_BASIC_AUTH` is not required locally — pgAdmin is accessible without HTTP basic auth.
 
 ### CLI usage
 
@@ -273,7 +283,8 @@ API keys can be referenced as placeholders (`${OPENAI_API_KEY}`, `${OPEN_ROUTER_
 
 ```
 gripl-master-thesis/
-├── docker-compose.yaml          # Production deployment (Traefik)
+├── docker-compose.yaml          # Production deployment (Traefik + external web network)
+├── docker-compose.local.yaml    # Local development (bridge network, localhost ports)
 ├── gripl/
 │   ├── gripl-frontend/          # Next.js web app (sandbox + labeling + evaluation UI)
 │   └── gripl-backend/           # Spring Boot API (classification + evaluation engine)
